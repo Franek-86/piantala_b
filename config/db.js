@@ -1,9 +1,11 @@
 var mysql = require("mysql");
+
 const dbOptions = {
-  host: "localhost",
+  host: process.env.HOST,
   user: process.env.USER_ID,
   password: process.env.DB_PASSWORD,
-  database: "ti_pianto_per_amore",
+  database: process.env.DATABASE,
+  port: process.env.PORT,
 };
 
 const con = mysql.createConnection(dbOptions);

@@ -10,11 +10,20 @@ const bodyParser = require("body-parser"); // Import body-parser
 const plantsRoutes = require("./routes/plantsRoutes");
 const authRoutes = require("./routes/authRoutes");
 const PORT = process.env.PORT || 3001;
+const HOST = process.env.HOST || "localhost";
 // Option 1: Passing a connection URI
+app.use(
+  cors({
+    origin: "http://localhost:3000", // or '*' to allow all origins (not recommended for production)
+    methods: ["GET", "POST", "PATCH", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
+// Allow all OPTIONS requests (preflight)
+app.options("*", cors());
 
 app.use("/uploads", express.static("uploads"));
 
-app.use(cors());
 app.use(bodyParser.json());
 
 const sessionStore = new MySQLStore({}, require("./config/db"));
@@ -81,5 +90,5 @@ app.get("/config", (req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
+  console.log(`Server is running on ${PORT}`);
 });
