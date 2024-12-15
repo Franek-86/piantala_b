@@ -84,7 +84,7 @@ exports.loginUser = (req, res) => {
   // console.log(process.env.STATIC_DIR);
   const { email, user_password } = req.body;
 
-  const sql = "SELECT * FROM users WHERE email = ?";
+  const sql = "SELECT * FROM users WHERE email = $1";
 
   con.query(sql, [email], async (err, result) => {
     if (err) {
@@ -96,8 +96,8 @@ exports.loginUser = (req, res) => {
       return res.status(401).json({ message: "Invalid email or password" });
     }
 
-    const user = result[0];
-    if (!user.is_verified) {
+    const user = result.rows[0];
+    if (!result.rows[0].is_verified) {
       return res.status(401).json({ message: "email non verificata" });
     }
     console.log("this", user);

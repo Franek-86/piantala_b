@@ -12,7 +12,7 @@ exports.addPlant = (req, res) => {
 
   // Insert the record into the database
   const sql =
-    "INSERT INTO piantine (lat, lang, image_url, user_id) VALUES (?, ?, ?, ?)";
+    "INSERT INTO piantine (lat, lang, image_url, user_id) VALUES ($1, $2, $3, $4)";
 
   con.query(sql, [lat, lang, image_url, user_id], (err, result) => {
     console.log("yo", user_id);
@@ -37,7 +37,8 @@ exports.getAllPlants = (req, res) => {
       console.log(err);
       return res.status(500).send(err);
     }
-    res.json(results);
+    console.log("results123", results);
+    res.json(results.rows);
   });
 };
 
@@ -54,7 +55,7 @@ exports.updateOwner = (req, res) => {
   );
 
   const sql =
-    "UPDATE piantine SET owner_id = ?, plant_type = ?, user_comment = ?, status_piantina = ?, purchase_date = ? WHERE id = ?";
+    "UPDATE piantine SET owner_id = $1, plant_type = $2, user_comment = $3, status_piantina = $4, purchase_date = $5 WHERE id = $6";
   con.query(
     sql,
     [owner_id, plantType, comment, status, purchase_date, id],
@@ -85,16 +86,17 @@ exports.updateStatus = (req, res) => {
   }
 
   // Prepare the SQL query
-  let sql = "UPDATE piantine SET status_piantina = ?";
+  let sql = "UPDATE piantine SET status_piantina = $1";
   const params = [status];
-
+  console.log("params", params);
   // If rejection_comment is defined, add it to the update query
   if (rejection_comment !== undefined) {
-    sql += ", rejection_comment = ?";
+    sql += ", rejection_comment = $2 WHERE id = $3";
     params.push(rejection_comment);
   }
-
-  sql += " WHERE id = ?";
+  if (!rejection_comment) {
+    sql += " WHERE id = $2";
+  }
   params.push(id);
 
   con.query(sql, params, (err, result) => {
@@ -116,7 +118,7 @@ exports.deletePlant = (req, res) => {
 
   // Validate the status
 
-  const sql = "DELETE FROM piantine WHERE id = ?";
+  const sql = "DELETE FROM piantine WHERE id = $1";
   con.query(sql, [id], (err, result) => {
     if (err) {
       console.log(err);
@@ -131,28 +133,30 @@ exports.deletePlant = (req, res) => {
 };
 
 exports.getUserPlants = (req, res) => {
-  console.log("ciao");
+  console.log("aooo", req.query.userId);
   const { userId } = req.query;
+  console.log("ciaooo", userId);
   // first get the id from local storage and set in in a varialble here
-  const sql = "SELECT * FROM piantine WHERE user_id = ?";
-  con.query(sql, userId, (err, results) => {
+  const sql = "SELECT * FROM piantine WHERE user_id = $1";
+  con.query(sql, [userId], (err, results) => {
     if (err) {
       console.log(err);
       return res.status(500).send(err);
     }
-    res.json(results);
+    console.log("results222", results);
+    res.json(results.rows);
   });
 };
 
 exports.getOwnedPlants = (req, res) => {
   console.log("ciao dal get owned plants", req.query.ID);
   const ownerID = req.query.ID;
-  const sql = "select * from piantine where owner_id = ?";
-  con.query(sql, ownerID, (err, results) => {
+  const sql = "select * from piantine where owner_id = $1";
+  con.query(sql, [ownerID], (err, results) => {
     if (err) {
       console.log(err);
       return res.status(500).send(err);
     }
-    res.json(results);
+    res.json(results.rows);
   });
 };

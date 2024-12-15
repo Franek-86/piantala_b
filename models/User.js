@@ -22,7 +22,7 @@ const User = sequelize.define(
     },
     is_verified: {
       type: Sequelize.BOOLEAN,
-      defaultValue: false,
+      // defaultValue: false,
     },
     verification_token: {
       type: Sequelize.STRING,
