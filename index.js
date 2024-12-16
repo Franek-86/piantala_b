@@ -41,7 +41,7 @@ app.use(
   })
 );
 
-app.use("/api/auth", authRoutes);
+app.use("https://piantala-b.onrender.com/api/auth", authRoutes);
 app.use("/api/plants", plantsRoutes);
 
 // This is your test secret API key.
