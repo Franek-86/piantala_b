@@ -61,7 +61,7 @@ exports.registerUser = async (req, res) => {
         from: "franekdev86@gmail.com",
         to: email,
         subject: "Email Verification",
-        html: `<p><a href="${process.env.DOMAIN_NAME_SERVER}/api/auth/verify/${user.verification_token}">here</a> to verify your email.</p>`,
+        html: `<p><a href="${process.env.DOMAIN_NAME_CLIENT}/api/auth/verify/${user.verification_token}">here</a> to verify your email.</p>`,
       };
       transporter.sendMail(mailOptions, (error, info) => {
         if (error) {
