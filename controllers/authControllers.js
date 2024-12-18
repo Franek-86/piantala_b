@@ -89,7 +89,9 @@ exports.loginUser = (req, res) => {
   const sql = "SELECT * FROM users WHERE email = $1";
 
   con.query(sql, [email], async (err, result) => {
+    console.log("result", result);
     if (err) {
+      console.log("err", err);
       console.error(err);
       return res.status(500).json({ message: "Server error" });
     }
@@ -99,6 +101,7 @@ exports.loginUser = (req, res) => {
     }
 
     const user = result.rows[0];
+    console.log("test", result.rows[0].is_verified);
     if (!result.rows[0].is_verified) {
       return res.status(401).json({ message: "email non verificata" });
     }
@@ -120,7 +123,7 @@ exports.loginUser = (req, res) => {
       "your_jwt_secret_key",
       { expiresIn: "1h" }
     );
-
+    console.log("boh");
     return res.status(200).json({
       message: "Login successful",
       token,
