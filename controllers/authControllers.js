@@ -21,7 +21,9 @@ exports.verificationEmail = async (req, res) => {
     user.is_verified = true;
     user.verification_token = null;
     await user.save();
-    return res.redirect("http://localhost:3000/verification-success");
+    return res.redirect(
+      `${process.env.DOMAIN_NAME_CLIENT}/verification-success`
+    );
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Internal server error" });
