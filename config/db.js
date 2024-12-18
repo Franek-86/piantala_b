@@ -7,7 +7,6 @@ const con = new Client({
   database: process.env.DATABASE,
   port: process.env.PORT,
   // below can be cancelled if I am on mysql
-  ssl: true,
 });
 // const dbOptions = {
 //   host: process.env.HOST,
