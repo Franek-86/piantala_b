@@ -87,7 +87,7 @@ exports.loginUser = (req, res) => {
   const { email, user_password } = req.body;
   console.log("sta qui", email);
   const sql = "SELECT * FROM users WHERE email = $1";
-
+  console.log("sta qua", sql);
   con.query(sql, [email], async (err, result) => {
     console.log("result", result);
     if (err) {
