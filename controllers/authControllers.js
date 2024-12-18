@@ -85,7 +85,7 @@ exports.registerUser = async (req, res) => {
 exports.loginUser = (req, res) => {
   // console.log(process.env.STATIC_DIR);
   const { email, user_password } = req.body;
-
+  console.log("sta qui");
   const sql = "SELECT * FROM users WHERE email = $1";
 
   con.query(sql, [email], async (err, result) => {
