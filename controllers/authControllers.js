@@ -35,7 +35,11 @@ exports.registerUser = async (req, res) => {
 
   const validRoles = ["user", "admin"];
   const userRole = validRoles.includes(role) ? role : "user";
+  const existingUser = await User.findOne({ where: { email } });
 
+  if (existingUser) {
+    return res.status(400).json({ message: "Utente già registrato" }); // Send a message "User
+  }
   try {
     const hashedPassword = await bcrypt.hash(user_password, 10);
     let email_token = generateVerificationToken();
@@ -85,9 +89,7 @@ exports.registerUser = async (req, res) => {
 exports.loginUser = (req, res) => {
   // console.log(process.env.STATIC_DIR);
   const { email, user_password } = req.body;
-  console.log("sta qui", email);
   const sql = "SELECT * FROM users WHERE email = $1";
-  console.log("sta qua", sql);
   con.query(sql, [email], async (err, result) => {
     console.log("result", result);
     if (err) {
@@ -101,7 +103,6 @@ exports.loginUser = (req, res) => {
     }
 
     const user = result.rows[0];
-    console.log("test", result.rows[0].is_verified);
     if (!result.rows[0].is_verified) {
       return res.status(401).json({ message: "email non verificata" });
     }
@@ -123,7 +124,6 @@ exports.loginUser = (req, res) => {
       "your_jwt_secret_key",
       { expiresIn: "1h" }
     );
-    console.log("boh");
     return res.status(200).json({
       message: "Login successful",
       token,
