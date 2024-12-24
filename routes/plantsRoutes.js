@@ -4,14 +4,16 @@ const plantsController = require("../controllers/plantsControllers");
 const isAdmin = require("../middleware/isAdmin");
 const multer = require("multer");
 const path = require("path");
-
+const { v4: uuidv4 } = require("uuid");
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     const uploadPath = path.join(__dirname, "..", "uploads"); // __dirname will point to the current directory of the file
     cb(null, uploadPath);
   },
   filename: (req, file, cb) => {
-    const uniqueName = `${Date.now()}_${file.originalname}`; // Generate a unique name
+    const extension = path.extname(file.originalname); // e.g., .jpg, .png
+    const newName = uuidv4();
+    const uniqueName = `${newName}${extension}`; // Generate a unique name
     cb(null, uniqueName);
   },
 });
