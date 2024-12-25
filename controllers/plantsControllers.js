@@ -135,12 +135,11 @@ exports.updateStatus = (req, res) => {
 exports.deletePlant = (req, res) => {
   const { id } = req.params; // Get the plant ID from the URL
 
-  // Use parameterized query for PostgreSQL
-  const sqlSelect = "SELECT image_url FROM piantine WHERE id = $1"; // Use $1 for parameterized queries
+  const sqlSelect = "SELECT image_url FROM piantine WHERE id = $1"; // PostgreSQL parameterized query
 
   con.query(sqlSelect, [id], (err, result) => {
     if (err) {
-      console.log(err);
+      console.log("Database error:", err);
       return res.status(500).json({ message: "Server error" });
     }
 
@@ -148,34 +147,37 @@ exports.deletePlant = (req, res) => {
       return res.status(404).json({ message: "Plant not found" });
     }
 
-    // Assuming the image filename is stored in the "image_url" field
     const imageFileName = result.rows[0].image_url;
-    console.log("test1", imageFileName);
+    console.log("Image file name:", imageFileName);
 
-    // Validate the status
-
-    const sqlDelete = "DELETE FROM piantine WHERE id = $1"; // Use parameterized query for DELETE
+    const sqlDelete = "DELETE FROM piantine WHERE id = $1"; // Delete plant query
     con.query(sqlDelete, [id], (err, result) => {
       if (err) {
-        console.log(err);
+        console.log("Error during deletion:", err);
         return res.status(500).json({ message: "Server error" });
       }
 
       if (result.rowCount === 0) {
-        // PostgreSQL uses `rowCount` to indicate how many rows were affected
         return res.status(404).json({ message: "Plant not found" });
       }
 
       if (imageFileName) {
         const filePath = path.join(__dirname, "..", imageFileName);
-        console.log("test2", filePath);
+        console.log("Attempting to delete file:", filePath);
 
-        // Delete the image file
-        fs.unlink(filePath, (err) => {
+        // Check if the file exists before attempting deletion
+        fs.access(filePath, fs.constants.F_OK, (err) => {
           if (err) {
-            console.error("Error deleting image file:", err);
+            console.error("File does not exist:", filePath);
           } else {
-            console.log("Image file deleted successfully");
+            // File exists, attempt to delete
+            fs.unlink(filePath, (err) => {
+              if (err) {
+                console.error("Error deleting file:", err); // More detailed error logging
+              } else {
+                console.log("File deleted successfully:", filePath);
+              }
+            });
           }
         });
       }
