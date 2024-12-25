@@ -1,5 +1,6 @@
 const con = require("../config/db");
 const fs = require("fs");
+const path = require("path");
 exports.addPlant = (req, res) => {
   const { lat, lang, user_id } = req.body; // Extract lat, lang, user_id from the form
   console.log("test555", user_id);
