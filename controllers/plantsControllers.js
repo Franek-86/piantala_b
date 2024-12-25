@@ -113,22 +113,75 @@ exports.updateStatus = (req, res) => {
   });
 };
 
+// exports.deletePlant = (req, res) => {
+//   const { id } = req.params; // Get the plant ID from the URL
+
+//   // Validate the status
+
+//   const sql = "DELETE FROM piantine WHERE id = $1";
+//   con.query(sql, [id], (err, result) => {
+//     if (err) {
+//       console.log(err);
+//       return res.status(500).json({ message: "Server error" });
+//     }
+//     if (result.affectedRows === 0) {
+//       console.log(err);
+//       return res.status(404).json({ message: "Plant not found" });
+//     }
+//     res.status(200).json({ message: `Plant ${id} successfully deleted!` });
+//   });
+// };
+
 exports.deletePlant = (req, res) => {
   const { id } = req.params; // Get the plant ID from the URL
 
-  // Validate the status
+  // Use parameterized query for PostgreSQL
+  const sqlSelect = "SELECT image_url FROM piantine WHERE id = $1"; // Use $1 for parameterized queries
 
-  const sql = "DELETE FROM piantine WHERE id = $1";
-  con.query(sql, [id], (err, result) => {
+  con.query(sqlSelect, [id], (err, result) => {
     if (err) {
       console.log(err);
       return res.status(500).json({ message: "Server error" });
     }
-    if (result.affectedRows === 0) {
-      console.log(err);
+
+    if (result.rows.length === 0) {
       return res.status(404).json({ message: "Plant not found" });
     }
-    res.status(200).json({ message: `Plant ${id} successfully deleted!` });
+
+    // Assuming the image filename is stored in the "image_url" field
+    const imageFileName = result.rows[0].image_url;
+    console.log("test1", imageFileName);
+
+    // Validate the status
+
+    const sqlDelete = "DELETE FROM piantine WHERE id = $1"; // Use parameterized query for DELETE
+    con.query(sqlDelete, [id], (err, result) => {
+      if (err) {
+        console.log(err);
+        return res.status(500).json({ message: "Server error" });
+      }
+
+      if (result.rowCount === 0) {
+        // PostgreSQL uses `rowCount` to indicate how many rows were affected
+        return res.status(404).json({ message: "Plant not found" });
+      }
+
+      if (imageFileName) {
+        const filePath = path.join(__dirname, "..", imageFileName);
+        console.log("test2", filePath);
+
+        // Delete the image file
+        fs.unlink(filePath, (err) => {
+          if (err) {
+            console.error("Error deleting image file:", err);
+          } else {
+            console.log("Image file deleted successfully");
+          }
+        });
+      }
+
+      res.status(200).json({ message: `Plant ${id} successfully deleted!` });
+    });
   });
 };
 
