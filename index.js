@@ -1,10 +1,9 @@
 const express = require("express");
-
+const con = require("./config/db");
 const path = require("path");
 const app = express();
 const session = require("express-session");
 const pgSession = require("connect-pg-simple")(session);
-const { Pool } = require("pg");
 // const MySQLStore = require("express-mysql-session")(session);
 require("@dotenvx/dotenvx").config();
 const cors = require("cors"); // Import CORS
@@ -44,16 +43,9 @@ const stripe = require("stripe")(`${process.env.STRIPE_SECRET_KEY}`);
 // );
 
 // Create a PostgreSQL client pool (adjust your database connection details)
-const pool = new Pool({
-  user: process.env.USER_ID,
-  host: process.env.HOST,
-  database: process.env.DATABASE,
-  password: process.env.DB_PASSWORD,
-  port: process.env.PORT || 5432,
-});
 
 const sessionStore = new pgSession({
-  pool: pool, // Use the connection pool
+  pool: con, // Use the connection pool
   tableName: "session", // Optional: You can customize the table name
   createTableIfMissing: true, // Ensure the table is created if it doesn't exist
 });
