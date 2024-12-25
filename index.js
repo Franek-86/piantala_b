@@ -3,8 +3,10 @@ const express = require("express");
 const path = require("path");
 const app = express();
 const session = require("express-session");
+const pgSession = require("connect-pg-simple")(session);
+const { Pool } = require("pg");
+// const MySQLStore = require("express-mysql-session")(session);
 require("@dotenvx/dotenvx").config();
-const MySQLStore = require("express-mysql-session")(session);
 const cors = require("cors"); // Import CORS
 const bodyParser = require("body-parser"); // Import body-parser
 const plantsRoutes = require("./routes/plantsRoutes");
@@ -26,17 +28,47 @@ app.use("/uploads", express.static("uploads"));
 
 app.use(bodyParser.json());
 
-const sessionStore = new MySQLStore({}, require("./config/db"));
+// const sessionStore = new MySQLStore({}, require("./config/db"));
 const stripe = require("stripe")(`${process.env.STRIPE_SECRET_KEY}`);
+// app.use(
+//   session({
+//     key: "user_sid",
+//     secret: `${process.env.MY_SECRET_KEY}`, // Change this to a strong secret
+//     store: sessionStore,
+//     resave: false,
+//     saveUninitialized: false,
+//     cookie: {
+//       expires: 600000, // Set cookie expiration time (in milliseconds)
+//     },
+//   })
+// );
+
+// Create a PostgreSQL client pool (adjust your database connection details)
+const pool = new Pool({
+  user: process.env.PG_USER,
+  host: process.env.PG_HOST,
+  database: process.env.PG_DB,
+  password: process.env.PG_PASSWORD,
+  port: process.env.PG_PORT || 5432,
+});
+
+const sessionStore = new pgSession({
+  pool: pool, // Use the connection pool
+  tableName: "session", // Optional: You can customize the table name
+  createTableIfMissing: true, // Ensure the table is created if it doesn't exist
+});
+
 app.use(
   session({
-    key: "user_sid",
-    secret: `${process.env.MY_SECRET_KEY}`, // Change this to a strong secret
-    store: sessionStore,
-    resave: false,
-    saveUninitialized: false,
+    key: "user_sid", // Cookie name for storing the session ID
+    secret: process.env.MY_SECRET_KEY, // Secret key for signing the session ID cookie
+    store: sessionStore, // Use the PostgreSQL session store
+    resave: false, // Don't resave session if unmodified
+    saveUninitialized: false, // Don't save uninitialized sessions
     cookie: {
-      expires: 600000, // Set cookie expiration time (in milliseconds)
+      expires: 600000, // Set the session cookie expiration time (in milliseconds)
+      httpOnly: true, // Prevent client-side JavaScript from accessing cookies
+      secure: process.env.NODE_ENV === "production", // Use secure cookies in production
     },
   })
 );
