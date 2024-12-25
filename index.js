@@ -45,11 +45,11 @@ const stripe = require("stripe")(`${process.env.STRIPE_SECRET_KEY}`);
 
 // Create a PostgreSQL client pool (adjust your database connection details)
 const pool = new Pool({
-  user: process.env.PG_USER,
-  host: process.env.PG_HOST,
-  database: process.env.PG_DB,
-  password: process.env.PG_PASSWORD,
-  port: process.env.PG_PORT || 5432,
+  user: process.env.USER_ID,
+  host: process.env.HOST,
+  database: process.env.DATABASE,
+  password: process.env.DB_PASSWORD,
+  port: process.env.PORT || 5432,
 });
 
 const sessionStore = new pgSession({
