@@ -17,7 +17,7 @@ const storage = multer.diskStorage({
     cb(null, uniqueName);
   },
 });
-
+console.log("ciao");
 const upload = multer({ storage: storage });
 
 router.post("/add-plant", upload.single("image"), plantsController.addPlant);
