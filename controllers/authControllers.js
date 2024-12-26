@@ -56,7 +56,8 @@ exports.registerUser = async (req, res) => {
     );
 
     res.status(201).json({
-      message: "Controlla la tua mailbox per completare la registrazione",
+      message:
+        "Controlla la tua casella di posta per completare la registrazione",
       token,
     });
     if (!email) {
@@ -186,15 +187,15 @@ table, td { color: #000000; } #u_body a { color: #000000; text-decoration: under
     <!--[if gte mso 9]>
       <table cellpadding="0" cellspacing="0" border="0" style="margin: 0 auto;min-width: 320px;max-width: 600px;">
         <tr>
-          <td background="https://assets.unlayer.com/projects/0/1735241297760-walter23.jpg" valign="top" width="100%">
+          <td background="https://assets.unlayer.com/projects/0/1735243312848-walter23.jpg" valign="top" width="100%">
       <v:rect xmlns:v="urn:schemas-microsoft-com:vml" fill="true" stroke="false" style="width: 600px;">
-        <v:fill type="frame" src="https://assets.unlayer.com/projects/0/1735241297760-walter23.jpg" /><v:textbox style="mso-fit-shape-to-text:true" inset="0,0,0,0">
+        <v:fill type="frame" src="https://assets.unlayer.com/projects/0/1735243312848-walter23.jpg" /><v:textbox style="mso-fit-shape-to-text:true" inset="0,0,0,0">
       <![endif]-->
   
-<div class="u-row-container" style="padding: 100px 0px 0px;background-image: url('https://assets.unlayer.com/projects/0/1735241297760-walter23.jpg');background-repeat: no-repeat;background-position: center bottom;background-color: transparent">
+<div class="u-row-container" style="padding: 100px 0px 0px;background-image: url('https://assets.unlayer.com/projects/0/1735243312848-walter23.jpg');background-repeat: no-repeat;background-position: center center;background-color: transparent">
   <div class="u-row" style="margin: 0 auto;min-width: 320px;max-width: 600px;overflow-wrap: break-word;word-wrap: break-word;word-break: break-word;background-color: transparent;">
     <div style="border-collapse: collapse;display: table;width: 100%;height: 100%;background-color: transparent;">
-      <!--[if (mso)|(IE)]><table width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td style="padding: 100px 0px 0px;background-image: url('https://assets.unlayer.com/projects/0/1735241297760-walter23.jpg');background-repeat: no-repeat;background-position: center bottom;background-color: transparent;" align="center"><table cellpadding="0" cellspacing="0" border="0" style="width:600px;"><tr style="background-color: transparent;"><![endif]-->
+      <!--[if (mso)|(IE)]><table width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td style="padding: 100px 0px 0px;background-image: url('https://assets.unlayer.com/projects/0/1735243312848-walter23.jpg');background-repeat: no-repeat;background-position: center center;background-color: transparent;" align="center"><table cellpadding="0" cellspacing="0" border="0" style="width:600px;"><tr style="background-color: transparent;"><![endif]-->
       
 <!--[if (mso)|(IE)]><td align="center" width="600" style="width: 600px;padding: 0px;border-top: 0px solid transparent;border-left: 0px solid transparent;border-right: 0px solid transparent;border-bottom: 0px solid transparent;border-radius: 0px;-webkit-border-radius: 0px; -moz-border-radius: 0px;" valign="top"><![endif]-->
 <div class="u-col u-col-100" style="max-width: 320px;min-width: 600px;display: table-cell;vertical-align: top;">
@@ -221,7 +222,7 @@ table, td { color: #000000; } #u_body a { color: #000000; text-decoration: under
       <td style="overflow-wrap:break-word;word-break:break-word;padding:0px 10px 10px;font-family:andale mono,times;" align="left">
         
   <div style="font-size: 71px; color: #ffffff; line-height: 140%; text-align: center; word-wrap: break-word;">
-    <p style="line-height: 140%;"><span style="color: #ffffff; line-height: 99.4px;"><strong>PER AMORE<br /></strong></span></p>
+    <p style="line-height: 140%;"><span style="color: #ffffff; line-height: 99.4px;"><strong>PER AMORE</strong></span></p>
   </div>
 
       </td>
@@ -235,7 +236,7 @@ table, td { color: #000000; } #u_body a { color: #000000; text-decoration: under
       <td style="overflow-wrap:break-word;word-break:break-word;padding:10px;font-family:andale mono,times;" align="left">
         
   <div style="font-size: 14px; color: #ffffff; line-height: 140%; text-align: center; word-wrap: break-word;">
-    <p style="line-height: 140%;">Completa la tua registrazione cliccando sul link in basso.</p>
+    <p style="line-height: 140%;">Clicca il link in basso per completare la tua registrazione.</p>
   </div>
 
       </td>
@@ -252,7 +253,7 @@ table, td { color: #000000; } #u_body a { color: #000000; text-decoration: under
 <div align="center">
   <!--[if mso]><table border="0" cellspacing="0" cellpadding="0"><tr><td align="center" bgcolor="#ffffff" style="padding:10px;" valign="top"><![endif]-->
     <a href="${process.env.DOMAIN_NAME_SERVER}/api/auth/verify/${user.verification_token}" target="_blank" class="v-button" style="box-sizing: border-box;display: inline-block;text-decoration: none;-webkit-text-size-adjust: none;text-align: center;color: #000000; background-color: #ffffff; border-radius: 4px;-webkit-border-radius: 4px; -moz-border-radius: 4px; width:28%; max-width:100%; overflow-wrap: break-word; word-break: break-word; word-wrap:break-word; mso-border-alt: none;font-size: 14px;">
-      <span style="display:block;padding:10px;line-height:120%;"><span style="line-height: 16.8px;">Registrati<br /></span></span>
+      <span style="display:block;padding:10px;line-height:120%;">Registrati</span>
     </a>
     <!--[if mso]></td></tr></table><![endif]-->
 </div>
@@ -287,10 +288,10 @@ table, td { color: #000000; } #u_body a { color: #000000; text-decoration: under
     <div style="border-collapse: collapse;display: table;width: 100%;height: 100%;background-color: transparent;">
       <!--[if (mso)|(IE)]><table width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td style="padding: 0px;background-color: transparent;" align="center"><table cellpadding="0" cellspacing="0" border="0" style="width:600px;"><tr style="background-color: transparent;"><![endif]-->
       
-<!--[if (mso)|(IE)]><td align="center" width="600" style="background-color: #ffffff;width: 600px;padding: 0px;border-top: 0px solid transparent;border-left: 0px solid transparent;border-right: 0px solid transparent;border-bottom: 0px solid transparent;border-radius: 0px;-webkit-border-radius: 0px; -moz-border-radius: 0px;" valign="top"><![endif]-->
+<!--[if (mso)|(IE)]><td align="center" width="600" style="background-color: #ffffff;width: 600px;padding: 0px 0px 60px;border-top: 0px solid transparent;border-left: 0px solid transparent;border-right: 0px solid transparent;border-bottom: 0px solid transparent;border-radius: 0px;-webkit-border-radius: 0px; -moz-border-radius: 0px;" valign="top"><![endif]-->
 <div class="u-col u-col-100" style="max-width: 320px;min-width: 600px;display: table-cell;vertical-align: top;">
   <div style="background-color: #ffffff;height: 100%;width: 100% !important;border-radius: 0px;-webkit-border-radius: 0px; -moz-border-radius: 0px;">
-  <!--[if (!mso)&(!IE)]><!--><div style="box-sizing: border-box; height: 100%; padding: 0px;border-top: 0px solid transparent;border-left: 0px solid transparent;border-right: 0px solid transparent;border-bottom: 0px solid transparent;border-radius: 0px;-webkit-border-radius: 0px; -moz-border-radius: 0px;"><!--<![endif]-->
+  <!--[if (!mso)&(!IE)]><!--><div style="box-sizing: border-box; height: 100%; padding: 0px 0px 60px;border-top: 0px solid transparent;border-left: 0px solid transparent;border-right: 0px solid transparent;border-bottom: 0px solid transparent;border-radius: 0px;-webkit-border-radius: 0px; -moz-border-radius: 0px;"><!--<![endif]-->
   
 <table style="font-family:andale mono,times;" role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0">
   <tbody>
@@ -298,7 +299,7 @@ table, td { color: #000000; } #u_body a { color: #000000; text-decoration: under
       <td style="overflow-wrap:break-word;word-break:break-word;padding:40px 10px 10px;font-family:andale mono,times;" align="left">
         
   <div style="font-family: arial black,AvenirNext-Heavy,avant garde,arial; font-size: 25px; line-height: 140%; text-align: center; word-wrap: break-word;">
-    <p style="line-height: 140%;"><strong>Insieme per un domani più verde<br /></strong></p>
+    <p style="line-height: 140%;">Insieme per un domani migliore</p>
   </div>
 
       </td>
@@ -341,120 +342,6 @@ table, td { color: #000000; } #u_body a { color: #000000; text-decoration: under
         <v:fill type="frame" src="https://cdn.templates.unlayer.com/assets/1681295030388-Shape.png" /><v:textbox style="mso-fit-shape-to-text:true" inset="0,0,0,0">
       <![endif]-->
   
-<div class="u-row-container" style="padding: 0px;background-image: url('https://cdn.templates.unlayer.com/assets/1681295030388-Shape.png');background-repeat: no-repeat;background-position: 50% 0%;background-color: transparent">
-  <div class="u-row" style="margin: 0 auto;min-width: 320px;max-width: 600px;overflow-wrap: break-word;word-wrap: break-word;word-break: break-word;background-color: transparent;">
-    <div style="border-collapse: collapse;display: table;width: 100%;height: 100%;background-color: transparent;">
-      <!--[if (mso)|(IE)]><table width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td style="padding: 0px;background-image: url('https://cdn.templates.unlayer.com/assets/1681295030388-Shape.png');background-repeat: no-repeat;background-position: 50% 0%;background-color: transparent;" align="center"><table cellpadding="0" cellspacing="0" border="0" style="width:600px;"><tr style="background-color: transparent;"><![endif]-->
-      
-<!--[if (mso)|(IE)]><td align="center" width="300" style="width: 300px;padding: 0px;border-top: 0px solid transparent;border-left: 0px solid transparent;border-right: 0px solid transparent;border-bottom: 0px solid transparent;border-radius: 0px;-webkit-border-radius: 0px; -moz-border-radius: 0px;" valign="top"><![endif]-->
-<div class="u-col u-col-50" style="max-width: 320px;min-width: 300px;display: table-cell;vertical-align: top;">
-  <div style="height: 100%;width: 100% !important;border-radius: 0px;-webkit-border-radius: 0px; -moz-border-radius: 0px;">
-  <!--[if (!mso)&(!IE)]><!--><div style="box-sizing: border-box; height: 100%; padding: 0px;border-top: 0px solid transparent;border-left: 0px solid transparent;border-right: 0px solid transparent;border-bottom: 0px solid transparent;border-radius: 0px;-webkit-border-radius: 0px; -moz-border-radius: 0px;"><!--<![endif]-->
-  
-<table style="font-family:andale mono,times;" role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0">
-  <tbody>
-    <tr>
-      <td style="overflow-wrap:break-word;word-break:break-word;padding:170px 10px 30px;font-family:andale mono,times;" align="left">
-        
-<table width="100%" cellpadding="0" cellspacing="0" border="0">
-  <tr>
-    <td style="padding-right: 0px;padding-left: 0px;" align="center">
-      
-      <img align="center" border="0" src="https://cdn.templates.unlayer.com/assets/1681295176459-Group%202.png" alt="" title="" style="outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;clear: both;display: inline-block !important;border: none;height: auto;float: none;width: 74%;max-width: 207.2px;" width="207.2"/>
-      
-    </td>
-  </tr>
-</table>
-
-      </td>
-    </tr>
-  </tbody>
-</table>
-
-  <!--[if (!mso)&(!IE)]><!--></div><!--<![endif]-->
-  </div>
-</div>
-<!--[if (mso)|(IE)]></td><![endif]-->
-<!--[if (mso)|(IE)]><td align="center" width="300" style="width: 300px;padding: 0px;border-top: 0px solid transparent;border-left: 0px solid transparent;border-right: 0px solid transparent;border-bottom: 0px solid transparent;border-radius: 0px;-webkit-border-radius: 0px; -moz-border-radius: 0px;" valign="top"><![endif]-->
-<div class="u-col u-col-50" style="max-width: 320px;min-width: 300px;display: table-cell;vertical-align: top;">
-  <div style="height: 100%;width: 100% !important;border-radius: 0px;-webkit-border-radius: 0px; -moz-border-radius: 0px;">
-  <!--[if (!mso)&(!IE)]><!--><div style="box-sizing: border-box; height: 100%; padding: 0px;border-top: 0px solid transparent;border-left: 0px solid transparent;border-right: 0px solid transparent;border-bottom: 0px solid transparent;border-radius: 0px;-webkit-border-radius: 0px; -moz-border-radius: 0px;"><!--<![endif]-->
-  
-<table style="font-family:andale mono,times;" role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0">
-  <tbody>
-    <tr>
-      <td style="overflow-wrap:break-word;word-break:break-word;padding:210px 10px 10px;font-family:andale mono,times;" align="left">
-        
-  <div style="font-family: arial black,AvenirNext-Heavy,avant garde,arial; font-size: 22px; color: #ffffff; line-height: 140%; text-align: left; word-wrap: break-word;">
-    <p style="line-height: 140%;">Mani che si uniscono per un pianeta più sano</p>
-  </div>
-
-      </td>
-    </tr>
-  </tbody>
-</table>
-
-<table style="font-family:andale mono,times;" role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0">
-  <tbody>
-    <tr>
-      <td style="overflow-wrap:break-word;word-break:break-word;padding:10px;font-family:andale mono,times;" align="left">
-        
-  <div style="font-size: 14px; color: #ffffff; line-height: 140%; text-align: left; word-wrap: break-word;">
-    <p style="line-height: 140%;">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore.</p>
-  </div>
-
-      </td>
-    </tr>
-  </tbody>
-</table>
-
-<table style="font-family:andale mono,times;" role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0">
-  <tbody>
-    <tr>
-      <td style="overflow-wrap:break-word;word-break:break-word;padding:10px;font-family:andale mono,times;" align="left">
-        
-  <!--[if mso]><style>.v-button {background: transparent !important;}</style><![endif]-->
-<div align="center">
-  <!--[if mso]><table border="0" cellspacing="0" cellpadding="0"><tr><td align="center" bgcolor="#ffffff" style="padding:10px 20px;" valign="top"><![endif]-->
-    <a href="" target="_blank" class="v-button" style="box-sizing: border-box;display: inline-block;text-decoration: none;-webkit-text-size-adjust: none;text-align: center;color: #000000; background-color: #ffffff; border-radius: 4px;-webkit-border-radius: 4px; -moz-border-radius: 4px; width:73%; max-width:100%; overflow-wrap: break-word; word-break: break-word; word-wrap:break-word; mso-border-alt: none;font-size: 14px;">
-      <span style="display:block;padding:10px 20px;line-height:120%;"><span style="line-height: 16.8px;">Leggi di più</span></span>
-    </a>
-    <!--[if mso]></td></tr></table><![endif]-->
-</div>
-
-      </td>
-    </tr>
-  </tbody>
-</table>
-
-  <!--[if (!mso)&(!IE)]><!--></div><!--<![endif]-->
-  </div>
-</div>
-<!--[if (mso)|(IE)]></td><![endif]-->
-      <!--[if (mso)|(IE)]></tr></table></td></tr></table><![endif]-->
-    </div>
-  </div>
-  </div>
-  
-    <!--[if gte mso 9]>
-      </v:textbox></v:rect>
-    </td>
-    </tr>
-    </table>
-    <![endif]-->
-    
-
-
-  
-  
-    <!--[if gte mso 9]>
-      <table cellpadding="0" cellspacing="0" border="0" style="margin: 0 auto;min-width: 320px;max-width: 600px;">
-        <tr>
-          <td background="https://cdn.templates.unlayer.com/assets/1681295030388-Shape.png" valign="top" width="100%">
-      <v:rect xmlns:v="urn:schemas-microsoft-com:vml" fill="true" stroke="false" style="width: 600px;">
-        <v:fill type="frame" src="https://cdn.templates.unlayer.com/assets/1681295030388-Shape.png" /><v:textbox style="mso-fit-shape-to-text:true" inset="0,0,0,0">
-      <![endif]-->
-  
 <div class="u-row-container" style="padding: 0px;background-image: url('https://cdn.templates.unlayer.com/assets/1681295030388-Shape.png');background-repeat: no-repeat;background-position: 0% 50%;background-color: transparent">
   <div class="u-row" style="margin: 0 auto;min-width: 320px;max-width: 600px;overflow-wrap: break-word;word-wrap: break-word;word-break: break-word;background-color: transparent;">
     <div style="border-collapse: collapse;display: table;width: 100%;height: 100%;background-color: transparent;">
@@ -471,7 +358,7 @@ table, td { color: #000000; } #u_body a { color: #000000; text-decoration: under
       <td style="overflow-wrap:break-word;word-break:break-word;padding:60px 10px 10px;font-family:andale mono,times;" align="left">
         
   <div style="font-family: arial black,AvenirNext-Heavy,avant garde,arial; font-size: 25px; color: #ffffff; line-height: 140%; text-align: left; word-wrap: break-word;">
-    <p style="line-height: 140%;">Pianta un nuovo seme oggi</p>
+    <p style="line-height: 140%;"><strong>Pianta un nuovo seme oggi</strong></p>
   </div>
 
       </td>
@@ -608,7 +495,7 @@ table, td { color: #000000; } #u_body a { color: #000000; text-decoration: under
 <div align="center">
   <!--[if mso]><v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="" style="height:37px; v-text-anchor:middle; width:191px;" arcsize="11%"  stroke="f" fillcolor="#ffffff"><w:anchorlock/><center style="color:#000000;"><![endif]-->
     <a href="" target="_blank" class="v-button" style="box-sizing: border-box;display: inline-block;text-decoration: none;-webkit-text-size-adjust: none;text-align: center;color: #000000; background-color: #ffffff; border-radius: 4px;-webkit-border-radius: 4px; -moz-border-radius: 4px; width:33%; max-width:100%; overflow-wrap: break-word; word-break: break-word; word-wrap:break-word; mso-border-alt: none;font-size: 14px;">
-      <span style="display:block;padding:10px 20px;line-height:120%;"><span style="line-height: 16.8px;">Leggi di più</span></span>
+      <span style="display:block;padding:10px 20px;line-height:120%;">Leggi di più</span>
     </a>
     <!--[if mso]></center></v:roundrect><![endif]-->
 </div>
@@ -794,7 +681,7 @@ table, td { color: #000000; } #u_body a { color: #000000; text-decoration: under
       <td style="overflow-wrap:break-word;word-break:break-word;padding:20px 10px 0px;font-family:andale mono,times;" align="left">
         
   <div style="font-size: 14px; color: #000000; line-height: 120%; text-align: center; word-wrap: break-word;">
-    <p style="font-size: 14px; line-height: 120%;"><span style="color: #000000; line-height: 16.8px;"><span style="font-size: 14px; line-height: 16.8px;">Hai ricevuto questa mail perchè ti stai registrando alla web app "piantami per amore".</span></span></p>
+    <p style="font-size: 14px; line-height: 120%;">Hai ricevuto questa mail perchè ti stai registrando alla web app "piantami per amore"</p>
 <p style="font-size: 14px; line-height: 120%;"> </p>
   </div>
 
@@ -809,7 +696,7 @@ table, td { color: #000000; } #u_body a { color: #000000; text-decoration: under
       <td style="overflow-wrap:break-word;word-break:break-word;padding:20px 10px 0px;font-family:andale mono,times;" align="left">
         
   <div style="font-size: 14px; color: #ffffff; line-height: 120%; text-align: center; word-wrap: break-word;">
-    <p style="font-size: 14px; line-height: 120%;"><span style="color: #000000; font-size: 14px; line-height: 16.8px;">Inviata da 🌳 "Piantami per amore"</span></p>
+    <p style="font-size: 14px; line-height: 120%;"><span style="color: #000000; font-size: 14px; line-height: 16.8px;">Inviato da 🌳 "Piantami per amore"</span></p>
   </div>
 
       </td>
@@ -823,7 +710,7 @@ table, td { color: #000000; } #u_body a { color: #000000; text-decoration: under
       <td style="overflow-wrap:break-word;word-break:break-word;padding:5px 10px 20px;font-family:andale mono,times;" align="left">
         
   <div style="font-size: 14px; color: #ffffff; line-height: 120%; text-align: center; word-wrap: break-word;">
-    <p style="font-size: 14px; line-height: 120%;"><span style="color: #000000; font-size: 14px; line-height: 16.8px;">Questa mail pianta nuovi alberi.</span></p>
+    <p style="font-size: 14px; line-height: 120%;"><span style="color: #000000; font-size: 14px; line-height: 16.8px;">Questa mail pianta alberi.</span></p>
   </div>
 
       </td>
