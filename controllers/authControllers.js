@@ -222,26 +222,6 @@ table, td { color: #000000; } #u_body a { color: #000000; text-decoration: under
 <table style="font-family:andale mono,times;" role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0">
   <tbody>
     <tr>
-      <td style="overflow-wrap:break-word;word-break:break-word;padding:10px;font-family:andale mono,times;" align="left">
-        
-<table width="100%" cellpadding="0" cellspacing="0" border="0">
-  <tr>
-    <td style="padding-right: 0px;padding-left: 0px;" align="center">
-      
-      <img align="center" border="0" src="https://assets.unlayer.com/projects/0/1735236258975-logo_albero_green.png" alt="" title="" style="outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;clear: both;display: inline-block !important;border: none;height: auto;float: none;width: 21%;max-width: 121.8px;" width="121.8"/>
-      
-    </td>
-  </tr>
-</table>
-
-      </td>
-    </tr>
-  </tbody>
-</table>
-
-<table style="font-family:andale mono,times;" role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0">
-  <tbody>
-    <tr>
       <td style="overflow-wrap:break-word;word-break:break-word;padding:60px 10px 0px;font-family:andale mono,times;" align="left">
         
   <div style="font-size: 61px; color: #ffffff; line-height: 140%; text-align: center; word-wrap: break-word;">
@@ -273,7 +253,7 @@ table, td { color: #000000; } #u_body a { color: #000000; text-decoration: under
       <td style="overflow-wrap:break-word;word-break:break-word;padding:10px;font-family:andale mono,times;" align="left">
         
   <div style="font-size: 14px; color: #ffffff; line-height: 140%; text-align: center; word-wrap: break-word;">
-    <p style="line-height: 140%;">Clicc qui in basso per complatere la tua registrazione.</p>
+    <p style="line-height: 140%;">Clicca qui in basso per complatere la tua registrazione.</p>
   </div>
 
       </td>
@@ -289,8 +269,8 @@ table, td { color: #000000; } #u_body a { color: #000000; text-decoration: under
   <!--[if mso]><style>.v-button {background: transparent !important;}</style><![endif]-->
 <div align="center">
   <!--[if mso]><table border="0" cellspacing="0" cellpadding="0"><tr><td align="center" bgcolor="#ffffff" style="padding:10px;" valign="top"><![endif]-->
-    <a href="" target="_blank" class="v-button" style="box-sizing: border-box;display: inline-block;text-decoration: none;-webkit-text-size-adjust: none;text-align: center;color: #000000; background-color: #ffffff; border-radius: 4px;-webkit-border-radius: 4px; -moz-border-radius: 4px; width:28%; max-width:100%; overflow-wrap: break-word; word-break: break-word; word-wrap:break-word; mso-border-alt: none;font-size: 14px;">
-      <span style="display:block;padding:10px;line-height:120%;"><span style="line-height: 16.8px;">Complete Registrazione<br /></span></span>
+    <a href="${process.env.DOMAIN_NAME_SERVER}/api/auth/verify/${user.verification_token}" target="_blank" class="v-button" style="box-sizing: border-box;display: inline-block;text-decoration: none;-webkit-text-size-adjust: none;text-align: center;color: #000000; background-color: #ffffff; border-radius: 4px;-webkit-border-radius: 4px; -moz-border-radius: 4px; width:28%; max-width:100%; overflow-wrap: break-word; word-break: break-word; word-wrap:break-word; mso-border-alt: none;font-size: 14px;">
+      <span style="display:block;padding:10px;line-height:120%;"><span style="line-height: 16.8px;">Completa Registrazione<br /></span></span>
     </a>
     <!--[if mso]></td></tr></table><![endif]-->
 </div>
@@ -361,9 +341,9 @@ table, td { color: #000000; } #u_body a { color: #000000; text-decoration: under
 <table width="100%" cellpadding="0" cellspacing="0" border="0">
   <tr>
     <td style="padding-right: 0px;padding-left: 0px;" align="right">
-      
+      <a href="https://m.facebook.com/amicidiernestverner/" target="_blank">
       <img align="right" border="0" src="https://cdn.tools.unlayer.com/social/icons/rounded/facebook.png" alt="" title="" style="outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;clear: both;display: inline-block !important;border: none;height: auto;float: none;width: 33%;max-width: 33.01px;" width="33.01"/>
-      
+      </a>
     </td>
   </tr>
 </table>
@@ -390,9 +370,9 @@ table, td { color: #000000; } #u_body a { color: #000000; text-decoration: under
 <table width="100%" cellpadding="0" cellspacing="0" border="0">
   <tr>
     <td style="padding-right: 0px;padding-left: 0px;" align="center">
-      
+      <a href="https://www.instagram.com/_amici_di_ernest_verner_/" target="_blank">
       <img align="center" border="0" src="https://cdn.tools.unlayer.com/social/icons/rounded/instagram.png" alt="" title="" style="outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;clear: both;display: inline-block !important;border: none;height: auto;float: none;width: 33%;max-width: 33.01px;" width="33.01"/>
-      
+      </a>
     </td>
   </tr>
 </table>
@@ -419,9 +399,9 @@ table, td { color: #000000; } #u_body a { color: #000000; text-decoration: under
 <table width="100%" cellpadding="0" cellspacing="0" border="0">
   <tr>
     <td style="padding-right: 0px;padding-left: 0px;" align="left">
-      
-      <img align="left" border="0" src="https://cdn.tools.unlayer.com/social/icons/rounded/linkedin.png" alt="" title="" style="outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;clear: both;display: inline-block !important;border: none;height: auto;float: none;width: 33%;max-width: 33.01px;" width="33.01"/>
-      
+      <a href="https://x.com/Amici_ErnestV" target="_blank">
+      <img align="left" border="0" src="https://cdn.tools.unlayer.com/social/icons/rounded/x.png" alt="" title="" style="outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;clear: both;display: inline-block !important;border: none;height: auto;float: none;width: 33%;max-width: 33.01px;" width="33.01"/>
+      </a>
     </td>
   </tr>
 </table>
