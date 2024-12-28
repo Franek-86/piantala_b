@@ -5,5 +5,6 @@ admin.initializeApp({
   storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
 });
 const bucket = admin.storage().bucket();
+console.log("Firebase bucket initialized:", bucket.name); // Ensure bucket name is correct
 
 module.exports = bucket;
