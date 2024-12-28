@@ -1,15 +1,48 @@
 const con = require("../config/db");
 const fs = require("fs");
 const path = require("path");
+const bucket = require("../config/firebaseConfig");
+const { v4: uuidv4 } = require("uuid");
 exports.addPlant = (req, res) => {
   const { lat, lang, user_id } = req.body; // Extract lat, lang, user_id from the form
   console.log("test555", user_id);
   // Handle file upload
-  if (!req.file) {
-    return res.status(400).json({ message: "Image file is required" });
-  }
+  try {
+    if (!req.file) {
+      return res.status(400).json({ message: "Image file is required" });
+    }
 
-  const image_url = `/uploads/${req.file.filename}`; // The relative path to the uploaded file
+    // const image_url = `/uploads/${req.file.filename}`;
+    const extension = path.extname(req.file.originalname); // Get the original file extension
+    const newName = uuidv4();
+    const uniqueFileName = `${newName}${extension}`; // Generate a unique name
+    const blob = bucket.file(uniqueFileName); // Reference to the file in Firebase Storage
+    const blobStream = blob.createWriteStream({
+      metadata: {
+        contentType: req.file.mimetype,
+      },
+    });
+
+    blobStream.on("error", (err) => {
+      console.error("Error uploading file to Firebase:", err);
+      res.status(500).send("Error uploading file.");
+    });
+
+    blobStream.on("finish", () => {
+      const publicUrl = `https://storage.googleapis.com/${bucket.name}/${uniqueFileName}`;
+      console.log("File uploaded to Firebase:", publicUrl);
+
+      // Save `publicUrl` in your database along with other plant details
+      res
+        .status(200)
+        .send({ message: "File uploaded successfully.", url: publicUrl });
+    });
+
+    blobStream.end(req.file.buffer);
+  } catch (err) {
+    console.error("Error uploading file:", err);
+    res.status(500).send("Error uploading file.");
+  }
 
   // Insert the record into the database
   const sql =
