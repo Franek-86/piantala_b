@@ -3,7 +3,7 @@ const fs = require("fs");
 const path = require("path");
 const bucket = require("../config/firebaseConfig");
 const { v4: uuidv4 } = require("uuid");
-exports.addPlant = (req, res) => {
+exports.addPlant = async (req, res) => {
   const { lat, lang, user_id } = req.body; // Extract lat, lang, user_id from the form
   console.log("test555", user_id);
   // Handle file upload
@@ -22,46 +22,45 @@ exports.addPlant = (req, res) => {
         contentType: req.file.mimetype,
       },
     });
+    // Promise wrapper to await the file upload completion
+    const uploadFile = new Promise((resolve, reject) => {
+      blobStream.on("error", (err) => {
+        console.error("Error uploading file to Firebase:", err);
+        reject(new Error("Error uploading file"));
+      });
 
-    blobStream.on("error", (err) => {
-      console.error("Error uploading file to Firebase:", err);
-      res.status(500).send("Error uploading file.");
+      blobStream.on("finish", () => {
+        const publicUrl = `https://storage.googleapis.com/${bucket.name}/${uniqueFileName}`;
+        console.log("File uploaded to Firebase:", publicUrl);
+        resolve(publicUrl); // Resolve the public URL when the file upload is complete
+      });
+
+      blobStream.end(req.file.buffer);
     });
+    const image_url = await uploadFile;
 
-    blobStream.on("finish", () => {
-      const publicUrl = `https://storage.googleapis.com/${bucket.name}/${uniqueFileName}`;
-      console.log("File uploaded to Firebase:", publicUrl);
+    // Insert the record into the database
+    const sql =
+      "INSERT INTO piantine (lat, lang, image_url, user_id) VALUES ($1, $2, $3, $4)";
 
-      // Save `publicUrl` in your database along with other plant details
-      res
-        .status(200)
-        .send({ message: "File uploaded successfully.", url: publicUrl });
+    con.query(sql, [lat, lang, image_url, user_id], (err, result) => {
+      console.log("yo", user_id);
+      if (err) {
+        console.log(err);
+        return res.status(500).send(err);
+      }
+
+      // Return a success response with the inserted record's ID
+      res.status(201).json({
+        message: "Item added successfully!",
+        id: result.insertId,
+        image_url, // Return the image URL for further use (optional)
+      });
     });
-
-    blobStream.end(req.file.buffer);
   } catch (err) {
-    console.error("Error uploading file:", err);
-    res.status(500).send("Error uploading file.");
+    console.error("Error uploading file or inserting record:", err);
+    res.status(500).send("Error uploading file or inserting record.");
   }
-
-  // Insert the record into the database
-  const sql =
-    "INSERT INTO piantine (lat, lang, image_url, user_id) VALUES ($1, $2, $3, $4)";
-
-  con.query(sql, [lat, lang, image_url, user_id], (err, result) => {
-    console.log("yo", user_id);
-    if (err) {
-      console.log(err);
-      return res.status(500).send(err);
-    }
-
-    // Return a success response with the inserted record's ID
-    res.status(201).json({
-      message: "Item added successfully!",
-      id: result.insertId,
-      image_url, // Return the image URL for further use (optional)
-    });
-  });
 };
 
 exports.getAllPlants = (req, res) => {
