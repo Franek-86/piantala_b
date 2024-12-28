@@ -4,6 +4,7 @@ admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
   storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
 });
+console.log("qui", serviceAccount);
 const bucket = admin.storage().bucket();
 console.log("Firebase bucket initialized:", bucket.name); // Ensure bucket name is correct
 
