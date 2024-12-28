@@ -25,14 +25,14 @@ exports.addPlant = async (req, res) => {
     // Promise wrapper to await the file upload completion
     const uploadFile = new Promise((resolve, reject) => {
       blobStream.on("error", (err) => {
-        console.error("Error uploading file to Firebase:", err);
-        reject(new Error("Error uploading file"));
+        console.error("Error uploading file to Firebase:", err); // Log the error
+        reject(err); // Reject with the error to handle it in the try-catch block
       });
 
       blobStream.on("finish", () => {
         const publicUrl = `https://storage.googleapis.com/${bucket.name}/${uniqueFileName}`;
         console.log("File uploaded to Firebase:", publicUrl);
-        resolve(publicUrl); // Resolve the public URL when the file upload is complete
+        resolve(publicUrl); // Resolve with the URL when the upload is finished
       });
 
       blobStream.end(req.file.buffer);
