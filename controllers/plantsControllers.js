@@ -5,7 +5,7 @@ const bucket = require("../config/firebaseConfig");
 const { v4: uuidv4 } = require("uuid");
 exports.addPlant = async (req, res) => {
   const { lat, lang, user_id } = req.body; // Extract lat, lang, user_id from the form
-  console.log("test555", user_id);
+  console.log("Uploaded filee:", req.file);
   // Handle file upload
   try {
     if (!req.file) {
