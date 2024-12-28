@@ -185,7 +185,7 @@ exports.deletePlant = (req, res) => {
     console.log("Image file name:", imageFileName);
 
     const sqlDelete = "DELETE FROM piantine WHERE id = $1"; // Delete plant query
-    con.query(sqlDelete, [id], (err, result) => {
+    con.query(sqlDelete, [id], async (err, result) => {
       if (err) {
         console.log("Error during deletion:", err);
         return res.status(500).json({ message: "Server error" });
@@ -196,24 +196,36 @@ exports.deletePlant = (req, res) => {
       }
 
       if (imageFileName) {
-        const filePath = path.join(__dirname, "..", imageFileName);
-        console.log("Attempting to delete file:", filePath);
+        try {
+          const file = bucket.file(imageFileName);
+          await file.delete();
 
-        // Check if the file exists before attempting deletion
-        fs.access(filePath, fs.constants.F_OK, (err) => {
-          if (err) {
-            console.error("File does not exist:", filePath);
-          } else {
-            // File exists, attempt to delete
-            fs.unlink(filePath, (err) => {
-              if (err) {
-                console.error("Error deleting file:", err); // More detailed error logging
-              } else {
-                console.log("File deleted successfully:", filePath);
-              }
-            });
-          }
-        });
+          console.log(
+            `File ${imageFileName} deleted successfully from Firebase.`
+          );
+          res.status(200).send("File deleted successfully.");
+        } catch (err) {
+          console.error("Error deleting file from Firebase:", err);
+          res.status(500).send("Error deleting file.");
+        }
+        // const filePath = path.join(__dirname, "..", imageFileName);
+        // console.log("Attempting to delete file:", filePath);
+
+        // // Check if the file exists before attempting deletion
+        // fs.access(filePath, fs.constants.F_OK, (err) => {
+        //   if (err) {
+        //     console.error("File does not exist:", filePath);
+        //   } else {
+        //     // File exists, attempt to delete
+        //     fs.unlink(filePath, (err) => {
+        //       if (err) {
+        //         console.error("Error deleting file:", err); // More detailed error logging
+        //       } else {
+        //         console.log("File deleted successfully:", filePath);
+        //       }
+        //     });
+        //   }
+        // });
       }
 
       res.status(200).json({ message: `Plant ${id} successfully deleted!` });
