@@ -18,18 +18,26 @@ exports.addPlant = async (req, res) => {
     formData.append("image", req.file.buffer, {
       filename: req.file.originalname,
     });
-
+    console.log("Request Data:", formData);
+    console.log("Request Headers:", formData.getHeaders());
     // Make a POST request to Imgur's API to upload the image
-    const imgurResponse = await axios.post(
-      "https://api.imgur.com/3/image",
-      formData,
-      {
+    const imgurResponse = await axios
+      .post("https://api.imgur.com/3/image", formData, {
         headers: {
           Authorization: `Client-ID ${process.env.IMGUR_CLIENT_ID}`,
           ...formData.getHeaders(), // Ensure the appropriate headers are set
         },
-      }
-    );
+      })
+      .catch((error) => {
+        console.error(
+          "Axios Error:",
+          error.response ? error.response.data : error.message
+        );
+      });
+
+    if (imgurResponse) {
+      console.log("Imgur Response:", imgurResponse.data);
+    }
 
     // If the request is successful, the image URL will be in the response
     const image_url = imgurResponse.data.data.link;
