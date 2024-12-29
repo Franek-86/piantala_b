@@ -198,13 +198,13 @@ exports.deletePlant = (req, res) => {
     if (result.rows.length === 0) {
       return res.status(404).json({ message: "Plant not found" });
     }
-
+    console.log("aa11", result.rows[0]);
     const { image_url, delete_hash } = result.rows[0];
     console.log("Image file name:", imageFileName);
     if (delete_hash) {
       try {
         const imgurResponse = axios.delete(
-          `https://api.imgur.com/3/image/${deletehash}`,
+          `https://api.imgur.com/3/image/${delete_hash}`,
           {
             headers: {
               Authorization: `Client-ID ${process.env.IMGUR_CLIENT_ID}`,
