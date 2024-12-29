@@ -184,27 +184,26 @@ exports.updateStatus = (req, res) => {
 //   });
 // };
 
-exports.deletePlant = (req, res) => {
+exports.deletePlant = async (req, res) => {
   const { id } = req.params; // Get the plant ID from the URL
 
   const sqlSelect = "SELECT image_url, delete_hash FROM piantine WHERE id = $1"; // PostgreSQL parameterized query
-
-  con.query(sqlSelect, [id], (err, result) => {
-    if (err) {
-      console.log("Database error:", err);
-      return res.status(500).json({ message: "Server error" });
-    }
-
-    if (result.rows.length === 0) {
+  try {
+    const selectResult = await new Promise((resolve, reject) => {
+      con.query(sqlSelect, [id], (err, result) => {
+        if (err) return reject(err);
+        resolve(result);
+      });
+    });
+    if ((selectResult.rows.length === 0) === 0) {
       return res.status(404).json({ message: "Plant not found" });
     }
-    console.log("aa11", result.rows[0]);
-    const { image_url, delete_hash } = result.rows[0];
-    console.log("Image file name:", imageFileName);
+    const { image_url, delete_hash } = selectResult.rows[0];
+    console.log("Image URL:", image_url);
     console.log("Delete hash:", delete_hash);
     if (delete_hash) {
       try {
-        const imgurResponse = axios.delete(
+        const imgurResponse = await axios.delete(
           `https://api.imgur.com/3/image/${delete_hash}`,
           {
             headers: {
@@ -225,19 +224,22 @@ exports.deletePlant = (req, res) => {
     }
 
     const sqlDelete = "DELETE FROM piantine WHERE id = $1"; // Delete plant query
-    con.query(sqlDelete, [id], async (err, result) => {
-      if (err) {
-        console.log("Error during deletion:", err);
-        return res.status(500).json({ message: "Server error" });
-      }
-
-      if (result.rowCount === 0) {
-        return res.status(404).json({ message: "Plant not found" });
-      }
-
-      res.status(200).json({ message: `Plant ${id} successfully deleted!` });
+    const deleteResult = await new Promise((resolve, reject) => {
+      con.query(sqlDelete, [id], (err, result) => {
+        if (err) return reject(err);
+        resolve(result);
+      });
     });
-  });
+
+    if (deleteResult.rowCount === 0) {
+      return res.status(404).json({ message: "Plant not found" });
+    }
+
+    res.status(200).json({ message: `Plant ${id} successfully deleted!` });
+  } catch (err) {
+    console.error("Error during deletion process:", err);
+    res.status(500).json({ message: "Server error" });
+  }
 };
 
 exports.getUserPlants = (req, res) => {
