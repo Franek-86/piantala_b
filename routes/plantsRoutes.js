@@ -4,6 +4,7 @@ const plantsController = require("../controllers/plantsControllers");
 const isAdmin = require("../middleware/isAdmin");
 const multer = require("multer");
 const path = require("path");
+const axios = require("axios");
 // const { v4: uuidv4 } = require("uuid");
 // const storage = multer.diskStorage({
 //   destination: (req, file, cb) => {
