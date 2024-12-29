@@ -17,92 +17,93 @@ exports.addPlant = async (req, res) => {
     console.log("File mime type:", req.file.mimetype); // Check mime type
     console.log("File size:", req.file.size); // Check file size
     // Create a new FormData instance and append the file buffer
+    // Create form data and append the image buffer
     const formData = new FormData();
     formData.append("image", req.file.buffer, {
-      filename: req.file.originalname,
-      contentType: req.file.mimetype,
+      filename: req.file.originalname, // Ensure correct filename is passed
+      contentType: req.file.mimetype, // Ensure correct MIME type is passed
     });
-
-    // Get the headers from FormData (this will contain the correct Content-Type for multipart form data)
+    // Get headers for the form data
     const formHeaders = formData.getHeaders();
 
-    // Add the Authorization header
+    // Log the headers to make sure everything looks correct
+    console.log("FormData Headers:", formHeaders);
+
+    // Add the Authorization header for Imgur API
     const headers = {
       ...formHeaders,
-      Authorization: `Client-ID ${process.env.IMGUR_CLIENT_ID}`, // Authorization header for Imgur
+      Authorization: `Client-ID ${process.env.IMGUR_CLIENT_ID}`, // Ensure the Client-ID is set properly
     };
-    console.log("aaa", headers);
 
-    // console.log("Request Data:", formData);
-    // console.log("Request Headers:", formData.getHeaders());
-    // Make a POST request to Imgur's API to upload the image
-    const imgurResponse = await axios
-      .post("https://api.imgur.com/3/image", formData, {
+    // Log the final headers
+    console.log("Request Headers:", headers);
+
+    const imgurResponse = await axios.post(
+      "https://api.imgur.com/3/image",
+      formData,
+      {
         headers: headers,
-      })
-      .catch((error) => {
-        console.error(
-          "Axios Error:",
-          error.response ? error.response.data : error.message
-        );
-      });
-
-    if (imgurResponse) {
-      console.log("Imgur Response:", imgurResponse.data);
-    }
-
-    // If the request is successful, the image URL will be in the response
-    const image_url = imgurResponse.data.data.link;
-    console.log("Image uploaded to Imgur:", image_url);
-
-    // const extension = path.extname(req.file.originalname);
-    // const newName = uuidv4();
-    // const uniqueFileName = `${newName}${extension}`;
-    // const blob = bucket.file(uniqueFileName);
-    // const blobStream = blob.createWriteStream({
-    //   metadata: {
-    //     contentType: req.file.mimetype,
-    //   },
-    // });
-
-    // const uploadFile = new Promise((resolve, reject) => {
-    //   blobStream.on("error", (err) => {
-    //     console.error("Error uploading file to Firebase:", err);
-    //     reject(err);
-    //   });
-
-    //   blobStream.on("finish", () => {
-    //     const publicUrl = `https://storage.googleapis.com/${bucket.name}/${uniqueFileName}`;
-    //     console.log("File uploaded to Firebase:", publicUrl);
-    //     resolve(publicUrl); // Resolve with the URL when the upload is finished
-    //   });
-
-    //   blobStream.end(req.file.buffer);
-    // });
-    // const image_url = await uploadFile;
-
-    // Insert the record into the database
-    const sql =
-      "INSERT INTO piantine (lat, lang, image_url, user_id) VALUES ($1, $2, $3, $4)";
-
-    con.query(sql, [lat, lang, image_url, user_id], (err, result) => {
-      console.log("yo", user_id);
-      if (err) {
-        console.log(err);
-        return res.status(500).send(err);
       }
+    );
+    // If the response is successful, extract the image URL
+    if (imgurResponse && imgurResponse.data && imgurResponse.data.success) {
+      const imageUrl = imgurResponse.data.data.link;
+      console.log("Image uploaded to Imgur:", imageUrl);
 
-      // Return a success response with the inserted record's ID
-      res.status(201).json({
-        message: "Item added successfully!",
-        id: result.insertId,
-        image_url, // Return the image URL for further use (optional)
+      // Now insert the record into the database with the image URL
+      const sql =
+        "INSERT INTO piantine (lat, lang, image_url, user_id) VALUES ($1, $2, $3, $4)";
+      con.query(sql, [lat, lang, imageUrl, user_id], (err, result) => {
+        if (err) {
+          console.log(err);
+          return res.status(500).send(err);
+        }
+
+        // Return success response with the inserted record's ID
+        res.status(201).json({
+          message: "Item added successfully!",
+          id: result.insertId,
+          image_url: imageUrl,
+        });
       });
-    });
+    } else {
+      console.error("Error uploading image:", imgurResponse.data);
+      return res
+        .status(500)
+        .json({ message: "Error uploading image to Imgur" });
+    }
   } catch (err) {
-    console.error("Error uploading file or inserting record:", err);
+    console.error("Error uploading file to Imgur or inserting record:", err);
     res.status(500).send("Error uploading file or inserting record.");
   }
+
+  // const extension = path.extname(req.file.originalname);
+  // const newName = uuidv4();
+  // const uniqueFileName = `${newName}${extension}`;
+  // const blob = bucket.file(uniqueFileName);
+  // const blobStream = blob.createWriteStream({
+  //   metadata: {
+  //     contentType: req.file.mimetype,
+  //   },
+  // });
+
+  // const uploadFile = new Promise((resolve, reject) => {
+  //   blobStream.on("error", (err) => {
+  //     console.error("Error uploading file to Firebase:", err);
+  //     reject(err);
+  //   });
+
+  //   blobStream.on("finish", () => {
+  //     const publicUrl = `https://storage.googleapis.com/${bucket.name}/${uniqueFileName}`;
+  //     console.log("File uploaded to Firebase:", publicUrl);
+  //     resolve(publicUrl); // Resolve with the URL when the upload is finished
+  //   });
+
+  //   blobStream.end(req.file.buffer);
+  // });
+  // const image_url = await uploadFile;
+
+  // Insert the record into the database
 };
 
 exports.getAllPlants = (req, res) => {
