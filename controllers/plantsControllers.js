@@ -48,24 +48,28 @@ exports.addPlant = async (req, res) => {
     // If the response is successful, extract the image URL
     if (imgurResponse && imgurResponse.data && imgurResponse.data.success) {
       const imageUrl = imgurResponse.data.data.link;
-      console.log("Image uploaded to Imgur:", imageUrl);
+      const deleteHash = imgurResponse.data.data.deletehash;
 
       // Now insert the record into the database with the image URL
       const sql =
-        "INSERT INTO piantine (lat, lang, image_url, user_id) VALUES ($1, $2, $3, $4)";
-      con.query(sql, [lat, lang, imageUrl, user_id], (err, result) => {
-        if (err) {
-          console.log(err);
-          return res.status(500).send(err);
-        }
+        "INSERT INTO piantine (lat, lang, image_url, delete_hash, user_id) VALUES ($1, $2, $3, $4, $5)";
+      con.query(
+        sql,
+        [lat, lang, imageUrl, deleteHash, user_id],
+        (err, result) => {
+          if (err) {
+            console.log(err);
+            return res.status(500).send(err);
+          }
 
-        // Return success response with the inserted record's ID
-        res.status(201).json({
-          message: "Item added successfully!",
-          id: result.insertId,
-          image_url: imageUrl,
-        });
-      });
+          // Return success response with the inserted record's ID
+          res.status(201).json({
+            message: "Item added successfully!",
+            id: result.insertId,
+            image_url: imageUrl,
+          });
+        }
+      );
     } else {
       console.error("Error uploading image:", imgurResponse.data);
       return res
@@ -76,34 +80,6 @@ exports.addPlant = async (req, res) => {
     console.error("Error uploading file to Imgur or inserting record:", err);
     res.status(500).send("Error uploading file or inserting record.");
   }
-
-  // const extension = path.extname(req.file.originalname);
-  // const newName = uuidv4();
-  // const uniqueFileName = `${newName}${extension}`;
-  // const blob = bucket.file(uniqueFileName);
-  // const blobStream = blob.createWriteStream({
-  //   metadata: {
-  //     contentType: req.file.mimetype,
-  //   },
-  // });
-
-  // const uploadFile = new Promise((resolve, reject) => {
-  //   blobStream.on("error", (err) => {
-  //     console.error("Error uploading file to Firebase:", err);
-  //     reject(err);
-  //   });
-
-  //   blobStream.on("finish", () => {
-  //     const publicUrl = `https://storage.googleapis.com/${bucket.name}/${uniqueFileName}`;
-  //     console.log("File uploaded to Firebase:", publicUrl);
-  //     resolve(publicUrl); // Resolve with the URL when the upload is finished
-  //   });
-
-  //   blobStream.end(req.file.buffer);
-  // });
-  // const image_url = await uploadFile;
-
-  // Insert the record into the database
 };
 
 exports.getAllPlants = (req, res) => {
@@ -211,7 +187,7 @@ exports.updateStatus = (req, res) => {
 exports.deletePlant = (req, res) => {
   const { id } = req.params; // Get the plant ID from the URL
 
-  const sqlSelect = "SELECT image_url FROM piantine WHERE id = $1"; // PostgreSQL parameterized query
+  const sqlSelect = "SELECT image_url, delete_hash FROM piantine WHERE id = $1"; // PostgreSQL parameterized query
 
   con.query(sqlSelect, [id], (err, result) => {
     if (err) {
@@ -223,8 +199,26 @@ exports.deletePlant = (req, res) => {
       return res.status(404).json({ message: "Plant not found" });
     }
 
-    const imageFileName = result.rows[0].image_url;
+    const { image_url, delete_hash } = result.rows[0];
     console.log("Image file name:", imageFileName);
+    if (delete_hash) {
+      try {
+        const imgurResponse = axios.delete(
+          `https://api.imgur.com/3/image/${deletehash}`,
+          {
+            headers: {
+              Authorization: `Client-ID ${process.env.IMGUR_CLIENT_ID}`,
+            },
+          }
+        );
+        console.log("Imgur delete response:", imgurResponse.data);
+      } catch (err) {
+        console.error("Failed to delete image from Imgur:", err.message);
+        // You might want to proceed anyway, even if Imgur deletion fails
+      }
+    } else {
+      console.warn("No deletehash found for image. Skipping Imgur deletion.");
+    }
 
     const sqlDelete = "DELETE FROM piantine WHERE id = $1"; // Delete plant query
     con.query(sqlDelete, [id], async (err, result) => {
@@ -235,39 +229,6 @@ exports.deletePlant = (req, res) => {
 
       if (result.rowCount === 0) {
         return res.status(404).json({ message: "Plant not found" });
-      }
-
-      if (imageFileName) {
-        try {
-          const file = bucket.file(imageFileName);
-          await file.delete();
-
-          console.log(
-            `File ${imageFileName} deleted successfully from Firebase.`
-          );
-          res.status(200).send("File deleted successfully.");
-        } catch (err) {
-          console.error("Error deleting file from Firebase:", err);
-          res.status(500).send("Error deleting file.");
-        }
-        // const filePath = path.join(__dirname, "..", imageFileName);
-        // console.log("Attempting to delete file:", filePath);
-
-        // // Check if the file exists before attempting deletion
-        // fs.access(filePath, fs.constants.F_OK, (err) => {
-        //   if (err) {
-        //     console.error("File does not exist:", filePath);
-        //   } else {
-        //     // File exists, attempt to delete
-        //     fs.unlink(filePath, (err) => {
-        //       if (err) {
-        //         console.error("Error deleting file:", err); // More detailed error logging
-        //       } else {
-        //         console.log("File deleted successfully:", filePath);
-        //       }
-        //     });
-        //   }
-        // });
       }
 
       res.status(200).json({ message: `Plant ${id} successfully deleted!` });
