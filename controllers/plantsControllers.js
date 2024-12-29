@@ -203,24 +203,23 @@ exports.deletePlant = (req, res) => {
     console.log("Image file name:", imageFileName);
     console.log("Delete hash:", delete_hash);
     if (delete_hash) {
-      console.log("abcd", delete_hash);
-      // try {
-      //   const imgurResponse = axios.delete(
-      //     `https://api.imgur.com/3/image/${delete_hash}`,
-      //     {
-      //       headers: {
-      //         Authorization: `Client-ID ${process.env.IMGUR_CLIENT_ID}`,
-      //       },
-      //     }
-      //   );
-      //   console.log("Imgur delete response:", imgurResponse.data);
-      // } catch (err) {
-      //   console.error(
-      //     "Failed to delete image from Imgur:",
-      //     err.response?.data || err.message
-      //   );
-      //   // You might want to proceed anyway, even if Imgur deletion fails
-      // }
+      try {
+        const imgurResponse = axios.delete(
+          `https://api.imgur.com/3/image/${delete_hash}`,
+          {
+            headers: {
+              Authorization: `Client-ID ${process.env.IMGUR_CLIENT_ID}`,
+            },
+          }
+        );
+        console.log("Imgur delete response:", imgurResponse.data);
+      } catch (err) {
+        console.error(
+          "Failed to delete image from Imgur:",
+          err.response?.data || err.message
+        );
+        // You might want to proceed anyway, even if Imgur deletion fails
+      }
     } else {
       console.warn("No deletehash found for image. Skipping Imgur deletion.");
     }
