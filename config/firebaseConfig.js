@@ -22,4 +22,6 @@ async function testFirebaseConnection() {
     console.error("Failed to connect to Firebase Storage:", error.message);
   }
 }
+testFirebaseConnection();
+
 module.exports = bucket;
