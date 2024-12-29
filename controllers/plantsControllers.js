@@ -13,7 +13,7 @@ exports.addPlant = async (req, res) => {
     if (!req.file) {
       return res.status(400).json({ message: "Image file is required" });
     }
-    // Create form data to send to Imgur
+
     const formData = new FormData();
     formData.append("image", req.file.buffer, {
       filename: req.file.originalname,
