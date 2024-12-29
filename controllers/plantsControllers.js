@@ -29,7 +29,7 @@ exports.addPlant = async (req, res) => {
     // Add the Authorization header
     const headers = {
       ...formHeaders,
-      Authorization: `Client-ID ${CLIENT_ID}`, // Authorization header for Imgur
+      Authorization: `Client-ID ${process.env.IMGUR_CLIENT_ID}`, // Authorization header for Imgur
     };
     console.log("aaa", headers);
 
@@ -38,10 +38,7 @@ exports.addPlant = async (req, res) => {
     // Make a POST request to Imgur's API to upload the image
     const imgurResponse = await axios
       .post("https://api.imgur.com/3/image", formData, {
-        headers: {
-          ...headers,
-          Authorization: `Client-ID ${process.env.IMGUR_CLIENT_ID}`,
-        },
+        headers: headers,
       })
       .catch((error) => {
         console.error(
