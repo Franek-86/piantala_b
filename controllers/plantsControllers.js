@@ -16,18 +16,31 @@ exports.addPlant = async (req, res) => {
     console.log("File buffer:", req.file.buffer); // Ensure this contains data
     console.log("File mime type:", req.file.mimetype); // Check mime type
     console.log("File size:", req.file.size); // Check file size
+    // Create a new FormData instance and append the file buffer
     const formData = new FormData();
     formData.append("image", req.file.buffer, {
       filename: req.file.originalname,
+      contentType: req.file.mimetype,
     });
-    console.log("Request Data:", formData);
-    console.log("Request Headers:", formData.getHeaders());
+
+    // Get the headers from FormData (this will contain the correct Content-Type for multipart form data)
+    const formHeaders = formData.getHeaders();
+
+    // Add the Authorization header
+    const headers = {
+      ...formHeaders,
+      Authorization: `Client-ID ${CLIENT_ID}`, // Authorization header for Imgur
+    };
+    console.log("aaa", headers);
+
+    // console.log("Request Data:", formData);
+    // console.log("Request Headers:", formData.getHeaders());
     // Make a POST request to Imgur's API to upload the image
     const imgurResponse = await axios
       .post("https://api.imgur.com/3/image", formData, {
         headers: {
+          ...headers,
           Authorization: `Client-ID ${process.env.IMGUR_CLIENT_ID}`,
-          ...formData.getHeaders(), // Ensure the appropriate headers are set
         },
       })
       .catch((error) => {
