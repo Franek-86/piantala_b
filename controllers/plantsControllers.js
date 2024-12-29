@@ -13,7 +13,9 @@ exports.addPlant = async (req, res) => {
     if (!req.file) {
       return res.status(400).json({ message: "Image file is required" });
     }
-
+    console.log("File buffer:", req.file.buffer); // Ensure this contains data
+    console.log("File mime type:", req.file.mimetype); // Check mime type
+    console.log("File size:", req.file.size); // Check file size
     const formData = new FormData();
     formData.append("image", req.file.buffer, {
       filename: req.file.originalname,
