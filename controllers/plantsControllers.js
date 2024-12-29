@@ -1,8 +1,9 @@
 const con = require("../config/db");
-const fs = require("fs");
-const path = require("path");
-const bucket = require("../config/firebaseConfig");
-const { v4: uuidv4 } = require("uuid");
+const FormData = require("form-data");
+// const fs = require("fs");
+// const path = require("path");
+// const bucket = require("../config/firebaseConfig");
+// const { v4: uuidv4 } = require("uuid");
 exports.addPlant = async (req, res) => {
   const { lat, lang, user_id } = req.body; // Extract lat, lang, user_id from the form
   console.log("Uploaded filee:", req.file);
@@ -11,33 +12,53 @@ exports.addPlant = async (req, res) => {
     if (!req.file) {
       return res.status(400).json({ message: "Image file is required" });
     }
-
-    // const image_url = `/uploads/${req.file.filename}`;
-    const extension = path.extname(req.file.originalname); // Get the original file extension
-    const newName = uuidv4();
-    const uniqueFileName = `${newName}${extension}`; // Generate a unique name
-    const blob = bucket.file(uniqueFileName); // Reference to the file in Firebase Storage
-    const blobStream = blob.createWriteStream({
-      metadata: {
-        contentType: req.file.mimetype,
-      },
+    // Create form data to send to Imgur
+    const formData = new FormData();
+    formData.append("image", req.file.buffer, {
+      filename: req.file.originalname,
     });
-    // Promise wrapper to await the file upload completion
-    const uploadFile = new Promise((resolve, reject) => {
-      blobStream.on("error", (err) => {
-        console.error("Error uploading file to Firebase:", err); // Log the error
-        reject(err); // Reject with the error to handle it in the try-catch block
-      });
 
-      blobStream.on("finish", () => {
-        const publicUrl = `https://storage.googleapis.com/${bucket.name}/${uniqueFileName}`;
-        console.log("File uploaded to Firebase:", publicUrl);
-        resolve(publicUrl); // Resolve with the URL when the upload is finished
-      });
+    // Make a POST request to Imgur's API to upload the image
+    const imgurResponse = await axios.post(
+      "https://api.imgur.com/3/image",
+      formData,
+      {
+        headers: {
+          Authorization: `Client-ID ${process.env.IMGUR_CLIENT_ID}`,
+          ...formData.getHeaders(), // Ensure the appropriate headers are set
+        },
+      }
+    );
 
-      blobStream.end(req.file.buffer);
-    });
-    const image_url = await uploadFile;
+    // If the request is successful, the image URL will be in the response
+    const image_url = imgurResponse.data.data.link;
+    console.log("Image uploaded to Imgur:", image_url);
+
+    // const extension = path.extname(req.file.originalname);
+    // const newName = uuidv4();
+    // const uniqueFileName = `${newName}${extension}`;
+    // const blob = bucket.file(uniqueFileName);
+    // const blobStream = blob.createWriteStream({
+    //   metadata: {
+    //     contentType: req.file.mimetype,
+    //   },
+    // });
+
+    // const uploadFile = new Promise((resolve, reject) => {
+    //   blobStream.on("error", (err) => {
+    //     console.error("Error uploading file to Firebase:", err);
+    //     reject(err);
+    //   });
+
+    //   blobStream.on("finish", () => {
+    //     const publicUrl = `https://storage.googleapis.com/${bucket.name}/${uniqueFileName}`;
+    //     console.log("File uploaded to Firebase:", publicUrl);
+    //     resolve(publicUrl); // Resolve with the URL when the upload is finished
+    //   });
+
+    //   blobStream.end(req.file.buffer);
+    // });
+    // const image_url = await uploadFile;
 
     // Insert the record into the database
     const sql =
