@@ -1,21 +1,38 @@
 const { Sequelize } = require("sequelize");
-const sequelize = new Sequelize(
-  process.env.DATABASE,
-  process.env.USER_ID,
-  process.env.DB_PASSWORD,
+require("dotenv").config();
+// const sequelize = new Sequelize(
+//   process.env.NODE_ENV === "production"
+//     ? process.env.DATABASE
+//     : process.env.TEST_DATABASE,
+//   process.env.USER_ID,
+//   process.env.DB_PASSWORD,
+//   {
+//     host:
+//       process.NODE_ENV === "production"
+//         ? process.env.HOST
+//         : process.env.TEST_HOST,
+//     port: process.env.PORT,
+//     dialect: "postgres",
+//     logging: console.log,
+//   }
+// );
 
+const sequelize = new Sequelize(
+  process.env.NODE_ENV === "test"
+    ? process.env.TEST_DATABASE
+    : process.env.DATABASE,
+  process.env.NODE_ENV === "test"
+    ? process.env.TEST_USER_ID
+    : process.env.USER_ID,
+  process.env.DB_PASSWORD,
   {
-    host: process.env.HOST,
-    port: process.env.PORT,
-    // dialect: "mysql",
+    host:
+      process.env.NODE_ENV === "test"
+        ? process.env.TEST_HOST
+        : process.env.HOST,
+    port: process.env.SERVER_PORT,
     dialect: "postgres",
-    // dialectOptions: {
-    //   ssl: {
-    //     require: true, // Force SSL
-    //     rejectUnauthorized: false, // Allow self-signed certificates (use with caution)
-    //   },
-    // },
-    logging: console.log, // Optional: Log SQL queries for debugging
+    logging: console.log,
   }
 );
 const testSequelize = async () => {

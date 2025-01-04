@@ -4,7 +4,10 @@ const con = require("../config/db");
 const crypto = require("crypto");
 const transporter = require("../config/nodemailer");
 const User = require("../models/User");
-
+const domainNameClient =
+  process.env.NODE_ENV === "test"
+    ? process.env.DOMAIN_NAME_TEST_CLIENT
+    : process.env.DOMAIN_NAME_CLIENT;
 const generateVerificationToken = () => {
   return crypto.randomBytes(16).toString("hex");
 };
@@ -21,9 +24,7 @@ exports.verificationEmail = async (req, res) => {
     user.is_verified = true;
     user.verification_token = null;
     await user.save();
-    return res.redirect(
-      `${process.env.DOMAIN_NAME_CLIENT}/verification-success`
-    );
+    return res.redirect(`${domainNameClient}/verification-success`);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Internal server error" });
@@ -252,7 +253,13 @@ table, td { color: #000000; } #u_body a { color: #000000; text-decoration: under
   <!--[if mso]><style>.v-button {background: transparent !important;}</style><![endif]-->
 <div align="center">
   <!--[if mso]><table border="0" cellspacing="0" cellpadding="0"><tr><td align="center" bgcolor="#ffffff" style="padding:10px;" valign="top"><![endif]-->
-    <a href="${process.env.DOMAIN_NAME_SERVER}/api/auth/verify/${user.verification_token}" target="_blank" class="v-button" style="box-sizing: border-box;display: inline-block;text-decoration: none;-webkit-text-size-adjust: none;text-align: center;color: #000000; background-color: #ffffff; border-radius: 4px;-webkit-border-radius: 4px; -moz-border-radius: 4px; width:28%; max-width:100%; overflow-wrap: break-word; word-break: break-word; word-wrap:break-word; mso-border-alt: none;font-size: 14px;">
+    <a href="${
+      process.env.NODE_ENV === "test"
+        ? process.env.DOMAIN_NAME_TEST_SERVER
+        : process.env.DOMAIN_NAME_SERVER
+    }/api/auth/verify/${
+          user.verification_token
+        }" target="_blank" class="v-button" style="box-sizing: border-box;display: inline-block;text-decoration: none;-webkit-text-size-adjust: none;text-align: center;color: #000000; background-color: #ffffff; border-radius: 4px;-webkit-border-radius: 4px; -moz-border-radius: 4px; width:28%; max-width:100%; overflow-wrap: break-word; word-break: break-word; word-wrap:break-word; mso-border-alt: none;font-size: 14px;">
       <span style="display:block;padding:10px;line-height:120%;">Registrati</span>
     </a>
     <!--[if mso]></td></tr></table><![endif]-->

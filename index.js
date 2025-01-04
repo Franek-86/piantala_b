@@ -11,7 +11,8 @@ const bodyParser = require("body-parser"); // Import body-parser
 const plantsRoutes = require("./routes/plantsRoutes");
 const authRoutes = require("./routes/authRoutes");
 const PORT = process.env.PORT || 3001;
-const HOST = process.env.HOST || "localhost";
+const HOST =
+  process.env.NODE_ENV === "test" ? process.env.TEST_HOST : process.env.HOST;
 // Option 1: Passing a connection URI
 app.use(
   cors({
@@ -70,8 +71,10 @@ app.use("/api/plants", plantsRoutes);
 
 // This is your test secret API key.
 
-const YOUR_DOMAIN = process.env.DOMAIN_NAME_CLIENT;
-
+const YOUR_DOMAIN =
+  process.env.NODE_ENV === "test"
+    ? process.env.TEST_DOMAIN_NAME_CLIENT
+    : process.env.DOMAIN_NAME_CLIENT;
 app.post("/create-checkout-session", async (req, res) => {
   const product = await stripe.products.create({
     name: "Piantina2",
