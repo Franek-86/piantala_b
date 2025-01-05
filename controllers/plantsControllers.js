@@ -6,7 +6,17 @@ const axios = require("axios");
 // const bucket = require("../config/firebaseConfig");
 // const { v4: uuidv4 } = require("uuid");
 exports.addPlant = async (req, res) => {
-  const { lat, lang, user_id } = req.body; // Extract lat, lang, user_id from the form
+  const {
+    lat,
+    lang,
+    user_id,
+    city,
+    suburb,
+    road,
+    residential,
+    shop,
+    house_number,
+  } = req.body; // Extract lat, lang, user_id from the form
   console.log("Uploaded filee:", req.file);
   // Handle file upload
   try {
@@ -52,10 +62,22 @@ exports.addPlant = async (req, res) => {
 
       // Now insert the record into the database with the image URL
       const sql =
-        "INSERT INTO piantine (lat, lang, image_url, delete_hash, user_id) VALUES ($1, $2, $3, $4, $5)";
+        "INSERT INTO piantine (lat, lang, image_url, delete_hash, user_id, city, suburb, road, residential, shop, house_number) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)";
       con.query(
         sql,
-        [lat, lang, imageUrl, deleteHash, user_id],
+        [
+          lat,
+          lang,
+          imageUrl,
+          deleteHash,
+          user_id,
+          city,
+          suburb,
+          road,
+          residential,
+          shop,
+          house_number,
+        ],
         (err, result) => {
           if (err) {
             console.log(err);
