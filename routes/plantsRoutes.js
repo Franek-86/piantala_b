@@ -23,6 +23,11 @@ const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
 router.post("/add-plant", upload.single("image"), plantsController.addPlant);
+router.post(
+  "/upload-plate/:id",
+  upload.single("plate"),
+  plantsController.addPlate
+);
 router.get("/", plantsController.getAllPlants);
 router.get("/user-plants", plantsController.getUserPlants);
 router.get("/owned-plants", plantsController.getOwnedPlants);

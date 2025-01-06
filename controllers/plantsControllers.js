@@ -5,6 +5,72 @@ const axios = require("axios");
 // const path = require("path");
 // const bucket = require("../config/firebaseConfig");
 // const { v4: uuidv4 } = require("uuid");
+
+exports.addPlate = async (req, res) => {
+  const file = req.file;
+  let { id } = req.params;
+  id = parseInt(id);
+  console.log("this", id);
+
+  if (!file) {
+    res.status(400).send("no file uploaded");
+  }
+  try {
+    const formData = new FormData();
+    formData.append("image", req.file.buffer, {
+      filename: req.file.originalname, // Ensure correct filename is passed
+      contentType: req.file.mimetype, // Ensure correct MIME type is passed
+    });
+
+    const formHeaders = formData.getHeaders();
+
+    // Add the Authorization header for Imgur API
+    const headers = {
+      ...formHeaders,
+      Authorization: `Client-ID ${process.env.IMGUR_CLIENT_ID}`, // Ensure the Client-ID is set properly
+    };
+    console.log("Request Headers:", headers);
+    // Log the final headers
+
+    const imgurResponse = await axios.post(
+      "https://api.imgur.com/3/image",
+      formData,
+      {
+        headers: headers,
+      }
+    );
+
+    if (imgurResponse && imgurResponse.data && imgurResponse.data.success) {
+      const imageUrl = imgurResponse.data.data.link;
+      const plateHash = imgurResponse.data.data.deletehash;
+      console.log("this2", imageUrl);
+
+      // Now insert the record into the database with the image URL
+      const sql = `UPDATE piantine set plate = $1, plate_hash = $2 where id = ${id}`;
+      con.query(sql, [imageUrl, plateHash], (err, result) => {
+        if (err) {
+          console.log(err);
+          return res.status(500).send(err);
+        }
+
+        // Return success response with the inserted record's ID
+        res.status(201).json({
+          message: "Item added successfully!",
+          id: result.insertId,
+          image_url: imageUrl,
+        });
+      });
+    } else {
+      console.error("Error uploading image:", imgurResponse.data);
+      return res
+        .status(500)
+        .json({ message: "Error uploading image to Imgur" });
+    }
+  } catch (err) {
+    console.log(err);
+  }
+};
+
 exports.addPlant = async (req, res) => {
   const {
     lat,
@@ -17,7 +83,7 @@ exports.addPlant = async (req, res) => {
     shop,
     house_number,
   } = req.body; // Extract lat, lang, user_id from the form
-  console.log("Uploaded filee:", req.file);
+
   // Handle file upload
   try {
     if (!req.file) {
@@ -187,29 +253,11 @@ exports.updateStatus = (req, res) => {
   });
 };
 
-// exports.deletePlant = (req, res) => {
-//   const { id } = req.params; // Get the plant ID from the URL
-
-//   // Validate the status
-
-//   const sql = "DELETE FROM piantine WHERE id = $1";
-//   con.query(sql, [id], (err, result) => {
-//     if (err) {
-//       console.log(err);
-//       return res.status(500).json({ message: "Server error" });
-//     }
-//     if (result.affectedRows === 0) {
-//       console.log(err);
-//       return res.status(404).json({ message: "Plant not found" });
-//     }
-//     res.status(200).json({ message: `Plant ${id} successfully deleted!` });
-//   });
-// };
-
 exports.deletePlant = async (req, res) => {
   const { id } = req.params; // Get the plant ID from the URL
 
-  const sqlSelect = "SELECT image_url, delete_hash FROM piantine WHERE id = $1"; // PostgreSQL parameterized query
+  const sqlSelect =
+    "SELECT image_url, delete_hash, plate, plate_hash FROM piantine WHERE id = $1"; // PostgreSQL parameterized query
   try {
     const selectResult = await new Promise((resolve, reject) => {
       con.query(sqlSelect, [id], (err, result) => {
@@ -217,33 +265,36 @@ exports.deletePlant = async (req, res) => {
         resolve(result);
       });
     });
-    if ((selectResult.rows.length === 0) === 0) {
+    if (selectResult.rows.length === 0) {
       return res.status(404).json({ message: "Plant not found" });
     }
-    const { image_url, delete_hash } = selectResult.rows[0];
+    const { image_url, delete_hash, plate, plate_hash } = selectResult.rows[0];
     console.log("Image URL:", image_url);
     console.log("Delete hash:", delete_hash);
-    if (delete_hash) {
+    console.log("plate URL:", plate);
+    console.log("plate hash:", plate_hash);
+
+    const deleteFromImgur = async (hash) => {
+      if (!hash) return;
       try {
         const imgurResponse = await axios.delete(
-          `https://api.imgur.com/3/image/${delete_hash}`,
+          `https://api.imgur.com/3/image/${hash}`,
           {
             headers: {
               Authorization: `Client-ID ${process.env.IMGUR_CLIENT_ID}`,
             },
           }
         );
-        console.log("Imgur delete response:", imgurResponse.data);
-      } catch (err) {
-        console.error(
-          "Failed to delete image from Imgur:",
-          err.response?.data || err.message
-        );
-        // You might want to proceed anyway, even if Imgur deletion fails
+        console.log(`Image with hash ${hash} deleted:`, imgurResponse.data);
+      } catch (error) {
+        console.error(`Failed to delete image with hash ${hash}:`, error);
       }
-    } else {
-      console.warn("No deletehash found for image. Skipping Imgur deletion.");
-    }
+    };
+    // Attempt to delete both images
+    await Promise.all([
+      deleteFromImgur(delete_hash), // Delete first image
+      deleteFromImgur(plate_hash), // Delete second image
+    ]);
 
     const sqlDelete = "DELETE FROM piantine WHERE id = $1"; // Delete plant query
     const deleteResult = await new Promise((resolve, reject) => {
