@@ -9,6 +9,7 @@ const config = {
     password: process.env.DB_PASSWORD,
     database: process.env.DATABASE,
     port: process.env.SERVER_PORT,
+    pool_mode: "transaction",
   },
   test: {
     host: process.env.TEST_HOST,

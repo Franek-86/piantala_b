@@ -30,10 +30,48 @@ exports.verificationEmail = async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
+exports.getUserInfo = async (req, res) => {
+  const user_id = req.params.id;
+  console.log("asaa", user_id);
+  try {
+    const user = await User.findOne({ where: { user_id: user_id } });
+    if (user) {
+      console.log("135", user);
+      const test = user.dataValues.user_name;
+      console.log("test1", test);
+      res.status(200).send(test);
+    } else {
+      return res.status(404).json({ message: "User not found" });
+    }
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
 
 exports.registerUser = async (req, res) => {
-  const { email, user_password, role } = req.body;
-
+  const {
+    first_name,
+    last_name,
+    address,
+    birthday,
+    fiscal_code,
+    email,
+    user_password,
+    role,
+    user_name,
+    phone,
+  } = req.body;
+  console.log(
+    "user_name and phone",
+    first_name,
+    last_name,
+    address,
+    birthday,
+    fiscal_code,
+    user_name,
+    phone
+  );
   const validRoles = ["user", "admin"];
   const userRole = validRoles.includes(role) ? role : "user";
   const existingUser = await User.findOne({ where: { email } });
@@ -46,7 +84,14 @@ exports.registerUser = async (req, res) => {
     let email_token = generateVerificationToken();
 
     const user = await User.create({
+      first_name: first_name,
+      last_name: last_name,
+      address: address,
+      birthday: birthday,
+      fiscal_code: fiscal_code,
       email: email,
+      user_name: user_name,
+      phone: phone,
       user_password: hashedPassword,
       verification_token: email_token,
     });

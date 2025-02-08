@@ -1,6 +1,7 @@
 const con = require("../config/db");
 const FormData = require("form-data");
 const axios = require("axios");
+const User = require("../models/User");
 // const fs = require("fs");
 // const path = require("path");
 // const bucket = require("../config/firebaseConfig");
@@ -253,6 +254,46 @@ exports.updateStatus = (req, res) => {
   });
 };
 
+exports.clearPlate = async (req, res) => {
+  const { id, plate_hash } = req.body;
+  console.log("sta12", id, plate_hash);
+  const deleteFromImgur = async (hash) => {
+    console.log("123321");
+    if (!hash) return;
+    try {
+      const imgurResponse = await axios.delete(
+        `https://api.imgur.com/3/image/${hash}`,
+        {
+          headers: {
+            Authorization: `Client-ID ${process.env.IMGUR_CLIENT_ID}`,
+          },
+        }
+      );
+      console.log(`Image with hash ${hash} deleted:`, imgurResponse.data);
+    } catch (error) {
+      console.error(`Failed to delete image with hash ${hash}:`, error);
+    }
+  };
+  const sqlUpdate =
+    "UPDATE piantine SET plate = NULL, plate_hash = NULL WHERE id = $1";
+
+  const removePlate = async (id) => {
+    try {
+      con.query(sqlUpdate, [id], (err, results) => {
+        if (err) {
+          console.log(err);
+          return res.status(500).send(err);
+        }
+        res.json(results);
+      });
+    } catch (err) {
+      console.log(err);
+    }
+  };
+  await deleteFromImgur(plate_hash);
+  await removePlate(id);
+};
+
 exports.deletePlant = async (req, res) => {
   const { id } = req.params; // Get the plant ID from the URL
 
@@ -342,4 +383,57 @@ exports.getOwnedPlants = (req, res) => {
     }
     res.json(results.rows);
   });
+};
+exports.getReporterInfo = async (req, res) => {
+  const reporterId = req.params.id;
+  console.log("aaa1", reporterId);
+  try {
+    const response = await User.findOne({ where: { id: reporterId } });
+    if (response === null) {
+      console.log("Not found!");
+      es.status(404).send("Not Found");
+    } else {
+      console.log(response instanceof User); // true
+      console.log(response); // 'My Title'
+      const repData = {
+        firstName: response.first_name,
+        lastName: response.last_name,
+        user: response.user_name,
+        phone: response.phone,
+        email: response.email,
+        cratedAt: response.createdAt,
+      };
+      res.status(200).send(repData);
+    }
+  } catch (err) {
+    console.log(err);
+    res.status(500).send(err.message);
+  }
+};
+exports.getOwnerInfo = async (req, res) => {
+  const ownerId = req.params.id;
+  console.log("aaa1", ownerId);
+  try {
+    const response = await User.findOne({ where: { id: ownerId } });
+    if (response === null) {
+      console.log("Not found!");
+      es.status(404).send("Not Found");
+    } else {
+      const repData = {
+        firstName: response.first_name,
+        lastName: response.last_name,
+        address: response.address,
+        birthday: response.birthday,
+        fiscalCode: response.fiscal_code,
+        user: response.user_name,
+        phone: response.phone,
+        email: response.email,
+        cratedAt: response.createdAt,
+      };
+      res.status(200).send(repData);
+    }
+  } catch (err) {
+    console.log(err);
+    res.status(500).send(err.message);
+  }
 };
