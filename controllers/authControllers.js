@@ -932,9 +932,8 @@ exports.fetchCities = async (req, res) => {
     );
     if (response) {
       let data = await response.data.geonames;
-
+      console.log(data);
       res.send(data);
-      // setCities(data);
     }
   } catch (error) {
     console.error("Error fetching cities:", error);
