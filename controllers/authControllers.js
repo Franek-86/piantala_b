@@ -931,7 +931,7 @@ exports.fetchCities = async (req, res) => {
       "http://api.geonames.org/childrenJSON?geonameId=3182350&username=franek"
     );
     if (response) {
-      let data = response.data.geonames;
+      let data = await response.data.geonames;
 
       res.send(data);
       // setCities(data);
