@@ -395,13 +395,19 @@ exports.getReporterInfo = async (req, res) => {
     } else {
       console.log(response instanceof User); // true
       console.log(response); // 'My Title'
+      const formatDate = (date) => {
+        const newDate = new Date(date);
+        return newDate.toLocaleDateString("en-GB");
+      };
       const repData = {
         firstName: response.first_name,
         lastName: response.last_name,
+        birthday: formatDate(response.birthday),
         user: response.user_name,
         phone: response.phone,
+        role: response.role,
         email: response.email,
-        cratedAt: response.createdAt,
+        cratedAt: formatDate(response.createdAt),
       };
       res.status(200).send(repData);
     }
@@ -419,17 +425,24 @@ exports.getOwnerInfo = async (req, res) => {
       console.log("Not found!");
       es.status(404).send("Not Found");
     } else {
+      const formatDate = (date) => {
+        const newDate = new Date(date);
+        return newDate.toLocaleDateString("en-GB");
+      };
+
       const repData = {
         firstName: response.first_name,
         lastName: response.last_name,
-        address: response.address,
-        birthday: response.birthday,
+        city: response.city,
+        birthday: formatDate(response.birthday),
         fiscalCode: response.fiscal_code,
         user: response.user_name,
+        role: response.role,
         phone: response.phone,
         email: response.email,
-        cratedAt: response.createdAt,
+        cratedAt: formatDate(response.createdAt),
       };
+      console.log(repData);
       res.status(200).send(repData);
     }
   } catch (err) {

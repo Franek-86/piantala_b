@@ -37,7 +37,12 @@ const User = sequelize.define(
       allowNull: false,
       unique: false,
     },
-    address: {
+    city: {
+      type: Sequelize.STRING,
+      allowNull: false,
+      unique: false,
+    },
+    gender: {
       type: Sequelize.STRING,
       allowNull: false,
       unique: false,
@@ -52,6 +57,10 @@ const User = sequelize.define(
       allowNull: false,
     },
     user_name: {
+      type: Sequelize.STRING,
+      allowNull: false,
+    },
+    role: {
       type: Sequelize.STRING,
       allowNull: false,
     },
