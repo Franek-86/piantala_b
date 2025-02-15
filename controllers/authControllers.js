@@ -933,7 +933,7 @@ exports.fetchCities = async (req, res) => {
     if (response) {
       let data = response.data.geonames;
 
-      res.json(data);
+      res.send(data);
       // setCities(data);
     }
   } catch (error) {
