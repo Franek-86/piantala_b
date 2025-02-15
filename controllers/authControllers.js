@@ -4,6 +4,7 @@ const con = require("../config/db");
 const crypto = require("crypto");
 const transporter = require("../config/nodemailer");
 const User = require("../models/User");
+const axios = require("axios");
 const domainNameClient =
   process.env.NODE_ENV === "test"
     ? process.env.DOMAIN_NAME_TEST_CLIENT
@@ -922,4 +923,21 @@ exports.getAllUsers = (req, res) => {
     }
     res.json(results);
   });
+};
+
+exports.fetchCities = async (req, res) => {
+  try {
+    const response = await axios.get(
+      "http://api.geonames.org/childrenJSON?geonameId=3182350&username=franek"
+    );
+    if (response) {
+      let data = response.data.geonames;
+
+      res.json(data);
+      // setCities(data);
+    }
+  } catch (error) {
+    console.error("Error fetching cities:", error);
+    res.status(500).json("qualcosa è andato storto");
+  }
 };

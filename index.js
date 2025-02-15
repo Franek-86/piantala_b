@@ -75,6 +75,7 @@ const YOUR_DOMAIN =
   process.env.NODE_ENV === "test"
     ? process.env.TEST_DOMAIN_NAME_CLIENT
     : process.env.DOMAIN_NAME_CLIENT;
+
 app.post("/create-checkout-session", async (req, res) => {
   const product = await stripe.products.create({
     name: "Piantina2",
