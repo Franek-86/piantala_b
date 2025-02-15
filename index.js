@@ -16,7 +16,11 @@ const HOST =
 // Option 1: Passing a connection URI
 app.use(
   cors({
-    origin: ["http://localhost:3000", "https://piantala-a.onrender.com"], // or '*' to allow all origins (not recommended for production)
+    origin: [
+      "http://localhost:3000",
+      "https://piantala-a.onrender.com",
+      "http://api.geonames.org",
+    ], // or '*' to allow all origins (not recommended for production)
     methods: ["GET", "POST", "PATCH", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
   })
