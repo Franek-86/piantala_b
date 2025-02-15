@@ -933,7 +933,6 @@ exports.fetchCities = async (req, res) => {
 
     res.json(response.data.geonames);
   } catch (error) {
-    console.error("Error fetching cities:", error);
-    res.status(500).json("qualcosa è andato storto");
+    res.status(500).json({ error: "qualcosa è andato storto" });
   }
 };
