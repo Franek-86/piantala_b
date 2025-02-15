@@ -930,11 +930,8 @@ exports.fetchCities = async (req, res) => {
     const response = await axios.get(
       "http://api.geonames.org/childrenJSON?geonameId=3182350&username=franek"
     );
-    if (response) {
-      let data = await response.data.geonames;
-      console.log(data);
-      res.json(data);
-    }
+
+    res.json(response.data.geonames);
   } catch (error) {
     console.error("Error fetching cities:", error);
     res.status(500).json("qualcosa è andato storto");
