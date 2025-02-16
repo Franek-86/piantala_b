@@ -63,6 +63,7 @@ const User = sequelize.define(
     role: {
       type: Sequelize.STRING,
       allowNull: false,
+      defaultValue: "user",
     },
     phone: {
       type: Sequelize.STRING,
