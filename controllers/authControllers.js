@@ -969,3 +969,19 @@ exports.generateFiscalCode = async (req, res) => {
     console.log(error);
   }
 };
+exports.validateFiscalCode = async (req, res) => {
+  const fiscalCode = req.body.payload;
+  try {
+    const response = await axios.get(
+      `${process.env.CF_URL}?cf=${fiscalCode}&access_token=${process.env.CF_KEY}`
+    );
+    console.log("quaa", response);
+    // if (response.data.status) {
+    res.status(200).json(response.data);
+    // } else {
+    //   res.json("codice non valido");
+    // }
+  } catch (error) {
+    res.status(500).json({ error: "qualcosa è andato storto" });
+  }
+};

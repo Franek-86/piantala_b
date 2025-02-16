@@ -20,6 +20,7 @@ app.use(
       "http://localhost:3000",
       "https://piantala-a.onrender.com",
       "http://api.geonames.org",
+      "http://api.miocodicefiscale.com",
     ], // or '*' to allow all origins (not recommended for production)
     methods: ["GET", "POST", "PATCH", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
