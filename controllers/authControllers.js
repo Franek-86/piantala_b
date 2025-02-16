@@ -924,7 +924,6 @@ exports.getAllUsers = (req, res) => {
     res.json(results);
   });
 };
-
 exports.fetchCities = async (req, res) => {
   try {
     const response = await axios.get(
@@ -934,5 +933,39 @@ exports.fetchCities = async (req, res) => {
     res.json(response.data.geonames);
   } catch (error) {
     res.status(500).json({ error: "qualcosa è andato storto" });
+  }
+};
+// exports.fetchCities = async (req, res) => {
+//   try {
+//     const response = await axios.get(
+//       "http://api.geonames.org/childrenJSON?geonameId=3182350&username=franek"
+//     );
+//     if (typeof response.data !== "object") {
+//       throw new Error("Invalid JSON response from GeoNames");
+//     }
+//     if (response) {
+//       let data = await response.data.geonames;
+//       console.log(data);
+
+//       await res.send(data);
+//       // setCities(data);
+//     }
+//   } catch (error) {
+//     console.error("Error fetching cities:", error);
+//     res.status(500).json("qualcosa è andato storto");
+//   }
+// };
+
+exports.generateFiscalCode = async (req, res) => {
+  console.log("qua", req.body.payload);
+  const { name, lastName, gender, city, year, month, day } = req.body.payload;
+  try {
+    const response = await axios.get(
+      `http://api.miocodicefiscale.com/calculate?lname=${lastName}&fname=${name}&gender=${gender}&city=${city}&state=BA&day=${day}&month=${month}&year=${year}&access_token=${process.env.CF_KEY}`
+    );
+    const fiscalCode = response.data.data.cf;
+    res.json(fiscalCode);
+  } catch (error) {
+    console.log(error);
   }
 };

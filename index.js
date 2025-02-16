@@ -31,22 +31,7 @@ app.options("*", cors());
 app.use("/uploads", express.static("uploads"));
 
 app.use(bodyParser.json());
-const { exec } = require("child_process");
 
-exec(
-  'curl -s "http://api.geonames.org/childrenJSON?geonameId=3182350&username=franek"',
-  (error, stdout, stderr) => {
-    if (error) {
-      console.error(`Error: ${error.message}`);
-      return;
-    }
-    if (stderr) {
-      console.error(`Stderr: ${stderr}`);
-      return;
-    }
-    console.log(`Curl Response:\n${stdout}`);
-  }
-);
 // const sessionStore = new MySQLStore({}, require("./config/db"));
 const stripe = require("stripe")(`${process.env.STRIPE_SECRET_KEY}`);
 // app.use(
@@ -89,6 +74,23 @@ app.use("/api/auth", authRoutes);
 app.use("/api/plants", plantsRoutes);
 
 // This is your test secret API key.
+
+// const { exec } = require("child_process");
+
+// exec(
+//   'curl -i "http://api.geonames.org/childrenJSON?geonameId=3182350&username=franek"',
+//   (error, stdout, stderr) => {
+//     if (error) {
+//       console.error(`Error: ${error.message}`);
+//       return;
+//     }
+//     if (stderr) {
+//       console.error(`Stderr: ${stderr}`);
+//       return;
+//     }
+//     console.log(`Curl Response: ${stdout}`);
+//   }
+// );
 
 const YOUR_DOMAIN =
   process.env.NODE_ENV === "test"
