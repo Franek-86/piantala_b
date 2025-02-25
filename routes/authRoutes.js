@@ -9,6 +9,7 @@ router.get("/verify/:token", authController.verificationEmail);
 router.post("/register", authController.registerUser);
 router.post("/login", authController.loginUser);
 router.post("/logout", authController.logoutUser);
+router.get("/users", authController.getAllUsers);
 router.get("/user/:id", authController.getUserInfo);
 router.get("/login/cities", authController.fetchCities);
 router.post("/login/generate-fiscal-code", authController.generateFiscalCode);

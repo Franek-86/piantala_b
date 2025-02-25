@@ -915,14 +915,7 @@ exports.logoutUser = async (req, res) => {
 
 // to be checked if needed
 exports.getAllUsers = (req, res) => {
-  const sql = "SELECT * FROM users";
-  con.query(sql, (err, results) => {
-    if (err) {
-      console.log(err);
-      return res.status(500).send(err);
-    }
-    res.json(results);
-  });
+  console.log("get all users");
 };
 exports.fetchCities = async (req, res) => {
   try {
