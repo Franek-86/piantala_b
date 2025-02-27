@@ -914,8 +914,36 @@ exports.logoutUser = async (req, res) => {
 };
 
 // to be checked if needed
-exports.getAllUsers = (req, res) => {
-  console.log("get all users");
+exports.getAllUsers = async (req, res) => {
+  try {
+    const user = await User.findAll({ where: { is_verified: true } });
+    if (user) {
+      console.log("user123", user);
+      let usersToBeSent = user.map((i) => {
+        console.log("aaa", i.dataValues.user_password);
+        delete i.dataValues.user_password;
+        delete i.dataValues.verification_token;
+        delete i.dataValues.phone;
+        delete i.dataValues.fiscal_code;
+        delete i.dataValues.email;
+        delete i.dataValues.updated_at;
+        delete i._previousDataValues;
+        delete i.uniqno;
+
+        return i;
+      });
+      console.log("user to be sent", usersToBeSent);
+
+      res.status(200).send({
+        usersToBeSent,
+      });
+    } else {
+      return res.status(404).json({ message: "User not found" });
+    }
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
 };
 exports.fetchCities = async (req, res) => {
   try {
