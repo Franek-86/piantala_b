@@ -14,4 +14,5 @@ router.get("/user/:id", authController.getUserInfo);
 router.get("/login/cities", authController.fetchCities);
 router.post("/login/generate-fiscal-code", authController.generateFiscalCode);
 router.post("/login/validate-fiscal-code", authController.validateFiscalCode);
+router.patch("/role", authController.setUserRole);
 module.exports = router;

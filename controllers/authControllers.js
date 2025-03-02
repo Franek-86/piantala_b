@@ -31,6 +31,25 @@ exports.verificationEmail = async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
+exports.setUserRole = async (req, res) => {
+  const { id, role } = req.body.payload.userInfo;
+
+  try {
+    await User.update(
+      { role: "admin" },
+      {
+        where: {
+          user_id: id,
+        },
+      }
+    );
+
+    res.status(200).send("User role has been changed");
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
 exports.getUserInfo = async (req, res) => {
   const user_id = req.params.id;
   console.log("asaa", user_id);

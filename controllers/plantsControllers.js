@@ -384,6 +384,7 @@ exports.getOwnedPlants = (req, res) => {
     res.json(results.rows);
   });
 };
+
 exports.getReporterInfo = async (req, res) => {
   const reporterId = req.params.id;
   console.log("aaa1", reporterId);
