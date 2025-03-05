@@ -50,6 +50,25 @@ exports.setUserRole = async (req, res) => {
     return res.status(500).json({ message: "Internal server error" });
   }
 };
+exports.setUserStatus = async (req, res) => {
+  const { id, role } = req.body.payload.userInfo;
+
+  try {
+    await User.update(
+      { status: 1 },
+      {
+        where: {
+          user_id: id,
+        },
+      }
+    );
+
+    res.status(200).send("User has been blocked");
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
 exports.getUserInfo = async (req, res) => {
   const user_id = req.params.id;
   console.log("asaa", user_id);
@@ -896,6 +915,11 @@ exports.loginUser = (req, res) => {
     const user = result.rows[0];
     if (!result.rows[0].is_verified) {
       return res.status(401).json({ message: "email non verificata" });
+    }
+    console.log("aaa", result.rows[0].status);
+    if (result.rows[0].status === 1) {
+      console.log("abb", result.rows[0].status);
+      return res.status(401).json({ message: "accesso non consentito" });
     }
     console.log("this", user);
     const passwordMatch = await bcrypt.compare(

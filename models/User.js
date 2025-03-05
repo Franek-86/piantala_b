@@ -73,6 +73,10 @@ const User = sequelize.define(
       type: Sequelize.BOOLEAN,
       // defaultValue: false,
     },
+    status: {
+      type: Sequelize.INTEGER,
+      defaultValue: 0,
+    },
     verification_token: {
       type: Sequelize.STRING,
     },
