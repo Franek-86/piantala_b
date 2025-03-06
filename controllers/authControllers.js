@@ -33,21 +33,39 @@ exports.verificationEmail = async (req, res) => {
 };
 exports.setUserRole = async (req, res) => {
   const { id, role } = req.body.payload.userInfo;
+  if (role === "admin") {
+    try {
+      await User.update(
+        { role: "user" },
+        {
+          where: {
+            user_id: id,
+          },
+        }
+      );
 
-  try {
-    await User.update(
-      { role: "admin" },
-      {
-        where: {
-          user_id: id,
-        },
-      }
-    );
+      res.status(200).send("user");
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ message: "Internal server error" });
+    }
+  }
+  if (role === "user") {
+    try {
+      await User.update(
+        { role: "admin" },
+        {
+          where: {
+            user_id: id,
+          },
+        }
+      );
 
-    res.status(200).send("User role has been changed");
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({ message: "Internal server error" });
+      res.status(200).send("admin");
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ message: "Internal server error" });
+    }
   }
 };
 exports.setUserStatus = async (req, res) => {
