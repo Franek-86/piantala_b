@@ -44,7 +44,7 @@ exports.setUserRole = async (req, res) => {
         }
       );
 
-      res.status(200).send("user");
+      res.status(200).send("diritti amministrativi rimossi");
     } catch (error) {
       console.error(error);
       return res.status(500).json({ message: "Internal server error" });
@@ -61,7 +61,7 @@ exports.setUserRole = async (req, res) => {
         }
       );
 
-      res.status(200).send("admin");
+      res.status(200).send("diritti amministrativi aggiunti");
     } catch (error) {
       console.error(error);
       return res.status(500).json({ message: "Internal server error" });
@@ -69,22 +69,40 @@ exports.setUserRole = async (req, res) => {
   }
 };
 exports.setUserStatus = async (req, res) => {
-  const { id, role } = req.body.payload.userInfo;
+  const { id, status } = req.body.payload.userInfo;
+  if (status === 0) {
+    try {
+      await User.update(
+        { status: 1 },
+        {
+          where: {
+            user_id: id,
+          },
+        }
+      );
 
-  try {
-    await User.update(
-      { status: 1 },
-      {
-        where: {
-          user_id: id,
-        },
-      }
-    );
+      res.status(200).send("User has been blocked");
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ message: "Internal server error" });
+    }
+  }
+  if (status === 1) {
+    try {
+      await User.update(
+        { status: 0 },
+        {
+          where: {
+            user_id: id,
+          },
+        }
+      );
 
-    res.status(200).send("User has been blocked");
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({ message: "Internal server error" });
+      res.status(200).send("User has been unblocked");
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ message: "Internal server error" });
+    }
   }
 };
 exports.getUserInfo = async (req, res) => {
