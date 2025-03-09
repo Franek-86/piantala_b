@@ -112,7 +112,11 @@ exports.getUserInfo = async (req, res) => {
     const user = await User.findOne({ where: { user_id: user_id } });
     if (user) {
       console.log("135", user);
-      const test = user.dataValues.user_name;
+      const test = {
+        userName: user.dataValues.user_name,
+        email: user.dataValues.email,
+      };
+      // const test = user.dataValues.user_name;
       console.log("test1", test);
       res.status(200).send(test);
     } else {
