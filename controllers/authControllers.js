@@ -973,16 +973,27 @@ exports.loginUser = (req, res) => {
 
     // Set user info in session
     req.session.user = { id: user.user_id, email: user.email, role: user.role };
+    console.log("aaa");
+    req.session.save((err) => {
+      if (err) {
+        console.log("bbb", err);
+        return res.status(500).json({ message: "login error" });
+      }
+      const token = jwt.sign(
+        { id: user.user_id, email: user.email, role: user.role },
+        process.env.JWT_SECRET_KEY,
+        { expiresIn: "1h" }
+      );
+      return res.status(200).json({
+        message: "Login successful",
+        token,
+        user: req.session.user,
+      });
 
-    const token = jwt.sign(
-      { id: user.user_id, email: user.email, role: user.role },
-      process.env.JWT_SECRET_KEY,
-      { expiresIn: "1h" }
-    );
-    return res.status(200).json({
-      message: "Login successful",
-      token,
-      user: { id: user.user_id, email: user.email, role: user.role },
+      // console.log("ccc");
+      // res
+      //   .status(200)
+      //   .json({ message: "login successfull", user: req.session.user });
     });
   });
 };
