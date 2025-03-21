@@ -64,7 +64,7 @@ app.use(
     resave: false, // Don't resave session if unmodified
     saveUninitialized: false, // Don't save uninitialized sessions
     cookie: {
-      expires: 600000, // Set the session cookie expiration time (in milliseconds)
+      maxAge: 600000, // Set the session cookie expiration time (in milliseconds)
       httpOnly: true, // Prevent client-side JavaScript from accessing cookies
       secure: process.env.NODE_ENV === "production", // Use secure cookies in production
     },
