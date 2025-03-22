@@ -988,6 +988,7 @@ exports.loginUser = (req, res) => {
         process.env.JWT_SECRET_KEY,
         { expiresIn: "1h" }
       );
+      console.log("test123", res.getHeaders(["set-cookie"]));
       return res.status(200).json({
         message: "Login successful",
         token,
