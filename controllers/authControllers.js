@@ -983,6 +983,7 @@ exports.loginUser = (req, res) => {
         httpOnly: true,
         secure: true,
         sameSite: "none",
+        maxAge: 600000,
       });
       // res.setHeader(
       //   "Set-Cookie",
