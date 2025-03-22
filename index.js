@@ -24,6 +24,7 @@ app.use(
     ], // or '*' to allow all origins (not recommended for production)
     methods: ["GET", "POST", "PATCH", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
+    credentials: true,
   })
 );
 // Allow all OPTIONS requests (preflight)
