@@ -973,7 +973,7 @@ exports.loginUser = (req, res) => {
 
     // Set user info in session
     req.session.user = { id: user.user_id, email: user.email, role: user.role };
-    console.log("aaa");
+    console.log("test123", req.sessionID);
     req.session.save((err) => {
       if (err) {
         console.log("bbb", err);
