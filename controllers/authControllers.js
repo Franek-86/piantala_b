@@ -979,6 +979,10 @@ exports.loginUser = (req, res) => {
         console.log("bbb", err);
         return res.status(500).json({ message: "login error" });
       }
+      res.setHeader(
+        "Set-Cookie",
+        "test_cookie=hello; Path=/; HttpOnly; Secure; SameSite=None"
+      );
       const token = jwt.sign(
         { id: user.user_id, email: user.email, role: user.role },
         process.env.JWT_SECRET_KEY,
@@ -1003,6 +1007,7 @@ exports.logoutUser = async (req, res) => {
     if (err) {
       return res.status(500).json({ message: "Logout failed" });
     }
+    res.clearCookie("user_sid", { path: "/" });
     res.status(200).json({ message: "Logged out successfully" });
   });
 };

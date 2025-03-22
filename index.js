@@ -36,20 +36,6 @@ app.use(bodyParser.json());
 
 // const sessionStore = new MySQLStore({}, require("./config/db"));
 const stripe = require("stripe")(`${process.env.STRIPE_SECRET_KEY}`);
-// app.use(
-//   session({
-//     key: "user_sid",
-//     secret: `${process.env.MY_SECRET_KEY}`, // Change this to a strong secret
-//     store: sessionStore,
-//     resave: false,
-//     saveUninitialized: false,
-//     cookie: {
-//       expires: 600000, // Set cookie expiration time (in milliseconds)
-//     },
-//   })
-// );
-
-// Create a PostgreSQL client pool (adjust your database connection details)
 
 const sessionStore = new pgSession({
   pool: con, // Use the connection pool
@@ -67,7 +53,9 @@ app.use(
     cookie: {
       maxAge: 600000, // Set the session cookie expiration time (in milliseconds)
       httpOnly: true, // Prevent client-side JavaScript from accessing cookies
-      secure: process.env.NODE_ENV === "production", // Use secure cookies in production
+      // secure: process.env.NODE_ENV === "production",
+      secure: true,
+      sameSite: "none",
     },
   })
 );
