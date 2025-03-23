@@ -980,7 +980,7 @@ exports.loginUser = (req, res) => {
         return res.status(500).json({ message: "login error" });
       }
       res.cookie("user_id", req.sessionID, {
-        httpOnly: false,
+        httpOnly: true,
         secure: true,
         sameSite: "none",
         maxAge: 600000,
