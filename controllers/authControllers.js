@@ -1113,6 +1113,7 @@ exports.validateFiscalCode = async (req, res) => {
 };
 
 exports.userSession = async (req, res) => {
+  console.log("session", req.session);
   if (req.session && req.session.user) {
     // User is authenticated
     return res.json({ authenticated: true, user: req.session.user });
