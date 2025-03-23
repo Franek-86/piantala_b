@@ -983,7 +983,6 @@ exports.loginUser = (req, res) => {
         httpOnly: true,
         secure: true,
         sameSite: "none",
-        maxAge: 600000,
       });
       // res.setHeader(
       //   "Set-Cookie",
@@ -1111,4 +1110,13 @@ exports.validateFiscalCode = async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: "qualcosa è andato storto" });
   }
+};
+
+exports.userSession = async (req, res) => {
+  if (req.session && req.session.user) {
+    // User is authenticated
+    return res.json({ authenticated: true, user: req.session.user });
+  }
+  // User is not authenticated
+  res.status(401).json({ authenticated: false, message: "Not authenticated" });
 };
