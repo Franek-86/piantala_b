@@ -107,14 +107,27 @@ exports.addPlant = async (req, res) => {
     console.log("FormData Headers:", formHeaders);
 
     // Add the Authorization header for Imgur API
-    const headers = {
-      ...formHeaders,
-      Authorization: `Client-ID ${process.env.IMGUR_CLIENT_ID}`, // Ensure the Client-ID is set properly
-    };
 
     // Log the final headers
-    console.log("Request Headers:", headers);
 
+    let accessToken = process.env.IMGUR_INTIAL_ACCESS_TOKEN;
+    async function refreshToken() {
+      const response = await axios.post("https://api.imgur.com/oauth2/token", {
+        refresh_token: process.env.IMGUR_REFRESH_TOKEN, // Replace with your refresh token
+        client_id: process.env.IMGUR_CLIENT_ID,
+        client_secret: process.env.IMGUR_CLIENT_SECRET,
+        grant_type: "refresh_token",
+      });
+      console.log("here1", response.data.access_token);
+      accessToken = response.data.access_token; // Store new token
+      console.log("New Access Token:", accessToken);
+    }
+    await refreshToken();
+    const headers = {
+      ...formHeaders,
+      Authorization: `Bearer ${accessToken}`, // Ensure the Client-ID is set properly
+    };
+    console.log("Request Headers:", headers);
     const imgurResponse = await axios.post(
       "https://api.imgur.com/3/image",
       formData,
