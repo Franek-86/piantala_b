@@ -52,7 +52,7 @@ app.use(
     saveUninitialized: false, // Don't save uninitialized sessions
     cookie: {
       maxAge: 600000, // Set the session cookie expiration time (in milliseconds)
-      httpOnly: true, // Prevent client-side JavaScript from accessing cookies
+      httpOnly: false, // Prevent client-side JavaScript from accessing cookies
       // secure: process.env.NODE_ENV === "production",
       secure: true,
       sameSite: "none",
