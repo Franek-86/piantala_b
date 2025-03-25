@@ -24,11 +24,22 @@ exports.addPlate = async (req, res) => {
     });
 
     const formHeaders = formData.getHeaders();
-
+    let accessToken = process.env.IMGUR_INTIAL_ACCESS_TOKEN;
+    async function refreshToken() {
+      const response = await axios.post("https://api.imgur.com/oauth2/token", {
+        refresh_token: process.env.IMGUR_REFRESH_TOKEN, // Replace with your refresh token
+        client_id: process.env.IMGUR_CLIENT_ID,
+        client_secret: process.env.IMGUR_CLIENT_SECRET,
+        grant_type: "refresh_token",
+      });
+      console.log("here1", response.data.access_token);
+      accessToken = response.data.access_token; // Store new token
+    }
+    await refreshToken();
     // Add the Authorization header for Imgur API
     const headers = {
       ...formHeaders,
-      Authorization: `Client-ID ${process.env.IMGUR_CLIENT_ID}`, // Ensure the Client-ID is set properly
+      Authorization: `Bearer ${accessToken}`, // Ensure the Client-ID is set properly
     };
     console.log("Request Headers:", headers);
     // Log the final headers
@@ -274,11 +285,26 @@ exports.clearPlate = async (req, res) => {
     console.log("123321");
     if (!hash) return;
     try {
+      async function refreshToken() {
+        const response = await axios.post(
+          "https://api.imgur.com/oauth2/token",
+          {
+            refresh_token: process.env.IMGUR_REFRESH_TOKEN, // Replace with your refresh token
+            client_id: process.env.IMGUR_CLIENT_ID,
+            client_secret: process.env.IMGUR_CLIENT_SECRET,
+            grant_type: "refresh_token",
+          }
+        );
+        console.log("here1", response.data.access_token);
+        accessToken = response.data.access_token; // Store new token
+        console.log("New Access Token:", accessToken);
+      }
+      await refreshToken();
       const imgurResponse = await axios.delete(
         `https://api.imgur.com/3/image/${hash}`,
         {
           headers: {
-            Authorization: `Client-ID ${process.env.IMGUR_CLIENT_ID}`,
+            Authorization: `Bearer ${accessToken}`,
           },
         }
       );
@@ -331,11 +357,26 @@ exports.deletePlant = async (req, res) => {
     const deleteFromImgur = async (hash) => {
       if (!hash) return;
       try {
+        let accessToken = process.env.IMGUR_INTIAL_ACCESS_TOKEN;
+        async function refreshToken() {
+          const response = await axios.post(
+            "https://api.imgur.com/oauth2/token",
+            {
+              refresh_token: process.env.IMGUR_REFRESH_TOKEN, // Replace with your refresh token
+              client_id: process.env.IMGUR_CLIENT_ID,
+              client_secret: process.env.IMGUR_CLIENT_SECRET,
+              grant_type: "refresh_token",
+            }
+          );
+          console.log("here1", response.data.access_token);
+          accessToken = response.data.access_token; // Store new token
+        }
+        await refreshToken();
         const imgurResponse = await axios.delete(
           `https://api.imgur.com/3/image/${hash}`,
           {
             headers: {
-              Authorization: `Client-ID ${process.env.IMGUR_CLIENT_ID}`,
+              Authorization: `Bearer ${accessToken}`,
             },
           }
         );
