@@ -1061,12 +1061,14 @@ exports.fetchRegions = async (req, res) => {
 
       return;
     }
-    if (response) {
-      console.log(response.data);
+    if (response.data.totalResultsCount) {
+      console.log("this", response.data.totalResultsCount);
       res.json(response.data.geonames);
     }
   } catch (err) {
-    console.log(err);
+    res
+      .status(500)
+      .json("Qualcosa è andato storto facendo il fetching delle regioni");
   }
 };
 exports.fetchDistricts = async (req, res) => {
