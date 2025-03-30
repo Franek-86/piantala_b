@@ -153,8 +153,7 @@ exports.registerUser = async (req, res) => {
     user_name,
     phone
   );
-  const validRoles = ["user", "admin"];
-  const userRole = validRoles.includes(role) ? role : "user";
+
   const existingUser = await User.findOne({ where: { email } });
 
   if (existingUser) {
@@ -1045,10 +1044,49 @@ exports.getAllUsers = async (req, res) => {
     return res.status(500).json({ message: "Internal server error" });
   }
 };
-exports.fetchCities = async (req, res) => {
+
+exports.fetchRegions = async (req, res) => {
   try {
     const response = await axios.get(
-      "http://api.geonames.org/childrenJSON?geonameId=3182350&username=franek"
+      "http://api.geonames.org/childrenJSON?geonameId=3175395&username=franek"
+    );
+
+    // console.log("test", response.data.status.value);
+    if (response.data.status?.value == 19) {
+      console.log("test1");
+      res.json({
+        message: "Abbiamo finito le prove gratuite, riprova fra un'oretta",
+        status: 503,
+      });
+
+      return;
+    }
+    if (response) {
+      console.log(response.data);
+      res.json(response.data.geonames);
+    }
+  } catch (err) {
+    console.log(err);
+  }
+};
+exports.fetchDistricts = async (req, res) => {
+  console.log("aaa", req.query.regionCode);
+  let geonameId = req.query.regionCode;
+  try {
+    const response = await axios.get(
+      `http://api.geonames.org/childrenJSON?geonameId=${geonameId}&username=franek`
+    );
+
+    res.json(response.data.geonames);
+  } catch (error) {
+    res.status(500).json({ error: "qualcosa è andato storto" });
+  }
+};
+exports.fetchCities = async (req, res) => {
+  let geonameId = req.query.cityCode;
+  try {
+    const response = await axios.get(
+      `http://api.geonames.org/childrenJSON?geonameId=${geonameId}&username=franek`
     );
 
     res.json(response.data.geonames);
