@@ -177,7 +177,7 @@ exports.registerUser = async (req, res) => {
       verification_token: email_token,
     });
     const token = jwt.sign(
-      { id: user.id, email: email, role: userRole },
+      { id: user.id, email: email, role: "user" },
       "your_jwt_secret_key",
       { expiresIn: "1h" }
     );
@@ -1096,25 +1096,7 @@ exports.fetchCities = async (req, res) => {
     res.status(500).json({ error: "qualcosa è andato storto" });
   }
 };
-// exports.fetchCities = async (req, res) => {
-//   try {
-//     const response = await axios.get(
-//       "http://api.geonames.org/childrenJSON?geonameId=3182350&username=franek"
-//     );
-//     if (typeof response.data !== "object") {
-//       throw new Error("Invalid JSON response from GeoNames");
-//     }
-//     if (response) {
-//       let data = await response.data.geonames;
-//       console.log(data);
 
-//       await res.send(data);
-//       // setCities(data);
-//     }
-//   } catch (error) {
-//     console.error("Error fetching cities:", error);
-//     res.status(500).json("qualcosa è andato storto");
-//   }
 // };
 
 exports.generateFiscalCode = async (req, res) => {
