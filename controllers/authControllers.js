@@ -953,7 +953,7 @@ exports.loginUser = (req, res) => {
 
     const user = result.rows[0];
     if (!result.rows[0].is_verified) {
-      return res.status(401).json({ message: "email non verificata" });
+      return res.status(401).json({ message: "Email non verificata" });
     }
     console.log("aaa", result.rows[0].status);
     if (result.rows[0].status === 1) {
