@@ -952,9 +952,13 @@ exports.loginUser = (req, res) => {
     }
 
     const user = result.rows[0];
-    if (!result.rows[0].is_verified) {
+    if (result.rowCount === 0) {
+      return res.status(401).json({ message: "Utente non registrato" });
+    }
+    if (!result.rows[0]?.is_verified) {
       return res.status(401).json({ message: "Email non verificata" });
     }
+
     console.log("aaa", result.rows[0].status);
     if (result.rows[0].status === 1) {
       console.log("abb", result.rows[0].status);
@@ -1066,9 +1070,9 @@ exports.fetchRegions = async (req, res) => {
       res.json(response.data.geonames);
     }
   } catch (err) {
-    res
-      .status(500)
-      .json("Qualcosa è andato storto facendo il fetching delle regioni");
+    res.status(500).json({
+      message: "Qualcosa è andato storto facendo il fetching delle regioni",
+    });
   }
 };
 exports.fetchDistricts = async (req, res) => {
