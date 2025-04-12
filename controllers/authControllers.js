@@ -210,16 +210,39 @@ exports.registerUser = async (req, res) => {
     res.status(500).json({ message: "Server error during registration" });
   }
 };
+exports.sendEmail = async (req, res) => {
+  const {
+    loggedUserInfo: { email },
+    messageBody,
+  } = req.body.payload;
+  console.log("here", email, messageBody);
+
+  const mailOptions = {
+    from: "franekdev86@gmail.com",
+    to: "franekdev86@gmail.com",
+    subject: `Ti Pianto per Amore - email da ${email}`,
+    html: `<p>${messageBody}</p>`,
+  };
+  try {
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        res.status(400).send({
+          message: "email non inviata, errore nell'invio della email",
+        });
+      } else {
+        res.status(200).send({ message: "email inviata" });
+      }
+    });
+  } catch (error) {
+    res.status(500).send("Error: Something went wrong. Please try again.");
+  }
+};
 
 exports.loginUser = (req, res) => {
-  // console.log(process.env.STATIC_DIR);
   const { email, user_password } = req.body;
   const sql = "SELECT * FROM users WHERE email = $1";
   con.query(sql, [email], async (err, result) => {
-    console.log("result", result);
     if (err) {
-      console.log("err", err);
-      console.error(err);
       return res.status(500).json({ message: "Server error" });
     }
 
@@ -235,12 +258,10 @@ exports.loginUser = (req, res) => {
       return res.status(401).json({ message: "Email non verificata" });
     }
 
-    console.log("aaa", result.rows[0].status);
     if (result.rows[0].status === 1) {
-      console.log("abb", result.rows[0].status);
       return res.status(401).json({ message: "accesso non consentito" });
     }
-    console.log("this", user);
+
     const passwordMatch = await bcrypt.compare(
       user_password,
       user.user_password
@@ -255,7 +276,6 @@ exports.loginUser = (req, res) => {
 
     req.session.save((err) => {
       if (err) {
-        console.log("bbb", err);
         return res.status(500).json({ message: "login error" });
       }
       res.cookie("user_id", req.sessionID, {
@@ -297,9 +317,7 @@ exports.getAllUsers = async (req, res) => {
   try {
     const user = await User.findAll({ where: { is_verified: true } });
     if (user) {
-      console.log("user123", user);
       let usersToBeSent = user.map((i) => {
-        console.log("aaa", i.dataValues.user_password);
         delete i.dataValues.user_password;
         delete i.dataValues.verification_token;
         delete i.dataValues.phone;
@@ -311,7 +329,6 @@ exports.getAllUsers = async (req, res) => {
 
         return i;
       });
-      console.log("user to be sent", usersToBeSent);
 
       res.status(200).send({
         usersToBeSent,
@@ -320,7 +337,6 @@ exports.getAllUsers = async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
   } catch (error) {
-    console.error(error);
     return res.status(500).json({ message: "Internal server error" });
   }
 };
@@ -331,9 +347,7 @@ exports.fetchRegions = async (req, res) => {
       "http://api.geonames.org/childrenJSON?geonameId=3175395&username=franek"
     );
 
-    // console.log("test", response.data.status.value);
     if (response.data.status?.value == 19) {
-      console.log("test1");
       res.json({
         message: "Abbiamo finito le prove gratuite, riprova fra un'oretta",
         status: 503,
@@ -342,7 +356,6 @@ exports.fetchRegions = async (req, res) => {
       return;
     }
     if (response.data.totalResultsCount) {
-      console.log("this", response.data.totalResultsCount);
       res.json(response.data.geonames);
     }
   } catch (err) {
@@ -352,7 +365,6 @@ exports.fetchRegions = async (req, res) => {
   }
 };
 exports.fetchDistricts = async (req, res) => {
-  console.log("aaa", req.query.regionCode);
   let geonameId = req.query.regionCode;
   try {
     const response = await axios.get(
@@ -380,7 +392,6 @@ exports.fetchCities = async (req, res) => {
 // };
 
 exports.generateFiscalCode = async (req, res) => {
-  console.log("qua", req.body.payload);
   const { name, lastName, gender, city, year, month, day } = req.body.payload;
   try {
     const response = await axios.get(
@@ -398,7 +409,7 @@ exports.validateFiscalCode = async (req, res) => {
     const response = await axios.get(
       `${process.env.CF_URL}?cf=${fiscalCode}&access_token=${process.env.CF_KEY}`
     );
-    console.log("quaa", response);
+
     // if (response.data.status) {
     res.status(200).json(response.data);
     // } else {
@@ -410,8 +421,6 @@ exports.validateFiscalCode = async (req, res) => {
 };
 
 exports.userSession = async (req, res) => {
-  console.log("session", req.session);
-
   if (req.session && req.session.user) {
     // User is authenticated
     return res.json({ authenticated: true, user: req.session.user });
