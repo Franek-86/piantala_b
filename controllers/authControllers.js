@@ -33,6 +33,26 @@ exports.verificationEmail = async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
+exports.verificationEmailPasswordReset = async (req, res) => {
+  const token = req.params.token;
+
+  try {
+    const user = await User.findOne({ where: { verification_token: token } });
+    console.log("t3", user);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    user.is_verified = true;
+    // user.verification_token = null;
+    await user.save();
+    return res.redirect(
+      `${domainNameClient}/verification-success-reset/${user.verification_token}`
+    );
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
 exports.setUserRole = async (req, res) => {
   const { id, role } = req.body.payload.userInfo;
   if (role === "admin") {
@@ -210,6 +230,109 @@ exports.registerUser = async (req, res) => {
     res.status(500).json({ message: "Server error during registration" });
   }
 };
+
+// Start password reset
+
+exports.passwordLink = async (req, res) => {
+  console.log(req.body);
+  const { email } = req.body.data;
+  try {
+    const user = await User.findOne({ where: { email } });
+    if (!user) {
+      return res.status(409).send({ message: "Email non registrata" });
+    }
+    let token = user?.verification_token;
+    if (!token) {
+      const token = generateVerificationToken();
+      console.log("I need to create a token?", token);
+      user.verification_token = token;
+      await user.save();
+      const url = `${
+        process.env.NODE_ENV === "test"
+          ? process.env.DOMAIN_NAME_TEST_SERVER
+          : process.env.DOMAIN_NAME_SERVER
+      }/api/auth/reset-password/verify/${user.verification_token}`;
+      console.log("here", url);
+      const mailOptions = {
+        from: "franekdev86@gmail.com",
+        to: `${user.email}`,
+        cc: "franekdev86@gmail.com",
+        subject: "password reset",
+        html: `<p>${url}</p>`,
+      };
+      try {
+        transporter.sendMail(mailOptions, (error, info) => {
+          if (error) {
+            res.status(400).send({
+              message: "email non inviata, errore nell'invio della email",
+            });
+          } else {
+            res.status(200).send({ message: "Email inviata" });
+          }
+        });
+      } catch (error) {
+        res.status(500).send("Something went wrong. Please try again.");
+      }
+    }
+    if (token) {
+      const url = `${
+        process.env.NODE_ENV === "test"
+          ? process.env.DOMAIN_NAME_TEST_SERVER
+          : process.env.DOMAIN_NAME_SERVER
+      }/api/auth/reset-password/verify/${user.verification_token}`;
+      console.log("here", url);
+      const mailOptions = {
+        from: "franekdev86@gmail.com",
+        to: `${user.email}`,
+        cc: "franekdev86@gmail.com",
+        subject: "password reset",
+        html: `<p>${url}</p>`,
+      };
+      try {
+        transporter.sendMail(mailOptions, (error, info) => {
+          if (error) {
+            res.status(400).send({
+              message: "email non inviata, errore nell'invio della email",
+            });
+          } else {
+            res.status(200).send({ message: "email inviata" });
+          }
+        });
+      } catch (error) {
+        res.status(500).send("Error: Something went wrong. Please try again.");
+      }
+    }
+  } catch (err) {
+    console.log(err);
+    res.status(500).send({ message: "internal server error" });
+  }
+};
+
+exports.newPassword = async (req, res) => {
+  try {
+    console.log("test111", req.body.payload);
+    const { psw } = req.body.payload;
+    const { token } = req.body.payload;
+    const hashedPassword = await bcrypt.hash(psw, 10);
+    console.log("token", token);
+    console.log("password", psw);
+    console.log("hashedPassword", hashedPassword);
+    const user = await User.findOne({ where: { verification_token: token } });
+    user.user_password = hashedPassword;
+    user.verification_token = null;
+    await user.save();
+
+    // console.log("user", user);
+    console.log("aaa", req.body);
+    res.status(200).send("Password cambiata con successo");
+  } catch (err) {
+    console.log("zzz", err);
+    res.status(400).send("Errore");
+  }
+};
+
+// End password reset
+
 exports.sendEmail = async (req, res) => {
   const {
     loggedUserInfo: { email },

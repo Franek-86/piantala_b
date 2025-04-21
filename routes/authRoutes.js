@@ -5,6 +5,10 @@ const User = require("../models/User");
 const authController = require("../controllers/authControllers");
 
 router.get("/verify/:token", authController.verificationEmail);
+router.get(
+  "/reset-password/verify/:token",
+  authController.verificationEmailPasswordReset
+);
 router.post("/send", authController.sendEmail);
 router.post("/register", authController.registerUser);
 router.post("/login", authController.loginUser);
@@ -19,4 +23,9 @@ router.post("/login/validate-fiscal-code", authController.validateFiscalCode);
 router.patch("/role", isAdmin, authController.setUserRole);
 router.patch("/status", isAdmin, authController.setUserStatus);
 router.get("/me", authController.userSession);
+// start password reset
+router.post("/password-reset", authController.passwordLink);
+router.patch("/new-password", authController.newPassword);
+
+// end password reset
 module.exports = router;
