@@ -1,21 +1,5 @@
 const { Sequelize } = require("sequelize");
 require("dotenv").config();
-// const sequelize = new Sequelize(
-//   process.env.NODE_ENV === "production"
-//     ? process.env.DATABASE
-//     : process.env.TEST_DATABASE,
-//   process.env.USER_ID,
-//   process.env.DB_PASSWORD,
-//   {
-//     host:
-//       process.NODE_ENV === "production"
-//         ? process.env.HOST
-//         : process.env.TEST_HOST,
-//     port: process.env.PORT,
-//     dialect: "postgres",
-//     logging: console.log,
-//   }
-// );
 
 const sequelize = new Sequelize(
   process.env.NODE_ENV === "test"

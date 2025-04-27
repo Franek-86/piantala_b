@@ -133,7 +133,7 @@ exports.getUserInfo = async (req, res) => {
   try {
     const user = await User.findOne({ where: { user_id: user_id } });
     if (user) {
-      console.log("135", user);
+      console.log("135", user.user_name);
       const test = {
         userName: user.dataValues.user_name,
         email: user.dataValues.email,
@@ -362,68 +362,47 @@ exports.sendEmail = async (req, res) => {
   }
 };
 
-exports.loginUser = (req, res) => {
+exports.loginUser = async (req, res) => {
   const { email, user_password } = req.body;
-  const sql = "SELECT * FROM users WHERE email = $1";
-  con.query(sql, [email], async (err, result) => {
-    if (err) {
-      return res.status(500).json({ message: "Server error" });
-    }
 
-    if (result.length === 0) {
-      return res.status(401).json({ message: "Invalid email or password" });
-    }
+  const user = await User.findOne({ where: { email: email } });
+  if (user === null) {
+    return res.status(401).json({ message: "Utente non registrato" });
+  }
+  if (user.is_verified === false) {
+    return res.status(401).json({ message: "Email non verificata" });
+  }
+  if (user.status === 1) {
+    return res.status(401).json({ message: "accesso non consentito" });
+  }
+  const passwordMatch = await bcrypt.compare(user_password, user.user_password);
 
-    const user = result.rows[0];
-    if (result.rowCount === 0) {
-      return res.status(401).json({ message: "Utente non registrato" });
-    }
-    if (!result.rows[0]?.is_verified) {
-      return res.status(401).json({ message: "Email non verificata" });
-    }
-
-    if (result.rows[0].status === 1) {
-      return res.status(401).json({ message: "accesso non consentito" });
-    }
-
-    const passwordMatch = await bcrypt.compare(
-      user_password,
-      user.user_password
-    );
-
-    if (!passwordMatch) {
-      return res.status(401).json({ message: "Invalid email or password" });
-    }
-
-    // Set user info in session
-    req.session.user = { id: user.user_id, email: user.email, role: user.role };
-
-    req.session.save((err) => {
-      if (err) {
-        return res.status(500).json({ message: "login error" });
-      }
-      res.cookie("user_id", req.sessionID, {
-        httpOnly: true,
-        secure: true,
-        sameSite: "none",
-      });
-      // res.setHeader(
-      //   "Set-Cookie",
-      //   "test_cookie=hello; Path=/; HttpOnly; Secure; SameSite=None"
-      // );
+  if (!passwordMatch) {
+    return res.status(401).json({ message: "Password non corretta" });
+  } else {
+    try {
+      console.log("test11", user.id);
       const token = jwt.sign(
-        { id: user.user_id, email: user.email, role: user.role },
+        { id: user.id, email: user.email, role: user.role },
         process.env.JWT_SECRET_KEY,
         { expiresIn: "1h" }
       );
-
+      // Set user info in session
+      req.session.user = {
+        id: user.id,
+        email: user.email,
+        role: user.role,
+      };
       return res.status(200).json({
         message: "Login successful",
         token,
         user: req.session.user,
       });
-    });
-  });
+    } catch (err) {
+      console.log("this", err);
+      return res.status(500).json({ message: "Server error" });
+    }
+  }
 };
 
 exports.logoutUser = async (req, res) => {
