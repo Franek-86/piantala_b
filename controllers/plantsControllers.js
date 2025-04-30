@@ -2,6 +2,8 @@ const con = require("../config/db");
 const FormData = require("form-data");
 const axios = require("axios");
 const User = require("../models/User");
+const Plant = require("../models/Plant");
+
 // const fs = require("fs");
 // const path = require("path");
 // const bucket = require("../config/firebaseConfig");
@@ -56,22 +58,23 @@ exports.addPlate = async (req, res) => {
       const imageUrl = imgurResponse.data.data.link;
       const plateHash = imgurResponse.data.data.deletehash;
       console.log("this2", imageUrl);
-
-      // Now insert the record into the database with the image URL
-      const sql = `UPDATE piantine set plate = $1, plate_hash = $2 where id = ${id}`;
-      con.query(sql, [imageUrl, plateHash], (err, result) => {
-        if (err) {
-          console.log(err);
-          return res.status(500).send(err);
-        }
-
-        // Return success response with the inserted record's ID
+      try {
+        const updatedPlate = await Plant.update(
+          { plate: imageUrl, plate_hash: plateHash },
+          {
+            where: {
+              id: id,
+            },
+          }
+        );
         res.status(201).json({
           message: "Item added successfully!",
-          id: result.insertId,
+          id: updatedPlate.insertId,
           image_url: imageUrl,
         });
-      });
+      } catch (err) {
+        console.log(err);
+      }
     } else {
       console.error("Error uploading image:", imgurResponse.data);
       return res
@@ -101,11 +104,7 @@ exports.addPlant = async (req, res) => {
     if (!req.file) {
       return res.status(400).json({ message: "Image file is required" });
     }
-    console.log("File buffer:", req.file.buffer); // Ensure this contains data
-    console.log("File mime type:", req.file.mimetype); // Check mime type
-    console.log("File size:", req.file.size); // Check file size
-    // Create a new FormData instance and append the file buffer
-    // Create form data and append the image buffer
+
     const formData = new FormData();
     formData.append("image", req.file.buffer, {
       filename: req.file.originalname, // Ensure correct filename is passed
@@ -146,43 +145,29 @@ exports.addPlant = async (req, res) => {
         headers: headers,
       }
     );
-    // If the response is successful, extract the image URL
     if (imgurResponse && imgurResponse.data && imgurResponse.data.success) {
       const imageUrl = imgurResponse.data.data.link;
       const deleteHash = imgurResponse.data.data.deletehash;
-
-      // Now insert the record into the database with the image URL
-      const sql =
-        "INSERT INTO piantine (lat, lang, image_url, delete_hash, user_id, city, suburb, road, residential, shop, house_number) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)";
-      con.query(
-        sql,
-        [
-          lat,
-          lang,
-          imageUrl,
-          deleteHash,
-          user_id,
-          city,
-          suburb,
-          road,
-          residential,
-          shop,
-          house_number,
-        ],
-        (err, result) => {
-          if (err) {
-            console.log(err);
-            return res.status(500).send(err);
-          }
-
-          // Return success response with the inserted record's ID
-          res.status(201).json({
-            message: "Item added successfully!",
-            id: result.insertId,
-            image_url: imageUrl,
-          });
-        }
-      );
+      const newPlant = await Plant.create({
+        lat,
+        lang,
+        image_url: imageUrl,
+        delete_hash: deleteHash,
+        user_id,
+        city,
+        suburb,
+        road,
+        residential,
+        shop,
+        house_number,
+      });
+      console.log("1111", newPlant);
+      res.status(201).json({
+        message: "Item added successfully!",
+        id: newPlant.id,
+        // id: result.insertId,
+        image_url: imageUrl,
+      });
     } else {
       console.error("Error uploading image:", imgurResponse.data);
       return res
@@ -195,19 +180,16 @@ exports.addPlant = async (req, res) => {
   }
 };
 
-exports.getAllPlants = (req, res) => {
-  const sql = "SELECT * FROM piantine";
-  con.query(sql, (err, results) => {
-    if (err) {
-      console.log(err);
-      return res.status(500).send(err);
-    }
-    console.log("results123", results);
-    res.json(results.rows);
-  });
+exports.getAllPlants = async (req, res) => {
+  try {
+    const plants = await Plant.findAll();
+    res.status(200).json(plants);
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
 };
 
-exports.updateOwner = (req, res) => {
+exports.updateOwner = async (req, res) => {
   const { id, owner_id, comment, plantType, status, purchase_date } = req.body; // Get the new status from the request body
   console.log(
     "test345",
@@ -218,29 +200,36 @@ exports.updateOwner = (req, res) => {
     status,
     purchase_date
   );
+  // qui
+  // Change everyone without a last name to "Doe"
+  try {
+    const updateOwner = await Plant.update(
+      {
+        owner_id: owner_id,
+        plant_type: plantType,
+        user_comment: comment,
+        status_piantina: status,
+        purchase_date: purchase_date,
+      },
+      {
+        where: {
+          id: id,
+        },
+      }
+    );
 
-  const sql =
-    "UPDATE piantine SET owner_id = $1, plant_type = $2, user_comment = $3, status_piantina = $4, purchase_date = $5 WHERE id = $6";
-  con.query(
-    sql,
-    [owner_id, plantType, comment, status, purchase_date, id],
-    (err, result) => {
-      if (err) {
-        console.log(err);
-        return res.status(500).json({ message: "Server error" });
-      }
-      if (result.affectedRows === 0) {
-        console.log(err);
-        return res.status(404).json({ message: "Plant not found" });
-      }
-      res.status(200).json({
-        message: `Plant ${id} ownership updated successfully, owner id is ${owner_id}`,
-      });
+    if (!updateOwner) {
+      return res.status(404).json({ message: "Plant not found" });
     }
-  );
-  return "test";
+
+    res.status(200).json({
+      message: `Plant ${id} ownership updated successfully, owner id is ${owner_id}`,
+    });
+  } catch (err) {
+    return res.status(500).json({ message: "Server error" });
+  }
 };
-exports.updateStatus = (req, res) => {
+exports.updateStatus = async (req, res) => {
   const { id } = req.params; // Get the plant ID from the URL
   const { status, rejection_comment } = req.body; // Get the new status and rejection comment from the request body
   console.log("comment", rejection_comment);
@@ -250,32 +239,49 @@ exports.updateStatus = (req, res) => {
     return res.status(400).json({ message: "Invalid status" });
   }
 
-  // Prepare the SQL query
-  let sql = "UPDATE piantine SET status_piantina = $1";
-  const params = [status];
-  console.log("params", params);
-  // If rejection_comment is defined, add it to the update query
-  if (rejection_comment !== undefined) {
-    sql += ", rejection_comment = $2 WHERE id = $3";
-    params.push(rejection_comment);
-  }
-  if (!rejection_comment) {
-    sql += " WHERE id = $2";
-  }
-  params.push(id);
+  try {
+    if (rejection_comment !== undefined) {
+      try {
+        await Plant.update(
+          { status_piantina: status, rejection_comment: rejection_comment },
+          {
+            where: {
+              id: id,
+            },
+          }
+        );
 
-  con.query(sql, params, (err, result) => {
-    if (err) {
-      console.log(err);
-      return res.status(500).json({ message: "Server error" });
+        return res
+          .status(200)
+          .json({ message: `Plant ${id} updated to ${status} successfully!` });
+      } catch (err) {
+        return res
+          .status(500)
+          .json(`rejection update failed due to: ${err.message}`);
+      }
+    } else {
+      try {
+        await Plant.update(
+          { status_piantina: status },
+          {
+            where: {
+              id: id,
+            },
+          }
+        );
+
+        return res.status(200).json({
+          message: `Plant ${id} updated to ${status} successfully!`,
+        });
+      } catch (err) {
+        return res
+          .status(500)
+          .json({ message: `status update failed due to: ${err.message}` });
+      }
     }
-    if (result.affectedRows === 0) {
-      return res.status(404).json({ message: "Plant not found" });
-    }
-    res
-      .status(200)
-      .json({ message: `Plant ${id} updated to ${status} successfully!` });
-  });
+  } catch (err) {
+    return res.status(500).json({ message: "Server error" });
+  }
 };
 
 exports.clearPlate = async (req, res) => {
@@ -314,7 +320,7 @@ exports.clearPlate = async (req, res) => {
     }
   };
   const sqlUpdate =
-    "UPDATE piantine SET plate = NULL, plate_hash = NULL WHERE id = $1";
+    "UPDATE plants SET plate = NULL, plate_hash = NULL WHERE id = $1";
 
   const removePlate = async (id) => {
     try {
@@ -335,108 +341,117 @@ exports.clearPlate = async (req, res) => {
 
 exports.deletePlant = async (req, res) => {
   const { id } = req.params; // Get the plant ID from the URL
+  console.log("ppp", id);
 
-  const sqlSelect =
-    "SELECT image_url, delete_hash, plate, plate_hash FROM piantine WHERE id = $1"; // PostgreSQL parameterized query
-  try {
-    const selectResult = await new Promise((resolve, reject) => {
-      con.query(sqlSelect, [id], (err, result) => {
-        if (err) return reject(err);
-        resolve(result);
-      });
-    });
-    if (selectResult.rows.length === 0) {
-      return res.status(404).json({ message: "Plant not found" });
-    }
-    const { image_url, delete_hash, plate, plate_hash } = selectResult.rows[0];
-    console.log("Image URL:", image_url);
-    console.log("Delete hash:", delete_hash);
-    console.log("plate URL:", plate);
-    console.log("plate hash:", plate_hash);
+  const test = await Plant.findAll({
+    attributes: ["image_url", "delete_hash", "plate", "plate_hash"],
+    where: {
+      id: id,
+    },
+  });
+  const { image_url, delete_hash, plate, plate_hash } = test[0].dataValues;
 
-    const deleteFromImgur = async (hash) => {
-      if (!hash) return;
-      try {
-        let accessToken = process.env.IMGUR_INTIAL_ACCESS_TOKEN;
-        async function refreshToken() {
-          const response = await axios.post(
-            "https://api.imgur.com/oauth2/token",
-            {
-              refresh_token: process.env.IMGUR_REFRESH_TOKEN, // Replace with your refresh token
-              client_id: process.env.IMGUR_CLIENT_ID,
-              client_secret: process.env.IMGUR_CLIENT_SECRET,
-              grant_type: "refresh_token",
-            }
-          );
-          console.log("here1", response.data.access_token);
-          accessToken = response.data.access_token; // Store new token
-        }
-        await refreshToken();
-        const imgurResponse = await axios.delete(
-          `https://api.imgur.com/3/image/${hash}`,
+  const deleteFromImgur = async (hash) => {
+    if (!hash) return;
+    try {
+      let accessToken = process.env.IMGUR_INTIAL_ACCESS_TOKEN;
+      async function refreshToken() {
+        const response = await axios.post(
+          "https://api.imgur.com/oauth2/token",
           {
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-            },
+            refresh_token: process.env.IMGUR_REFRESH_TOKEN, // Replace with your refresh token
+            client_id: process.env.IMGUR_CLIENT_ID,
+            client_secret: process.env.IMGUR_CLIENT_SECRET,
+            grant_type: "refresh_token",
           }
         );
-        console.log(`Image with hash ${hash} deleted:`, imgurResponse.data);
-      } catch (error) {
-        console.error(`Failed to delete image with hash ${hash}:`, error);
+        console.log("here1", response.data.access_token);
+        accessToken = response.data.access_token; // Store new token
       }
-    };
-    // Attempt to delete both images
-    await Promise.all([
-      deleteFromImgur(delete_hash), // Delete first image
-      deleteFromImgur(plate_hash), // Delete second image
-    ]);
-
-    const sqlDelete = "DELETE FROM piantine WHERE id = $1"; // Delete plant query
-    const deleteResult = await new Promise((resolve, reject) => {
-      con.query(sqlDelete, [id], (err, result) => {
-        if (err) return reject(err);
-        resolve(result);
-      });
-    });
-
-    if (deleteResult.rowCount === 0) {
-      return res.status(404).json({ message: "Plant not found" });
+      await refreshToken();
+      const imgurResponse = await axios.delete(
+        `https://api.imgur.com/3/image/${hash}`,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
+      console.log(`Image with hash ${hash} deleted:`, imgurResponse.data);
+    } catch (error) {
+      console.error(`Failed to delete image with hash ${hash}:`, error);
     }
+  };
 
+  await Promise.all([
+    deleteFromImgur(delete_hash),
+    deleteFromImgur(plate_hash),
+  ]);
+
+  try {
+    await Plant.destroy({
+      where: {
+        id: id,
+      },
+    });
     res.status(200).json({ message: `Plant ${id} successfully deleted!` });
   } catch (err) {
-    console.error("Error during deletion process:", err);
-    res.status(500).json({ message: "Server error" });
+    res
+      .status(400)
+      .json(
+        `something went wrong deleting the plant after delting images from imgur: ${err.message}`
+      );
   }
 };
 
-exports.getUserPlants = (req, res) => {
-  console.log("aooo", req.query.userId);
+exports.getUserPlants = async (req, res) => {
   const { userId } = req.query;
-  console.log("ciaooo", userId);
-  // first get the id from local storage and set in in a varialble here
-  const sql = "SELECT * FROM piantine WHERE user_id = $1";
-  con.query(sql, [userId], (err, results) => {
-    if (err) {
-      console.log(err);
-      return res.status(500).send(err);
-    }
-    console.log("results222", results);
-    res.json(results.rows);
-  });
+
+  try {
+    const user = await Plant.findAll({
+      where: {
+        user_id: userId,
+      },
+    });
+    return res.status(200).json(user);
+  } catch (err) {
+    return res.status(500).send(err);
+  }
+
+  // console.log("test0", user);
+
+  // const sql = "SELECT * FROM plants WHERE user_id = $1";
+  // con.query(sql, [userId], (err, results) => {
+  //   if (err) {
+  //     console.log(err);
+  //     return res.status(500).send(err);
+  //   }
+  //   console.log("test1", results.rows);
+  //   res.json(results.rows);
+  // });
 };
 
-exports.getOwnedPlants = (req, res) => {
+exports.getOwnedPlants = async (req, res) => {
   console.log("ciao dal get owned plants", req.query.ID);
   const ownerID = req.query.ID;
-  const sql = "select * from piantine where owner_id = $1";
-  con.query(sql, [ownerID], (err, results) => {
-    if (err) {
-      console.log(err);
-      return res.status(500).send(err);
-    }
-    res.json(results.rows);
-  });
+  // const sql = "select * from plants where owner_id = $1";
+  // con.query(sql, [ownerID], (err, results) => {
+  //   if (err) {
+  //     console.log(err);
+  //     return res.status(500).send(err);
+  //   }
+  //   res.json(results.rows);
+  // });
+  try {
+    const user = await Plant.findAll({
+      where: {
+        owner_id: ownerID,
+      },
+    });
+    return res.status(200).json(user);
+  } catch (err) {
+    return res.status(500).send(err);
+  }
 };
 
 exports.getReporterInfo = async (req, res) => {

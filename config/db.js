@@ -2,7 +2,7 @@
 const { Client } = require("pg");
 require("dotenv").config();
 
-const config = {
+const configuration = {
   production: {
     host: process.env.HOST,
     user: process.env.USER_ID,
@@ -20,10 +20,12 @@ const config = {
   },
 };
 let liveConfig =
-  process.env.NODE_ENV === "test" ? config.test : config.production;
+  process.env.NODE_ENV === "test"
+    ? configuration.test
+    : configuration.production;
 
-const con = new Client(liveConfig);
-con
+const config = new Client(liveConfig);
+config
   .connect()
   .then(() => {
     console.log("Connected to PostgreSQL database");
@@ -32,4 +34,4 @@ con
     console.error("Error connecting to PostgreSQL database", err);
   });
 
-module.exports = con;
+module.exports = config;
