@@ -4,11 +4,6 @@ const axios = require("axios");
 const User = require("../models/User");
 const Plant = require("../models/Plant");
 
-// const fs = require("fs");
-// const path = require("path");
-// const bucket = require("../config/firebaseConfig");
-// const { v4: uuidv4 } = require("uuid");
-
 exports.addPlate = async (req, res) => {
   const file = req.file;
   let { id } = req.params;
