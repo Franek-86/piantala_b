@@ -1,4 +1,6 @@
 const express = require("express");
+const cookieParser = require("cookie-parser");
+
 const con = require("./config/db");
 const path = require("path");
 const app = express();
@@ -27,9 +29,10 @@ app.use(
     credentials: true,
   })
 );
+
 // Allow all OPTIONS requests (preflight)
 app.options("*", cors());
-
+app.use(cookieParser());
 app.use("/uploads", express.static("uploads"));
 
 app.use(bodyParser.json());

@@ -12,6 +12,7 @@ router.get(
 router.post("/send", authController.sendEmail);
 router.post("/register", authController.registerUser);
 router.post("/login", authController.loginUser);
+router.post("/refresh-token", authController.refreshToken);
 router.post("/logout", authController.logoutUser);
 router.get("/users", authController.getAllUsers);
 router.get("/user/:id", authController.getUserInfo);

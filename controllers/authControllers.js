@@ -387,6 +387,18 @@ exports.loginUser = async (req, res) => {
         process.env.JWT_SECRET_KEY,
         { expiresIn: "1h" }
       );
+      // eventually ned to change JWT_SECRET_KEY with a REFRESH_SECRET, here and where I verify the token
+      const refreshToken = jwt.sign(
+        { id: user.id, email: user.email, role: user.role },
+        process.env.JWT_SECRET_KEY,
+        { expiresIn: "7d" }
+      );
+      res.cookie("refreshToken", refreshToken, {
+        httpOnly: true,
+        secure: false,
+        sameSite: "Lax",
+        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+      });
       // Set user info in session
       req.session.user = {
         id: user.id,
@@ -404,13 +416,43 @@ exports.loginUser = async (req, res) => {
     }
   }
 };
+exports.refreshToken = (req, res) => {
+  const token = req.cookies?.refreshToken;
+  console.log("test1234", token);
+  if (!token) {
+    return res.status(401).send("Token not found");
+  }
+  try {
+    // JWT_SECRET_KEY needs to be replaced with REFRESH_SECRET, here and also where actually sign the  refresh token
+    const user = jwt.verify(token, process.env.JWT_SECRET_KEY);
+    console.log("user123", user);
+    // const newAccessToken = jwt.sign(
+    //   { id: user.id, email: user.email, role: user.role },
+    //   process.env.JWT_SECRET_KEY,
+    //   { expiresIn: "1h" }
+    // );
+    // res.status(200).json({
+    //   message: "Login successful",
+    //   token: newAccessToken,
+    //   user: req.session.user,
+    // });
+    res.status(200).json({ test: "test" });
+  } catch (err) {
+    res.status(403).send("Error while trying to get the refresh token");
+  }
+};
 
 exports.logoutUser = async (req, res) => {
   req.session.destroy((err) => {
     if (err) {
       return res.status(500).json({ message: "Logout failed" });
     }
-    res.clearCookie("user_sid", { path: "/" });
+    // res.clearCookie("user_sid", { path: "/" });
+    res.clearCookie("refreshToken", {
+      httpOnly: true,
+      secure: true,
+      sameSite: "strict",
+    });
     res.status(200).json({ message: "Logged out successfully" });
   });
 };
