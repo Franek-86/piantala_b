@@ -201,7 +201,7 @@ exports.registerUser = async (req, res) => {
     const token = jwt.sign(
       { id: user.id, email: email, role: "user" },
       "your_jwt_secret_key",
-      { expiresIn: "1h" }
+      { expiresIn: "10d" }
     );
 
     res.status(201).json({
@@ -395,10 +395,16 @@ exports.loginUser = async (req, res) => {
       );
       res.cookie("refreshToken", refreshToken, {
         httpOnly: true,
-        secure: false,
-        sameSite: "Lax",
-        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+        secure: true,
+        sameSite: "Strict",
+        maxAge: 20 * 24 * 60 * 60 * 1000, // 20 days
       });
+      // res.cookie("refreshToken", refreshToken, {
+      //   httpOnly: true,
+      //   secure: false,
+      //   sameSite: "Lax",
+      //   maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+      // });
       // Set user info in session
       req.session.user = {
         id: user.id,
@@ -424,8 +430,8 @@ exports.refreshToken = (req, res) => {
   }
   try {
     // JWT_SECRET_KEY needs to be replaced with REFRESH_SECRET, here and also where actually sign the  refresh token
-    const user = jwt.verify(token, process.env.JWT_SECRET_KEY);
-    console.log("user123", user);
+    const newToken = jwt.verify(token, process.env.JWT_SECRET_KEY);
+    console.log("user123", newToken);
     // const newAccessToken = jwt.sign(
     //   { id: user.id, email: user.email, role: user.role },
     //   process.env.JWT_SECRET_KEY,
@@ -436,7 +442,7 @@ exports.refreshToken = (req, res) => {
     //   token: newAccessToken,
     //   user: req.session.user,
     // });
-    res.status(200).json({ test: "test" });
+    res.status(200).json(newToken);
   } catch (err) {
     res.status(403).send("Error while trying to get the refresh token");
   }
