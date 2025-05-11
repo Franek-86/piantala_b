@@ -416,7 +416,6 @@ exports.loginUser = async (req, res) => {
         user: req.session.user,
       });
     } catch (err) {
-      console.log("this", err);
       return res.status(500).json({ message: "Server error" });
     }
   }
