@@ -385,18 +385,18 @@ exports.loginUser = async (req, res) => {
       const token = jwt.sign(
         { id: user.id, email: user.email, role: user.role },
         process.env.JWT_SECRET_KEY,
-        { expiresIn: "10s" }
+        { expiresIn: "10m" }
       );
       const refreshToken = jwt.sign(
         { id: user.id, email: user.email, role: user.role },
         process.env.REFRESH_SECRET,
-        { expiresIn: "7d" }
+        { expiresIn: "120d" }
       );
       res.cookie("refreshToken", refreshToken, {
         httpOnly: true,
         secure: true,
         sameSite: "none",
-        maxAge: 20 * 24 * 60 * 60 * 1000, // 20 days
+        maxAge: 365 * 24 * 60 * 60 * 1000, // 1 year
       });
       // res.cookie("refreshToken", refreshToken, {
       //   httpOnly: true,
@@ -404,7 +404,7 @@ exports.loginUser = async (req, res) => {
       //   sameSite: "Lax",
       //   maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
       // });
-      // Set user info in session
+
       req.session.user = {
         id: user.id,
         email: user.email,
