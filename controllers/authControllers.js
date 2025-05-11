@@ -385,12 +385,11 @@ exports.loginUser = async (req, res) => {
       const token = jwt.sign(
         { id: user.id, email: user.email, role: user.role },
         process.env.JWT_SECRET_KEY,
-        { expiresIn: "1h" }
+        { expiresIn: "10s" }
       );
-      // eventually ned to change JWT_SECRET_KEY with a REFRESH_SECRET, here and where I verify the token
       const refreshToken = jwt.sign(
         { id: user.id, email: user.email, role: user.role },
-        process.env.JWT_SECRET_KEY,
+        process.env.REFRESH_SECRET,
         { expiresIn: "7d" }
       );
       res.cookie("refreshToken", refreshToken, {
@@ -423,26 +422,27 @@ exports.loginUser = async (req, res) => {
   }
 };
 exports.refreshToken = (req, res) => {
-  const token = req.cookies?.refreshToken;
-  console.log("test1234", token);
-  if (!token) {
+  const refreshToken = req.cookies?.refreshToken;
+  console.log("test1234", refreshToken);
+  if (!refreshToken) {
+    console.log("no refresh token found");
     return res.status(401).send("Token not found");
   }
   try {
     // JWT_SECRET_KEY needs to be replaced with REFRESH_SECRET, here and also where actually sign the  refresh token
-    const newToken = jwt.verify(token, process.env.JWT_SECRET_KEY);
-    console.log("user123", newToken);
-    // const newAccessToken = jwt.sign(
-    //   { id: user.id, email: user.email, role: user.role },
-    //   process.env.JWT_SECRET_KEY,
-    //   { expiresIn: "1h" }
-    // );
-    // res.status(200).json({
-    //   message: "Login successful",
-    //   token: newAccessToken,
-    //   user: req.session.user,
-    // });
-    res.status(200).json(newToken);
+    console.log("sta facendo il try");
+    const user = jwt.verify(refreshToken, process.env.REFRESH_SECRET);
+
+    const newAccessToken = jwt.sign(
+      { id: user.id, email: user.email, role: user.role },
+      process.env.JWT_SECRET_KEY,
+      { expiresIn: "10s" }
+    );
+    res.status(200).json({
+      message: "Login successful",
+      token: newAccessToken,
+      user: req.session.user,
+    });
   } catch (err) {
     res.status(403).send("Error while trying to get the refresh token");
   }
