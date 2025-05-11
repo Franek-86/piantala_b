@@ -76,7 +76,7 @@ app.post("/create-checkout-session", async (req, res) => {
   const product = await stripe.products.create({
     name: "Piantina2",
   });
-  console.log(product);
+
   const price = await stripe.prices.create({
     product: "prod_RBhoAtdt0PFZRI",
     unit_amount: 1000,
