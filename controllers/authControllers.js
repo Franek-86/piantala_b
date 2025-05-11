@@ -426,7 +426,8 @@ exports.refreshToken = (req, res) => {
   console.log("test1234", refreshToken);
   if (!refreshToken) {
     console.log("no refresh token found");
-    return res.status(401).send("Token not found");
+    // i set 404 for avoiding infinite loop, it was 401
+    return res.status(404).send("Token not found");
   }
   try {
     // JWT_SECRET_KEY needs to be replaced with REFRESH_SECRET, here and also where actually sign the  refresh token
