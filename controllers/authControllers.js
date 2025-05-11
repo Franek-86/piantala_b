@@ -395,7 +395,7 @@ exports.loginUser = async (req, res) => {
       res.cookie("refreshToken", refreshToken, {
         httpOnly: true,
         secure: true,
-        sameSite: "Strict",
+        sameSite: "none",
         maxAge: 20 * 24 * 60 * 60 * 1000, // 20 days
       });
       // res.cookie("refreshToken", refreshToken, {
