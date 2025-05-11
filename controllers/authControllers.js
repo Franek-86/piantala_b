@@ -422,7 +422,7 @@ exports.loginUser = async (req, res) => {
 };
 exports.refreshToken = (req, res) => {
   const refreshToken = req.cookies?.refreshToken;
-  console.log("test1234", refreshToken);
+
   if (!refreshToken) {
     console.log("no refresh token found");
     return res.status(401).send("Token not found");
