@@ -27,7 +27,11 @@ let liveConfig =
 const config = new Client(liveConfig);
 config
   .connect()
-  .then(() => {})
-  .catch((err) => {});
+  .then(() => {
+    console.log("Connected to PostgreSQL database");
+  })
+  .catch((err) => {
+    console.error("Error connecting to PostgreSQL database", err);
+  });
 
 module.exports = config;

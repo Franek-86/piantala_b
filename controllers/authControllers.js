@@ -20,6 +20,7 @@ exports.verificationEmail = async (req, res) => {
 
   try {
     const user = await User.findOne({ where: { verification_token: token } });
+    console.log(user);
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
@@ -28,6 +29,7 @@ exports.verificationEmail = async (req, res) => {
     await user.save();
     return res.redirect(`${domainNameClient}/verification-success`);
   } catch (error) {
+    console.error(error);
     res.status(500).json({ message: "Internal server error" });
   }
 };
@@ -36,6 +38,7 @@ exports.verificationEmailPasswordReset = async (req, res) => {
 
   try {
     const user = await User.findOne({ where: { verification_token: token } });
+    console.log("t3", user);
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
@@ -46,6 +49,7 @@ exports.verificationEmailPasswordReset = async (req, res) => {
       `${domainNameClient}/verification-success-reset/${user.verification_token}`
     );
   } catch (error) {
+    console.error(error);
     res.status(500).json({ message: "Internal server error" });
   }
 };
@@ -64,6 +68,7 @@ exports.setUserRole = async (req, res) => {
 
       res.status(200).send("diritti amministrativi rimossi");
     } catch (error) {
+      console.error(error);
       return res.status(500).json({ message: "Internal server error" });
     }
   }
@@ -80,6 +85,7 @@ exports.setUserRole = async (req, res) => {
 
       res.status(200).send("diritti amministrativi aggiunti");
     } catch (error) {
+      console.error(error);
       return res.status(500).json({ message: "Internal server error" });
     }
   }
@@ -99,6 +105,7 @@ exports.setUserStatus = async (req, res) => {
 
       res.status(200).send("User has been blocked");
     } catch (error) {
+      console.error(error);
       return res.status(500).json({ message: "Internal server error" });
     }
   }
@@ -115,25 +122,30 @@ exports.setUserStatus = async (req, res) => {
 
       res.status(200).send("User has been unblocked");
     } catch (error) {
+      console.error(error);
       return res.status(500).json({ message: "Internal server error" });
     }
   }
 };
 exports.getUserInfo = async (req, res) => {
   const user_id = req.params.id;
+  console.log("asaa", user_id);
   try {
     const user = await User.findOne({ where: { user_id: user_id } });
     if (user) {
+      console.log("135", user.user_name);
       const test = {
         userName: user.dataValues.user_name,
         email: user.dataValues.email,
       };
       // const test = user.dataValues.user_name;
+      console.log("test1", test);
       res.status(200).send(test);
     } else {
       return res.status(404).json({ message: "User not found" });
     }
   } catch (error) {
+    console.error(error);
     return res.status(500).json({ message: "Internal server error" });
   }
 };
@@ -153,6 +165,16 @@ exports.registerUser = async (req, res) => {
     user_name,
     phone,
   } = req.body;
+  console.log(
+    "user_name and phone",
+    first_name,
+    last_name,
+    city,
+    birthday,
+    fiscal_code,
+    user_name,
+    phone
+  );
 
   const existingUser = await User.findOne({ where: { email } });
 
@@ -192,11 +214,19 @@ exports.registerUser = async (req, res) => {
     }
     try {
       const mailOptions = emailToBeSent(email, user);
-      transporter.sendMail(mailOptions, (error, info) => {});
+      transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+          console.error(error);
+        } else {
+          console.log("Email sent: " + info.response);
+        }
+      });
     } catch (error) {
+      console.log("Error sending email: ", error);
       res.status(500).send("Error: Something went wrong. Please try again.");
     }
   } catch (error) {
+    console.error("Error during user registration:", error);
     res.status(500).json({ message: "Server error during registration" });
   }
 };
@@ -204,6 +234,7 @@ exports.registerUser = async (req, res) => {
 // Start password reset
 
 exports.passwordLink = async (req, res) => {
+  console.log(req.body);
   const { email } = req.body.data;
   try {
     const user = await User.findOne({ where: { email } });
@@ -213,7 +244,7 @@ exports.passwordLink = async (req, res) => {
     let token = user?.verification_token;
     if (!token) {
       const token = generateVerificationToken();
-
+      console.log("I need to create a token?", token);
       user.verification_token = token;
       await user.save();
       const url = `${
@@ -221,7 +252,7 @@ exports.passwordLink = async (req, res) => {
           ? process.env.DOMAIN_NAME_TEST_SERVER
           : process.env.DOMAIN_NAME_SERVER
       }/api/auth/reset-password/verify/${user.verification_token}`;
-
+      console.log("here", url);
       const mailOptions = {
         from: "franekdev86@gmail.com",
         to: `${user.email}`,
@@ -249,7 +280,7 @@ exports.passwordLink = async (req, res) => {
           ? process.env.DOMAIN_NAME_TEST_SERVER
           : process.env.DOMAIN_NAME_SERVER
       }/api/auth/reset-password/verify/${user.verification_token}`;
-
+      console.log("here", url);
       const mailOptions = {
         from: "franekdev86@gmail.com",
         to: `${user.email}`,
@@ -272,22 +303,30 @@ exports.passwordLink = async (req, res) => {
       }
     }
   } catch (err) {
+    console.log(err);
     res.status(500).send({ message: "internal server error" });
   }
 };
 
 exports.newPassword = async (req, res) => {
   try {
+    console.log("test111", req.body.payload);
     const { psw } = req.body.payload;
     const { token } = req.body.payload;
     const hashedPassword = await bcrypt.hash(psw, 10);
+    console.log("token", token);
+    console.log("password", psw);
+    console.log("hashedPassword", hashedPassword);
     const user = await User.findOne({ where: { verification_token: token } });
     user.user_password = hashedPassword;
     user.verification_token = null;
     await user.save();
 
+    // console.log("user", user);
+    console.log("aaa", req.body);
     res.status(200).send("Password cambiata con successo");
   } catch (err) {
+    console.log("zzz", err);
     res.status(400).send("Errore");
   }
 };
@@ -299,6 +338,7 @@ exports.sendEmail = async (req, res) => {
     loggedUserInfo: { email },
     messageBody,
   } = req.body.payload;
+  console.log("here", email, messageBody);
 
   const mailOptions = {
     from: "franekdev86@gmail.com",
@@ -341,6 +381,7 @@ exports.loginUser = async (req, res) => {
     return res.status(401).json({ message: "Password non corretta" });
   } else {
     try {
+      console.log("test11", user.id);
       const token = jwt.sign(
         { id: user.id, email: user.email, role: user.role },
         process.env.JWT_SECRET_KEY,
@@ -375,19 +416,21 @@ exports.loginUser = async (req, res) => {
         user: req.session.user,
       });
     } catch (err) {
+      console.log("this", err);
       return res.status(500).json({ message: "Server error" });
     }
   }
 };
 exports.refreshToken = (req, res) => {
   const refreshToken = req.cookies?.refreshToken;
-
+  console.log("test1234", refreshToken);
   if (!refreshToken) {
+    console.log("no refresh token found");
     return res.status(401).send("Token not found");
   }
   try {
     // JWT_SECRET_KEY needs to be replaced with REFRESH_SECRET, here and also where actually sign the  refresh token
-
+    console.log("sta facendo il try");
     const user = jwt.verify(refreshToken, process.env.REFRESH_SECRET);
 
     const newAccessToken = jwt.sign(
@@ -507,7 +550,9 @@ exports.generateFiscalCode = async (req, res) => {
     );
     const fiscalCode = response.data.data.cf;
     res.json(fiscalCode);
-  } catch (error) {}
+  } catch (error) {
+    console.log(error);
+  }
 };
 exports.validateFiscalCode = async (req, res) => {
   const fiscalCode = req.body.payload;
