@@ -385,7 +385,7 @@ exports.loginUser = async (req, res) => {
       const token = jwt.sign(
         { id: user.id, email: user.email, role: user.role },
         process.env.JWT_SECRET_KEY,
-        { expiresIn: "10m" }
+        { expiresIn: "600s" }
       );
       const refreshToken = jwt.sign(
         { id: user.id, email: user.email, role: user.role },
@@ -396,7 +396,8 @@ exports.loginUser = async (req, res) => {
         httpOnly: true,
         secure: true,
         sameSite: "none",
-        maxAge: 365 * 24 * 60 * 60 * 1000, // 1 year
+        // maxAge: 1000,
+        maxAge: 120 * 24 * 60 * 60 * 1000, // 120 days
       });
       // res.cookie("refreshToken", refreshToken, {
       //   httpOnly: true,

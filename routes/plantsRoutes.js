@@ -4,18 +4,24 @@ const plantsController = require("../controllers/plantsControllers");
 const isAdmin = require("../middleware/isAdmin");
 const multer = require("multer");
 const path = require("path");
+const isAuth = require("../middleware/isAuth");
 
 const storage = multer.memoryStorage();
 
 const upload = multer({ storage: storage });
 
-router.post("/add-plant", upload.single("image"), plantsController.addPlant);
+router.post(
+  "/add-plant",
+  isAuth,
+  upload.single("image"),
+  plantsController.addPlant
+);
 router.post(
   "/upload-plate/:id",
   upload.single("plate"),
   plantsController.addPlate
 );
-router.get("/", plantsController.getAllPlants);
+router.get("/", isAuth, plantsController.getAllPlants);
 router.get("/user-plants", plantsController.getUserPlants);
 router.get("/owned-plants", plantsController.getOwnedPlants);
 router.patch("/:id/status", isAdmin, plantsController.updateStatus);

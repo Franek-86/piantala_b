@@ -11,8 +11,8 @@ const emailToBeSent = (email, user) => {
         : process.env.DOMAIN_NAME_SERVER
     }/api/auth/verify/${
       user.verification_token
-    }"target="_blank"">questo link</span>
-    </a>. Grazie!</p>`,
+    }"target="_blank"">questo link.</span>
+    </a> Grazie!</p>`,
   };
 };
 module.exports = emailToBeSent;

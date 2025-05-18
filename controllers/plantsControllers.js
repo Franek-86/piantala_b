@@ -227,7 +227,9 @@ exports.updateOwner = async (req, res) => {
 exports.updateStatus = async (req, res) => {
   const { id } = req.params; // Get the plant ID from the URL
   const { status, rejection_comment } = req.body; // Get the new status and rejection comment from the request body
-  console.log("comment", rejection_comment);
+  console.log("comment1113", req);
+  console.log("comment 111", rejection_comment);
+  console.log("comment 1112", status);
 
   // Validate the status
   if (status !== "approved" && status !== "rejected") {
@@ -336,7 +338,6 @@ exports.clearPlate = async (req, res) => {
 
 exports.deletePlant = async (req, res) => {
   const { id } = req.params; // Get the plant ID from the URL
-  console.log("ppp", id);
 
   const test = await Plant.findAll({
     attributes: ["image_url", "delete_hash", "plate", "plate_hash"],
@@ -394,7 +395,7 @@ exports.deletePlant = async (req, res) => {
     res
       .status(400)
       .json(
-        `something went wrong deleting the plant after delting images from imgur: ${err.message}`
+        `something went wrong deleting the plant after deleting images from imgur: ${err.message}`
       );
   }
 };
