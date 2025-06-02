@@ -2,7 +2,7 @@ const { text } = require("body-parser");
 
 const emailToBeSent = (email, user) => {
   return {
-    from: "franekdev86@gmail.com",
+    from: "postmaster@ernestverner.it",
     to: email,
     subject: "Email Verification",
     html: `<p>Completa la tua registrazione cliccando su <a href="${

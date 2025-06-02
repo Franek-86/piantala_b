@@ -254,9 +254,8 @@ exports.passwordLink = async (req, res) => {
       }/api/auth/reset-password/verify/${user.verification_token}`;
       console.log("here", url);
       const mailOptions = {
-        from: "franekdev86@gmail.com",
+        from: "postmaster@ernestverner.it",
         to: `${user.email}`,
-        cc: "franekdev86@gmail.com",
         subject: "password reset",
         html: `<p>${url}</p>`,
       };
@@ -282,9 +281,8 @@ exports.passwordLink = async (req, res) => {
       }/api/auth/reset-password/verify/${user.verification_token}`;
       console.log("here", url);
       const mailOptions = {
-        from: "franekdev86@gmail.com",
+        from: "postmaster@ernestverner.it",
         to: `${user.email}`,
-        cc: "franekdev86@gmail.com",
         subject: "password reset",
         html: `<p>${url}</p>`,
       };
@@ -341,9 +339,8 @@ exports.sendEmail = async (req, res) => {
   console.log("here", email, messageBody);
 
   const mailOptions = {
-    from: "franekdev86@gmail.com",
+    from: "postmaster@ernestverner.it",
     to: "amicidiernestverner@gmail.com",
-    cc: "franekdev86@gmail.com",
     subject: `Ti Pianto per Amore - email da ${email}`,
     html: `<p>${messageBody}</p>`,
   };
