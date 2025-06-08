@@ -4,9 +4,10 @@ const con = require("../config/db");
 const crypto = require("crypto");
 const transporter = require("../config/nodemailer");
 const User = require("../models/User");
-
+const MailerSend = require("mailersend");
 const axios = require("axios");
 const emailToBeSent = require("../assets/mailOptions");
+const sendVerificationEmail = require("../assets/mailerSend");
 const domainNameClient =
   process.env.NODE_ENV === "test"
     ? process.env.DOMAIN_NAME_TEST_CLIENT
@@ -204,23 +205,32 @@ exports.registerUser = async (req, res) => {
       { expiresIn: "10d" }
     );
 
-    res.status(201).json({
-      message:
-        "Controlla la tua casella di posta per completare la registrazione",
-      token,
-    });
+    // res.status(201).json({
+    //   message:
+    //     "Controlla la tua casella di posta per completare la registrazione",
+    //   token,
+    // });
     if (!email) {
       return res.status(400).send("no email address provided");
     }
     try {
-      const mailOptions = emailToBeSent(email, user);
-      transporter.sendMail(mailOptions, (error, info) => {
-        if (error) {
-          console.error(error);
-        } else {
-          console.log("Email sent: " + info.response);
-        }
+      await sendVerificationEmail(email, email, user);
+      res.status(201).json({
+        message:
+          "Controlla la tua casella di posta per completare la registrazione",
+        token,
       });
+      // return res
+      //   .status(200)
+      //   .json({ message: "User registered and email sent" });
+      // const mailOptions = emailToBeSent(email, user);
+      // transporter.sendMail(mailOptions, (error, info) => {
+      //   if (error) {
+      //     console.error(error);
+      //   } else {
+      //     console.log("Email sent: " + info.response);
+      //   }
+      // });
     } catch (error) {
       console.log("Error sending email: ", error);
       res.status(500).send("Error: Something went wrong. Please try again.");
