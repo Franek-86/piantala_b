@@ -1,23 +1,21 @@
-const { Recipient, EmailParams, MailerSend } = require("mailersend");
+const Recipient = require("mailersend").Recipient;
+const EmailParams = require("mailersend").EmailParams;
+const { MailerSend } = require("mailersend");
 
 const mailersend = new MailerSend({
-  apiKey: process.env.MAILER_SEND, // Replace with your real key or use env vars
+  apiKey: process.env.MAILER_SEND,
 });
-// console.log("mailersend object:", mailersend);
-console.log("typeof mailersend:", typeof mailersend);
-console.log("mailersend.send exists?", typeof mailersend.send === "function");
-console.log("MailerSend object keys:", Object.keys(mailersend));
-function sendVerificationEmail(recipientEmail, recipientName, user) {
+
+const sendVerificationEmail = (a, b, c) => {
+  const recipients = [new Recipient(a, b)];
   const verificationUrl = `${
     process.env.NODE_ENV === "test"
       ? process.env.DOMAIN_NAME_TEST_SERVER
       : process.env.DOMAIN_NAME_SERVER
-  }/api/auth/verify/${user.verification_token}`;
-  const recipients = [new Recipient(recipientEmail, recipientName)];
-
+  }/api/auth/verify/${c.verification_token}`;
   const personalization = [
     {
-      email: recipientEmail,
+      email: a,
       data: {
         verification_url: verificationUrl,
       },
@@ -28,15 +26,12 @@ function sendVerificationEmail(recipientEmail, recipientName, user) {
   emailParams.setFrom({
     email: "postmaster@ernestverner.it",
     name: "Ti Pianto Per Amore",
-  }); // single object instead of two calls
-  // .setFrom("postmaster@ernestverner.it") // Your verified sender
-  // .setFromName("Ti Pianto Per Amore") // Sender name
+  });
   emailParams.setTo(recipients);
-  emailParams.setSubject("Verifica il tuo indirizzo mail");
-  emailParams.setTemplateId("v69oxl5y2pk4785k"); // Your MailerSend template ID
+  emailParams.setSubject("Verifica indirizzo mail");
+  emailParams.setTemplateId("v69oxl5y2pk4785k");
   emailParams.setPersonalization(personalization);
 
   return mailersend.email.send(emailParams);
-}
-
+};
 module.exports = sendVerificationEmail;
