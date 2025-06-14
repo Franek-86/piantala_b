@@ -7,7 +7,10 @@ const User = require("../models/User");
 const MailerSend = require("mailersend");
 const axios = require("axios");
 const emailToBeSent = require("../assets/mailOptions");
-const sendVerificationEmail = require("../assets/mailerSend");
+const {
+  sendVerificationEmail,
+  sendPasswordResetEmail,
+} = require("../assets/mailerSend");
 
 const domainNameClient =
   process.env.NODE_ENV === "test"
@@ -245,10 +248,11 @@ exports.registerUser = async (req, res) => {
 // Start password reset
 
 exports.passwordLink = async (req, res) => {
-  console.log(req.body);
+  console.log("tutaj", req.body);
   const { email } = req.body.data;
   try {
     const user = await User.findOne({ where: { email } });
+    const name = user.first_name;
     if (!user) {
       return res.status(409).send({ message: "Email non registrata" });
     }
@@ -257,6 +261,7 @@ exports.passwordLink = async (req, res) => {
       const token = generateVerificationToken();
       console.log("I need to create a token?", token);
       user.verification_token = token;
+
       await user.save();
       const url = `${
         process.env.NODE_ENV === "test"
@@ -264,26 +269,36 @@ exports.passwordLink = async (req, res) => {
           : process.env.DOMAIN_NAME_SERVER
       }/api/auth/reset-password/verify/${user.verification_token}`;
       console.log("here", url);
-      const mailOptions = {
-        from: "postmaster@ernestverner.it",
-        to: `${user.email}`,
-        subject: "password reset",
-        html: `<p>${url}</p>`,
-      };
+      // replace from here
+      // sendPasswordResetEmail;
       try {
-        transporter.sendMail(mailOptions, (error, info) => {
-          if (error) {
-            res.status(400).send({
-              message: "email non inviata, errore nell'invio della email",
-            });
-          } else {
-            res.status(200).send({ message: "Email inviata" });
-          }
-        });
+        await sendPasswordResetEmail(email, name, url);
+        res.status(200).send({ message: "email inviata" });
       } catch (error) {
-        res.status(500).send("Something went wrong. Please try again.");
+        console.log("error:", error);
+        res.status(500).send({ message: "Errore di invio mail" });
       }
+      // const mailOptions = {
+      //   from: "postmaster@ernestverner.it",
+      //   to: `${user.email}`,
+      //   subject: "password reset",
+      //   html: `<p>${url}</p>`,
+      // };
+      // try {
+      //   transporter.sendMail(mailOptions, (error, info) => {
+      //     if (error) {
+      //       res.status(400).send({
+      //         message: "email non inviata, errore nell'invio della email",
+      //       });
+      //     } else {
+      //       res.status(200).send({ message: "Email inviata" });
+      //     }
+      //   });
+      // } catch (error) {
+      //   res.status(500).send("Something went wrong. Please try again.");
+      // }
     }
+    // to here
     if (token) {
       const url = `${
         process.env.NODE_ENV === "test"
@@ -291,25 +306,32 @@ exports.passwordLink = async (req, res) => {
           : process.env.DOMAIN_NAME_SERVER
       }/api/auth/reset-password/verify/${user.verification_token}`;
       console.log("here", url);
-      const mailOptions = {
-        from: "postmaster@ernestverner.it",
-        to: `${user.email}`,
-        subject: "password reset",
-        html: `<p>${url}</p>`,
-      };
       try {
-        transporter.sendMail(mailOptions, (error, info) => {
-          if (error) {
-            res.status(400).send({
-              message: "email non inviata, errore nell'invio della email",
-            });
-          } else {
-            res.status(200).send({ message: "email inviata" });
-          }
-        });
+        await sendPasswordResetEmail(email, name, url);
+        res.status(200).send({ message: "email inviata" });
       } catch (error) {
-        res.status(500).send("Error: Something went wrong. Please try again.");
+        console.log("error:", error);
+        res.status(500).send({ message: "Errore di invio mail" });
       }
+      // const mailOptions = {
+      //   from: "postmaster@ernestverner.it",
+      //   to: `${user.email}`,
+      //   subject: "password reset",
+      //   html: `<p>${url}</p>`,
+      // };
+      // try {
+      //   transporter.sendMail(mailOptions, (error, info) => {
+      //     if (error) {
+      //       res.status(400).send({
+      //         message: "email non inviata, errore nell'invio della email",
+      //       });
+      //     } else {
+      //       res.status(200).send({ message: "email inviata" });
+      //     }
+      //   });
+      // } catch (error) {
+      //   res.status(500).send("Error: Something went wrong. Please try again.");
+      // }
     }
   } catch (err) {
     console.log(err);

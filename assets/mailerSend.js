@@ -8,6 +8,7 @@ const mailersend = new MailerSend({
 
 const sendVerificationEmail = (a, b, c) => {
   const recipients = [new Recipient(a, b)];
+  console.log("a123", a, b);
   const verificationUrl = `${
     process.env.NODE_ENV === "test"
       ? process.env.DOMAIN_NAME_TEST_SERVER
@@ -34,4 +35,31 @@ const sendVerificationEmail = (a, b, c) => {
 
   return mailersend.email.send(emailParams);
 };
-module.exports = sendVerificationEmail;
+const sendPasswordResetEmail = (a, b, c) => {
+  console.log("zzz", a, b, c);
+  const recipients = [new Recipient(a, b)];
+  const personalization = [
+    {
+      email: a,
+      data: {
+        name: b,
+        account_name: "Ti Pianto Per Amore",
+        support_email: "amicidiernestverner@gmail.com",
+        url: c,
+      },
+    },
+  ];
+
+  const emailParams = new EmailParams();
+  emailParams.setFrom({
+    email: "postmaster@ernestverner.it",
+    name: "Ti Pianto Per Amore",
+  });
+  emailParams.setTo(recipients);
+  emailParams.setSubject("Password reset");
+  emailParams.setTemplateId("0p7kx4xqk07g9yjr");
+  emailParams.setPersonalization(personalization);
+
+  return mailersend.email.send(emailParams);
+};
+module.exports = { sendVerificationEmail, sendPasswordResetEmail };

@@ -74,11 +74,11 @@ const YOUR_DOMAIN =
 
 app.post("/create-checkout-session", async (req, res) => {
   const product = await stripe.products.create({
-    name: "Piantina2",
+    name: "Piantina",
   });
   console.log(product);
   const price = await stripe.prices.create({
-    product: "prod_RBhoAtdt0PFZRI",
+    product: "prod_SUy1S06QzQmEnj",
     unit_amount: 1000,
     currency: "eur",
   });
