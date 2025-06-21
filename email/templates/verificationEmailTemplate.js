@@ -158,8 +158,8 @@ const verificationEmailHTML = (a, url) => {
                             >
                               <a href="https://piantala-a.onrender.com" target="_blank"
                                 ><img
-                                  width="25"
-                                  height="25"
+                                  width="30"
+                                  height="30"
                                   alt="logo"
                                   src="https://i.ibb.co/Wpg2m71D/tree-icon-transparent-320x320.png"
                               /></a>
@@ -399,13 +399,10 @@ const verificationEmailHTML = (a, url) => {
                                   line-height: 170%;
                                 "
                               >
-                                Hai bisogno di assistenza? Contattaci al'indirizzo mail
+                                Hai bisogno di assistenza? Contattaci all'indirizzo mail
                                 <a
                                   href="mailto:tipiantoperamore@gmail.com"
-                                  style="
-                                    color: #99cc00;
-                                    text-decoration: underline;
-                                  "
+                                  color: #99cc00;
                                   target="_blank"
                                   >tipiantoperamore@gmail.com</a
                                 >

@@ -7,11 +7,14 @@ const User = require("../models/User");
 const MailerSend = require("mailersend");
 const axios = require("axios");
 const emailToBeSent = require("../assets/mailOptions");
+// const {
+//   // sendVerificationEmail,
+//   sendPasswordResetEmail,
+// } = require("../assets/mailerSend");
 const {
-  // sendVerificationEmail,
+  sendVerificationEmail,
   sendPasswordResetEmail,
-} = require("../assets/mailerSend");
-const sendVerificationEmail = require("../email/resend");
+} = require("../email/resend");
 const domainNameClient =
   process.env.NODE_ENV === "test"
     ? process.env.DOMAIN_NAME_TEST_CLIENT
