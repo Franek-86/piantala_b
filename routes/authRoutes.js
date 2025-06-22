@@ -10,6 +10,10 @@ router.get(
   authController.verificationEmailPasswordReset
 );
 router.post("/send", authController.sendEmail);
+router.post(
+  "/send-payment-confirmation-email",
+  authController.sendPaymentConfirmationEmail
+);
 router.post("/register", authController.registerUser);
 router.post("/login", authController.loginUser);
 router.post("/refresh-token", authController.refreshToken);

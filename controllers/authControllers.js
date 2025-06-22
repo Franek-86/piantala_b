@@ -14,6 +14,7 @@ const emailToBeSent = require("../assets/mailOptions");
 const {
   sendVerificationEmail,
   sendPasswordResetEmail,
+  sendPaymentConfirmationEmail,
 } = require("../email/resend");
 const domainNameClient =
   process.env.NODE_ENV === "test"
@@ -41,6 +42,21 @@ exports.verificationEmail = async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
+
+exports.sendPaymentConfirmationEmail = async (req, res) => {
+  console.log("aabbdd", req.body);
+  const email = req.body.payload;
+  try {
+    sendPaymentConfirmationEmail(email);
+    res.status(200).json({ message: "email inviata" });
+  } catch (error) {
+    console.log("error", error);
+    res.status(500).json({
+      message: "c'è stato un errore nell'invio email, email non inviata",
+    });
+  }
+};
+
 exports.verificationEmailPasswordReset = async (req, res) => {
   const token = req.params.token;
 

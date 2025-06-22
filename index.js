@@ -36,9 +36,13 @@ app.use(cookieParser());
 app.use("/uploads", express.static("uploads"));
 
 app.use(bodyParser.json());
-
+// STRIPE_TEST_SECRET_KEY;
 // const sessionStore = new MySQLStore({}, require("./config/db"));
-const stripe = require("stripe")(`${process.env.STRIPE_SECRET_KEY}`);
+const MY_STRIPE_SECRET_KEY =
+  process.env.NODE_ENV === "test"
+    ? process.env.STRIPE_TEST_SECRET_KEY
+    : process.env.STRIPE_SECRET_KEY;
+const stripe = require("stripe")(MY_STRIPE_SECRET_KEY);
 
 const sessionStore = new pgSession({
   pool: con, // Use the connection pool
@@ -67,18 +71,26 @@ app.use(
 app.use("/api/auth", authRoutes);
 app.use("/api/plants", plantsRoutes);
 
-const YOUR_DOMAIN =
+const MY_DOMAIN =
   process.env.NODE_ENV === "test"
     ? process.env.TEST_DOMAIN_NAME_CLIENT
     : process.env.DOMAIN_NAME_CLIENT;
-
+const MY_STRIPE_PUBLISHABLE_KEY =
+  process.env.NODE_ENV === "test"
+    ? process.env.STRIPE_TEST_PUBLISHABLE_KEY
+    : process.env.STRIPE_PUBLISHABLE_KEY;
 app.post("/create-checkout-session", async (req, res) => {
-  const product = await stripe.products.create({
-    name: "Piantina",
-  });
-  console.log(product);
+  // const testProduct = await stripe.products.create({
+  //   name: "Piantina",
+  // });
+  // console.log("aaaa", testProduct);
+  const product =
+    process.env.NODE_ENV === "test"
+      ? "prod_SXbLBcm0aD8vtG"
+      : "prod_SXbqGGnyIScuVZ";
+  console.log("this is the cl of the product", product);
   const price = await stripe.prices.create({
-    product: "prod_SUy1S06QzQmEnj",
+    product: product,
     unit_amount: 1000,
     currency: "eur",
   });
@@ -92,7 +104,7 @@ app.post("/create-checkout-session", async (req, res) => {
       },
     ],
     mode: "payment",
-    return_url: `${YOUR_DOMAIN}/return?session_id={CHECKOUT_SESSION_ID}`,
+    return_url: `${MY_DOMAIN}/return?session_id={CHECKOUT_SESSION_ID}`,
   });
 
   res.send({ clientSecret: session.client_secret });
@@ -109,7 +121,7 @@ app.get("/session-status", async (req, res) => {
 
 app.get("/config", (req, res) => {
   res.send({
-    publishableKey: process.env.STRIPE_PUBLISHABLE_KEY,
+    publishableKey: MY_STRIPE_PUBLISHABLE_KEY,
   });
 });
 
