@@ -25,8 +25,7 @@ const generateVerificationToken = () => {
 };
 
 exports.verificationEmail = async (req, res) => {
-  const token = req.params.token;
-
+  const token = req.query.token;
   try {
     const user = await User.findOne({ where: { verification_token: token } });
     console.log(user);
@@ -36,7 +35,7 @@ exports.verificationEmail = async (req, res) => {
     user.is_verified = true;
     user.verification_token = null;
     await user.save();
-    return res.redirect(`${domainNameClient}/verification-success`);
+    return res.status(200).json({ message: "email verificata con successo" });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Internal server error" });

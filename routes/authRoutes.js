@@ -4,7 +4,7 @@ const isAdmin = require("../middleware/isAdmin");
 const User = require("../models/User");
 const authController = require("../controllers/authControllers");
 
-router.get("/verify/:token", authController.verificationEmail);
+router.get("/verify", authController.verificationEmail);
 router.get(
   "/reset-password/verify/:token",
   authController.verificationEmailPasswordReset
