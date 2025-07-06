@@ -6,7 +6,7 @@ const authController = require("../controllers/authControllers");
 
 router.get("/verify", authController.verificationEmail);
 router.get(
-  "/reset-password/verify/:token",
+  "/reset-password/verify",
   authController.verificationEmailPasswordReset
 );
 router.post("/send", authController.sendEmail);
