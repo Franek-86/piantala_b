@@ -282,21 +282,21 @@ exports.passwordLink = async (req, res) => {
 
       await user.save();
 
-      // const url = `${
-      //   process.env.NODE_ENV === "test"
-      //     ? process.env.DOMAIN_NAME_TEST_SERVER
-      //     : process.env.DOMAIN_NAME_SERVER
-      // }/api/auth/reset-password/verify/${user.verification_token}`;
-      // replace from here
+      const url = `${
+        process.env.NODE_ENV === "test"
+          ? process.env.DOMAIN_NAME_TEST_CLIENT
+          : process.env.DOMAIN_NAME_CLIENT
+      }/verify-reset/${user.verification_token}`;
+      console.log("here", url);
       // sendPasswordResetEmail;
 
-      // try {
-      //   await sendPasswordResetEmail(email, name, url);
-      //   res.status(200).send({ message: "email inviata" });
-      // } catch (error) {
-      //   console.log("error:", error);
-      //   res.status(500).send({ message: "Errore di invio mail" });
-      // }
+      try {
+        await sendPasswordResetEmail(email, name, url);
+        res.status(200).send({ message: "email inviata" });
+      } catch (error) {
+        console.log("error:", error);
+        res.status(500).send({ message: "Errore di invio mail" });
+      }
     }
     // to here
     if (token) {
