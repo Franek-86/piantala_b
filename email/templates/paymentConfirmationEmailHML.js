@@ -1,4 +1,4 @@
-const paymentConfirmationEmailHTML = () => {
+const paymentConfirmationEmailHTML = (a, b, c) => {
   console.log("ciao");
   return `<html>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -403,7 +403,7 @@ const paymentConfirmationEmailHTML = () => {
                                                     <!-- CONTENT // -->
 
                                                     <!-- Header and footer images have display inline block !important so they can be centered -->
-                                                    <h1 style="max-width:400px;line-height:32px;font-size:25px;font-weight:400;margin-top: 32px;margin-bottom:32px;text-align:center;color: rgba(0,0,0,.7);" class="" id="greeting">Grazie per aver acquistato una piantina con "Ti Pianto Per Amore". Verrai ricontattato dal nostro team per la piantumazione.</span></h1>
+                                                    <h1 style="max-width:400px;line-height:32px;font-size:25px;font-weight:400;margin-top: 32px;margin-bottom:32px;text-align:center;color: rgba(0,0,0,.7);" class="" id="greeting">Grazie per aver acquistato una piantina con "Ti Pianto Per Amore".</span></h1>
                                                   </td>
                                                 </tr>
                                               </tbody>
@@ -564,11 +564,11 @@ const paymentConfirmationEmailHTML = () => {
                                                   <td valign="top">
                                                 <tr>
                                                   <td valign="top" class="textContent" style="color: #4A4A4A;max-width: calc(100% - 150px); word-wrap: break-word;">
-                                                    <div class="textRow" style="line-height: 32px;"><span style="font-weight: 600;font-size:16px;" class="" id="orderNumber">Numero ordine</span>:
-                                                      <span style="font-size:16px;">&nbsp; - </span>
+                                                    <div class="textRow" style="line-height: 32px;"><span style="font-weight: 600;font-size:16px;" class="" id="orderNumber">Numero ordine:</span>
+                                                      <span style="font-size:16px;">&nbsp; ${b}</span>
                                                     </div>
-                                                    <div class="textRow" style="line-height: 32px;"><span style="font-weight: 600;font-size:16px;" class="" id="orderDate">Data ordine</span>:
-                                                      <span style="font-size:16px;">&nbsp; - </span>
+                                                    <div class="textRow" style="line-height: 32px;"><span style="font-weight: 600;font-size:16px;" class="" id="orderDate">Data ordine:</span>
+                                                      <span style="font-size:16px;">&nbsp; ${c}</span>
                                                     </div>
                                                   </td>
                                                   <td style="text-align:right; max-width: 150px; word-wrap: break-word;" valign="top" align="right">
@@ -651,53 +651,7 @@ const paymentConfirmationEmailHTML = () => {
       </td>
     </tr> <!-- // END -->
 
-    <!-- MODULE ROW // -->
-    <tr>
-      <td align="left" valign="top">
-
-        <!-- CENTERING TABLE // -->
-        <table border="0" cellpadding="0" cellspacing="0" width="100%">
-          <tbody>
-            <tr>
-              <td align="left" valign="top">
-
-                <!-- FLEXIBLE CONTAINER // -->
-                <table border="0" cellpadding="0" cellspacing="0" width="600" class="flexibleContainer">
-                  <tbody>
-                    <tr>
-                      <td align="left" valign="top" width="600" class="flexibleContainerCell">
-                        <table border="0" cellpadding="16" cellspacing="0" width="100%">
-                          <tbody>
-                            <tr>
-                              <td align="left" valign="top" style="padding-top:20px;">
-
-                                <!-- CONTENT TABLE // -->
-                                <table border="0" cellpadding="0" cellspacing="0" width="100%">
-                                  <tbody>
-                                    <tr>
-                                      <td valign="top">
-                                    <tr class="textContent" style="color: #4A4A4A;">
-                                      <td valign="top" style="line-height:16px;padding-right:12px;"><span style="font-weight: 600;font-size:16px;white-space:nowrap;">Gift:</span></td>
-                                      <td align="left" style="line-height:16px;padding-bottom:16px;"><span style="font-size:16px;">No</span></td>
-                                    </tr>
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table> <!-- // CONTENT TABLE -->
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </td>
-            </tr>
-          </tbody>
-        </table> <!-- // FLEXIBLE CONTAINER -->
-      </td>
-    </tr>
-    </tbody>
-    </table> <!-- // CENTERING TABLE -->
-    </td>
-    </tr> <!-- // MODULE ROW -->
+    
 
     <!-- MODULE DIVIDER // -->
     <tr>
@@ -802,58 +756,6 @@ const paymentConfirmationEmailHTML = () => {
     </table>
 
     <!-- END WHITE CONTAINER SECTION -->
-
-    <!-- EMAIL FOOTER // -->
-    <table border="0" cellpadding="0" cellspacing="0" width="600" id="emailFooter">
-
-      <!-- FOOTER ROW // -->
-
-      <!--
-                                To move or duplicate any of the design patterns
-                                in this email, simply move or copy the entire
-                                MODULE ROW section for each content block.
-                            -->
-      <tbody>
-        <tr>
-          <td align="center" valign="top">
-
-            <!-- CENTERING TABLE // -->
-            <table border="0" cellpadding="0" cellspacing="0" width="100%">
-              <tbody>
-                <tr>
-                  <td align="center" valign="top">
-
-                    <!-- FLEXIBLE CONTAINER // -->
-                    <table border="0" cellpadding="0" cellspacing="0" width="600" class="flexibleContainer" style="margin-bottom:32px;">
-                      <tbody>
-                        <tr>
-                          <td align="center" valign="top" width="600" class="flexibleContainerCell">
-                            <table border="0" cellpadding="0" cellspacing="0" width="100%">
-                              <tbody>
-                                <tr>
-                                  <td valign="top" style="font-size:12px;text-align:center;padding-bottom: 16px;padding-right: 25px;padding-left:25px;padding-top: 32px;" colspan="2">
-
-                                    <!-- Contact us Links -->
-                                    <span style="color: rgba(0,0,0,.7);" class="" id="fineprint"> If you have any questions about your order,  </span>
-                                    <a href="mailto:hello@wildist.co" class="ios-footer " id="fineprintLink" style="color: #468EE5 !important; text-decoration: none; -webkit-text-size-adjust: none; display: inline-block;" target="_blank">
-                                      contact us.
-                                    </a>
-                                  </td>
-                                </tr>
-                              </tbody>
-                            </table>
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table> <!-- // FLEXIBLE CONTAINER -->
-                  </td>
-                </tr>
-              </tbody>
-            </table> <!-- // CENTERING TABLE -->
-          </td>
-        </tr>
-      </tbody>
-    </table> <!-- // END -->
     </td>
     </tr>
     </tbody>

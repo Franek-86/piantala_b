@@ -2,8 +2,9 @@ const con = require("../config/db");
 const FormData = require("form-data");
 const axios = require("axios");
 const User = require("../models/User");
-const Plant = require("../models/Plant");
-
+// const Plant = require("../models/Plant");
+const db = require("../models");
+const Plant = db.Plant;
 exports.addPlate = async (req, res) => {
   const file = req.file;
   let { id } = req.params;

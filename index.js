@@ -12,6 +12,8 @@ const cors = require("cors"); // Import CORS
 const bodyParser = require("body-parser"); // Import body-parser
 const plantsRoutes = require("./routes/plantsRoutes");
 const authRoutes = require("./routes/authRoutes");
+const ordersRoutes = require("./routes/ordersRoutes");
+
 const PORT = process.env.PORT || 3001;
 const HOST =
   process.env.NODE_ENV === "test" ? process.env.TEST_HOST : process.env.HOST;
@@ -70,6 +72,7 @@ app.use(
 
 app.use("/api/auth", authRoutes);
 app.use("/api/plants", plantsRoutes);
+app.use("/api/orders", ordersRoutes);
 
 const MY_DOMAIN =
   process.env.NODE_ENV === "test"
@@ -78,7 +81,11 @@ const MY_DOMAIN =
 const MY_STRIPE_PUBLISHABLE_KEY =
   process.env.NODE_ENV === "test"
     ? process.env.STRIPE_TEST_PUBLISHABLE_KEY
-    : process.env.STRIPE_PUBLISHABLE_KEY;
+    : process.env.STRIPE_TEST_PUBLISHABLE_KEY;
+// const MY_STRIPE_PUBLISHABLE_KEY =
+//   process.env.NODE_ENV === "test"
+//     ? process.env.STRIPE_TEST_PUBLISHABLE_KEY
+//     : process.env.STRIPE_PUBLISHABLE_KEY;
 app.post("/create-checkout-session", async (req, res) => {
   // const testProduct = await stripe.products.create({
   //   name: "Piantina",

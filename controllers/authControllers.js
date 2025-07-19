@@ -3,7 +3,9 @@ const jwt = require("jsonwebtoken");
 const con = require("../config/db");
 const crypto = require("crypto");
 const transporter = require("../config/nodemailer");
-const User = require("../models/User");
+// const User = require("../models/User");
+const db = require("../models");
+const User = db.User;
 const MailerSend = require("mailersend");
 const axios = require("axios");
 const emailToBeSent = require("../assets/mailOptions");
@@ -64,9 +66,9 @@ exports.verificationEmailPasswordReset = async (req, res) => {
 
 exports.sendPaymentConfirmationEmail = async (req, res) => {
   console.log("aabbdd", req.body);
-  const email = req.body.payload;
+  const { email, order_number, created_at } = req.body.payload;
   try {
-    sendPaymentConfirmationEmail(email);
+    sendPaymentConfirmationEmail(email, order_number, created_at);
     res.status(200).json({ message: "email inviata" });
   } catch (error) {
     console.log("error", error);

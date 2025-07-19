@@ -1,5 +1,3 @@
-const verificationEmailHTML = require("./verificationEmailTemplate");
-
 const passwordResetEmailHTML = (a, b, c) => {
   return `<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en" style="-moz-osx-font-smoothing: grayscale; -webkit-font-smoothing: antialiased;">
@@ -547,7 +545,7 @@ const passwordResetEmailHTML = (a, b, c) => {
                                 <tbody>
                                   <tr style="padding: 0; text-align: left; vertical-align: top;" align="left">
                                     <th style="Margin: 0; color: #676d73; font-family: Helvetica,Arial,sans-serif; font-size: 16px; font-weight: 400; line-height: 1.6; margin: 0; padding: 0; text-align: left;" align="left">
-                                      <h1 style="Margin: 0; Margin-bottom: 12px; color: #2f3033; font-family: Helvetica,Arial,sans-serif; font-size: 24px; font-weight: 700; line-height: 32px; margin: 0; margin-bottom: 12px; padding: 0; text-align: left; word-wrap: normal;" align="left"Ciao ${b},</h1>
+                                      <h1 style="Margin: 0; Margin-bottom: 12px; color: #2f3033; font-family: Helvetica,Arial,sans-serif; font-size: 24px; font-weight: 700; line-height: 32px; margin: 0; margin-bottom: 12px; padding: 0; text-align: left; word-wrap: normal;" align="left">Ciao ${b},</h1>
                                       <p style="Margin: 0; Margin-bottom: 16px; color: #676d73; font-family: Helvetica,Arial,sans-serif; font-size: 16px; font-weight: 400; line-height: 1.6; margin: 0; margin-bottom: 16px; padding: 0; text-align: left;" align="left">Abbiamo ricevuto la richiesta di resettare la password del tuo account di Ti Pianto Per Amore. Per resettare la password, <a href="${c}" style="Margin: 0; color: #99cc00; font-family: Helvetica,Arial,sans-serif; font-weight: 400; line-height: 1.6; margin: 0; padding: 0; text-align: left; text-decoration: none;">scegli una nuova password adesso.</a> Questo link scadrà tra 24 ore.</p>
                                       <table class="button rounded small-expanded tpe-margin--none" style="Margin: 0 !important; border-collapse: collapse; border-spacing: 0; margin: 0 !important; margin-bottom: 12px; margin-top: 24px; padding: 0; text-align: left; vertical-align: top; width: auto;">
                                         <tbody>
