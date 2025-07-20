@@ -78,14 +78,14 @@ const MY_DOMAIN =
   process.env.NODE_ENV === "test"
     ? process.env.TEST_DOMAIN_NAME_CLIENT
     : process.env.DOMAIN_NAME_CLIENT;
-const MY_STRIPE_PUBLISHABLE_KEY =
-  process.env.NODE_ENV === "test"
-    ? process.env.STRIPE_TEST_PUBLISHABLE_KEY
-    : process.env.STRIPE_TEST_PUBLISHABLE_KEY;
 // const MY_STRIPE_PUBLISHABLE_KEY =
 //   process.env.NODE_ENV === "test"
 //     ? process.env.STRIPE_TEST_PUBLISHABLE_KEY
-//     : process.env.STRIPE_PUBLISHABLE_KEY;
+//     : process.env.STRIPE_TEST_PUBLISHABLE_KEY;
+const MY_STRIPE_PUBLISHABLE_KEY =
+  process.env.NODE_ENV === "test"
+    ? process.env.STRIPE_TEST_PUBLISHABLE_KEY
+    : process.env.STRIPE_PUBLISHABLE_KEY;
 app.post("/create-checkout-session", async (req, res) => {
   // const testProduct = await stripe.products.create({
   //   name: "Piantina",
