@@ -1,6 +1,6 @@
 const express = require("express");
 const cookieParser = require("cookie-parser");
-
+const crypto = require("node:crypto");
 const con = require("./config/db");
 const path = require("path");
 const app = express();
@@ -40,10 +40,13 @@ app.use("/uploads", express.static("uploads"));
 app.use(bodyParser.json());
 // STRIPE_TEST_SECRET_KEY;
 // const sessionStore = new MySQLStore({}, require("./config/db"));
-const MY_STRIPE_SECRET_KEY =
-  process.env.NODE_ENV === "test"
-    ? process.env.STRIPE_TEST_SECRET_KEY
-    : process.env.STRIPE_SECRET_KEY;
+
+// const MY_STRIPE_SECRET_KEY =
+//   process.env.NODE_ENV === "test"
+//     ? process.env.STRIPE_TEST_SECRET_KEY
+//     : process.env.STRIPE_SECRET_KEY;
+const MY_STRIPE_SECRET_KEY = process.env.STRIPE_TEST_SECRET_KEY;
+
 const stripe = require("stripe")(MY_STRIPE_SECRET_KEY);
 
 const sessionStore = new pgSession({
@@ -51,6 +54,15 @@ const sessionStore = new pgSession({
   tableName: "session", // Optional: You can customize the table name
   createTableIfMissing: true, // Ensure the table is created if it doesn't exist
 });
+
+// test crypto
+let first = "ORD";
+let second = new Date().toISOString().replace(/-/g, "").slice(0, 11);
+
+let third = crypto.randomBytes(2).toString("hex");
+
+const order_number = `${first}-${second}-${third}`;
+console.log("jjj2", order_number);
 
 app.use(
   session({
@@ -78,14 +90,14 @@ const MY_DOMAIN =
   process.env.NODE_ENV === "test"
     ? process.env.TEST_DOMAIN_NAME_CLIENT
     : process.env.DOMAIN_NAME_CLIENT;
-// const MY_STRIPE_PUBLISHABLE_KEY =
-//   process.env.NODE_ENV === "test"
-//     ? process.env.STRIPE_TEST_PUBLISHABLE_KEY
-//     : process.env.STRIPE_TEST_PUBLISHABLE_KEY;
 const MY_STRIPE_PUBLISHABLE_KEY =
   process.env.NODE_ENV === "test"
     ? process.env.STRIPE_TEST_PUBLISHABLE_KEY
-    : process.env.STRIPE_PUBLISHABLE_KEY;
+    : process.env.STRIPE_TEST_PUBLISHABLE_KEY;
+// const MY_STRIPE_PUBLISHABLE_KEY =
+//   process.env.NODE_ENV === "test"
+//     ? process.env.STRIPE_TEST_PUBLISHABLE_KEY
+//     : process.env.STRIPE_PUBLISHABLE_KEY;
 app.post("/create-checkout-session", async (req, res) => {
   // const testProduct = await stripe.products.create({
   //   name: "Piantina",

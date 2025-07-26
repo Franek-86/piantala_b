@@ -696,62 +696,7 @@ const paymentConfirmationEmailHTML = (a, b, c) => {
       </td>
     </tr> <!-- // END -->
 
-    <!-- MODULE ROW // -->
-    <tr>
-      <td align="left" valign="top">
-
-        <!-- CENTERING TABLE // -->
-        <table border="0" cellpadding="0" cellspacing="0" width="100%">
-          <tbody>
-            <tr>
-              <td align="left" valign="top">
-
-                <!-- FLEXIBLE CONTAINER // -->
-                <table border="0" cellpadding="0" cellspacing="0" width="600" class="flexibleContainer">
-                  <tbody>
-                    <tr>
-                      <td align="left" valign="top" width="600" class="flexibleContainerCell">
-                        <table border="0" cellpadding="16" cellspacing="0" width="100%">
-                          <tbody>
-                            <tr>
-                              <td align="left" valign="top" style="padding-top:16px;">
-
-                                <!-- CONTENT TABLE // -->
-                                <table border="0" cellpadding="0" cellspacing="0" width="100%">
-                                  <tbody>
-                                    <tr>
-                                      <td valign="top" class="textContent" style="color: #4A4A4A;">
-                                        <h3 style="line-height:24px;font-size:16px;font-weight:600;margin-top:0;margin-bottom:4px;text-align:left;"><span class="" id="billedTo">Billed To</span>:</h3>
-                                        <div style="text-align:left;font-size:16px;margin-bottom:0;margin-top:3px;line-height:24px;">
-                                          Smiles Davis
-                                          <br />
-                                          600 Montgomery St
-                                          <br />
-                                          San Franscisco, CA 94111
-                                          <br />
-                                          US
-                                          <br />
-                                          Visa ending in 6500
-                                          <br />
-                                        </div>
-                                      </td>
-                                    </tr>
-                                  </tbody>
-                                </table> <!-- // CONTENT TABLE -->
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table> <!-- // FLEXIBLE CONTAINER -->
-              </td>
-            </tr>
-          </tbody>
-        </table> <!-- // CENTERING TABLE -->
-      </td>
-    </tr> <!-- // MODULE ROW -->
+    <!--QUI-->
     </tbody>
     </table>
 
@@ -775,3 +720,59 @@ const paymentConfirmationEmailHTML = (a, b, c) => {
  </html>`;
 };
 module.exports = paymentConfirmationEmailHTML;
+// <!-- MODULE ROW // --> inseriesci in "QUI" se necessario
+//     <tr>
+//       <td align="left" valign="top">
+
+//         <!-- CENTERING TABLE // -->
+//         <table border="0" cellpadding="0" cellspacing="0" width="100%">
+//           <tbody>
+//             <tr>
+//               <td align="left" valign="top">
+
+//                 <!-- FLEXIBLE CONTAINER // -->
+//                 <table border="0" cellpadding="0" cellspacing="0" width="600" class="flexibleContainer">
+//                   <tbody>
+//                     <tr>
+//                       <td align="left" valign="top" width="600" class="flexibleContainerCell">
+//                         <table border="0" cellpadding="16" cellspacing="0" width="100%">
+//                           <tbody>
+//                             <tr>
+//                               <td align="left" valign="top" style="padding-top:16px;">
+
+//                                 <!-- CONTENT TABLE // -->
+//                                 <table border="0" cellpadding="0" cellspacing="0" width="100%">
+//                                   <tbody>
+//                                     <tr>
+//                                       <td valign="top" class="textContent" style="color: #4A4A4A;">
+//                                         <h3 style="line-height:24px;font-size:16px;font-weight:600;margin-top:0;margin-bottom:4px;text-align:left;"><span class="" id="billedTo">Billed To</span>:</h3>
+//                                         <div style="text-align:left;font-size:16px;margin-bottom:0;margin-top:3px;line-height:24px;">
+//                                           Smiles Davis
+//                                           <br />
+//                                           600 Montgomery St
+//                                           <br />
+//                                           San Franscisco, CA 94111
+//                                           <br />
+//                                           US
+//                                           <br />
+//                                           Visa ending in 6500
+//                                           <br />
+//                                         </div>
+//                                       </td>
+//                                     </tr>
+//                                   </tbody>
+//                                 </table> <!-- // CONTENT TABLE -->
+//                               </td>
+//                             </tr>
+//                           </tbody>
+//                         </table>
+//                       </td>
+//                     </tr>
+//                   </tbody>
+//                 </table> <!-- // FLEXIBLE CONTAINER -->
+//               </td>
+//             </tr>
+//           </tbody>
+//         </table> <!-- // CENTERING TABLE -->
+//       </td>
+//     </tr> <!-- // MODULE ROW -->

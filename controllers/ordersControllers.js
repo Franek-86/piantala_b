@@ -1,9 +1,15 @@
 // const Order = require("../models/Order");
 const db = require("../models");
+const crypto = require("node:crypto");
 const Order = db.Order;
 exports.addOrder = async (req, res) => {
-  const order_number = 1;
-  console.log("qui123", req.body);
+  let first = "ORD";
+
+  let second = new Date().toISOString().replace(/-/g, "").slice(0, 11);
+  let third = crypto.randomBytes(2).toString("hex");
+
+  const order_number = `${first}-${second}-${third}`;
+  console.log("jjj2", order_number);
   const { owner_id: user_id, id: product_id } = req.body;
   const newOrder = await Order.create({
     order_number,
@@ -15,6 +21,7 @@ exports.addOrder = async (req, res) => {
     message: "Order added successfully!",
     order: newOrder,
   });
+
   try {
   } catch (err) {
     res.status(500).send("Error adding order.");
