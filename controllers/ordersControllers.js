@@ -37,6 +37,7 @@ exports.getOrders = async (req, res) => {
 };
 exports.updateOrder = async (req, res) => {
   const { status: newStatus, id: orderId } = req.body;
+  console.log("req.body", req.body);
   try {
     const updatedOrder = await Order.update(
       {
@@ -54,7 +55,9 @@ exports.updateOrder = async (req, res) => {
         .status(404)
         .json({ message: `No order with product id ${orderId}` });
     }
-    return res.status(200).json({ message: `Updated order successfully` });
+    return res
+      .status(200)
+      .json({ message: `Ordine modificato in "${newStatus}"` });
   } catch (err) {
     return res.status(400).json({ message: err.message });
   }
