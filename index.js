@@ -41,17 +41,19 @@ app.use(bodyParser.json());
 // STRIPE_TEST_SECRET_KEY;
 // const sessionStore = new MySQLStore({}, require("./config/db"));
 // Stripe da ripristinare, oltre a questo devi anche andare nella stessa pagina a ripristinare il "product" che sta nel post della "create-checkout-session"
-// const MY_STRIPE_SECRET_KEY =
-//   process.env.NODE_ENV === "test"
-//     ? process.env.STRIPE_TEST_SECRET_KEY
-//     : process.env.STRIPE_SECRET_KEY;
-// const MY_STRIPE_PUBLISHABLE_KEY =
-//   process.env.NODE_ENV === "test"
-//     ? process.env.STRIPE_TEST_PUBLISHABLE_KEY
-//     : process.env.STRIPE_PUBLISHABLE_KEY;
 
-const MY_STRIPE_SECRET_KEY = process.env.STRIPE_TEST_SECRET_KEY;
-const MY_STRIPE_PUBLISHABLE_KEY = process.env.STRIPE_TEST_PUBLISHABLE_KEY;
+const MY_STRIPE_SECRET_KEY =
+  process.env.NODE_ENV === "test"
+    ? process.env.STRIPE_TEST_SECRET_KEY
+    : process.env.STRIPE_SECRET_KEY;
+const MY_STRIPE_PUBLISHABLE_KEY =
+  process.env.NODE_ENV === "test"
+    ? process.env.STRIPE_TEST_PUBLISHABLE_KEY
+    : process.env.STRIPE_PUBLISHABLE_KEY;
+
+// When testing in production use wht below
+// const MY_STRIPE_SECRET_KEY = process.env.STRIPE_TEST_SECRET_KEY;
+// const MY_STRIPE_PUBLISHABLE_KEY = process.env.STRIPE_TEST_PUBLISHABLE_KEY;
 
 const stripe = require("stripe")(MY_STRIPE_SECRET_KEY);
 
@@ -102,11 +104,16 @@ app.post("/create-checkout-session", async (req, res) => {
   //   name: "Piantina",
   // });
   // console.log("aaaa", testProduct);
-  // const product =
-  //   process.env.NODE_ENV === "test"
-  //     ? "prod_SXbLBcm0aD8vtG"
-  //     : "prod_SXbqGGnyIScuVZ";
-  const product = "prod_SXbLBcm0aD8vtG";
+
+  const product =
+    process.env.NODE_ENV === "test"
+      ? "prod_SXbLBcm0aD8vtG"
+      : "prod_SXbqGGnyIScuVZ";
+
+  // When testing in production use the product below
+
+  // const product = "prod_SXbLBcm0aD8vtG";
+
   console.log("this is the cl of the product", product);
   const price = await stripe.prices.create({
     product: product,
