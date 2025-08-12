@@ -16,13 +16,9 @@ const io = new Server(server, {
 
 app.set("io", io);
 io.on("connection", (socket) => {
-  // socket.on("chat message", () => {
-  //   console.log("message from front end");
-  // });
-  // socket.on("plant", () => {
-  //   console.log("plant added on front end");
-  // });
-  // socket.emit("plant", "test");
+  socket.on("connect", () => {
+    console.log("plant added on front end");
+  });
 });
 
 //  end

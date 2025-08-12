@@ -167,7 +167,6 @@ exports.addPlant = async (req, res) => {
         // id: result.insertId,
         image_url: imageUrl,
       });
-      console.log("socket", io, newPlant);
       io.emit("add-plant", newPlant);
     } else {
       console.error("Error uploading image:", imgurResponse.data);
@@ -351,6 +350,8 @@ exports.deletePlant = async (req, res) => {
       id: id,
     },
   });
+  const io = req.app.get("io");
+
   const { image_url, delete_hash, plate, plate_hash } = test[0].dataValues;
 
   const deleteFromImgur = async (hash) => {
@@ -397,6 +398,7 @@ exports.deletePlant = async (req, res) => {
       },
     });
     res.status(200).json({ message: `Plant ${id} successfully deleted!` });
+    io.emit("delete-plant", id);
   } catch (err) {
     res
       .status(400)
