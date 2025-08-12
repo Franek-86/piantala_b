@@ -158,12 +158,17 @@ exports.addPlant = async (req, res) => {
         house_number,
       });
       console.log("1111", newPlant);
+      const io = req.app.get("io");
+      console.log("tsocket test", io);
+
       res.status(201).json({
         message: "Item added successfully!",
         id: newPlant.id,
         // id: result.insertId,
         image_url: imageUrl,
       });
+      console.log("socket", io, newPlant);
+      io.emit("add-plant", newPlant);
     } else {
       console.error("Error uploading image:", imgurResponse.data);
       return res

@@ -3,7 +3,29 @@ const cookieParser = require("cookie-parser");
 const crypto = require("node:crypto");
 const con = require("./config/db");
 const path = require("path");
+const { createServer } = require("node:http");
+const { Server } = require("socket.io");
 const app = express();
+// socket
+const server = createServer(app);
+const io = new Server(server, {
+  cors: {
+    origin: ["http://localhost:3000", "https://piantala-a.onrender.com"],
+  },
+});
+
+app.set("io", io);
+io.on("connection", (socket) => {
+  // socket.on("chat message", () => {
+  //   console.log("message from front end");
+  // });
+  // socket.on("plant", () => {
+  //   console.log("plant added on front end");
+  // });
+  // socket.emit("plant", "test");
+});
+
+//  end
 const session = require("express-session");
 const pgSession = require("connect-pg-simple")(session);
 // const MySQLStore = require("express-mysql-session")(session);
@@ -13,7 +35,6 @@ const bodyParser = require("body-parser"); // Import body-parser
 const plantsRoutes = require("./routes/plantsRoutes");
 const authRoutes = require("./routes/authRoutes");
 const ordersRoutes = require("./routes/ordersRoutes");
-
 const PORT = process.env.PORT || 3001;
 const HOST =
   process.env.NODE_ENV === "test" ? process.env.TEST_HOST : process.env.HOST;
@@ -151,6 +172,6 @@ app.get("/config", (req, res) => {
   });
 });
 
-app.listen(PORT, () => {
+server.listen(PORT, () => {
   console.log(`Server is running on ${PORT}`);
 });
