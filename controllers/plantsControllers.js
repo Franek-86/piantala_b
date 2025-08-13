@@ -167,7 +167,6 @@ exports.addPlant = async (req, res) => {
         // id: result.insertId,
         image_url: imageUrl,
       });
-      io.emit("add-plant", newPlant);
     } else {
       console.error("Error uploading image:", imgurResponse.data);
       return res
@@ -182,8 +181,10 @@ exports.addPlant = async (req, res) => {
 
 exports.getAllPlants = async (req, res) => {
   try {
+    const io = req.app.get("io");
     const plants = await Plant.findAll();
     res.status(200).json(plants);
+    io.emit("all-plants", plants);
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
@@ -235,7 +236,7 @@ exports.updateStatus = async (req, res) => {
   console.log("comment1113", req);
   console.log("comment 111", rejection_comment);
   console.log("comment 1112", status);
-
+  const io = req.app.get("io");
   // Validate the status
   if (status !== "approved" && status !== "rejected") {
     return res.status(400).json({ message: "Invalid status" });
@@ -398,7 +399,6 @@ exports.deletePlant = async (req, res) => {
       },
     });
     res.status(200).json({ message: `Plant ${id} successfully deleted!` });
-    io.emit("delete-plant", id);
   } catch (err) {
     res
       .status(400)
