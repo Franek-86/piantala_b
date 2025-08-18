@@ -15,9 +15,35 @@ const io = new Server(server, {
 });
 
 app.set("io", io);
+let users = [];
 io.on("connection", (socket) => {
-  socket.on("connect", () => {
-    console.log("plant added on front end");
+  console.log(`⚡: ${socket.id} user just connected!`);
+  socket.on("message", (data) => {
+    console.log(data);
+    io.emit("messageResponse", data);
+  });
+  socket.on("newUser", (data) => {
+    console.log("data coming from newUser", data);
+
+    users.push(data);
+    users = users.filter(
+      (obj, index, self) =>
+        index === self.findIndex((t) => t.socketID === obj.socketID)
+    );
+    console.log("users", users);
+    io.emit("newUserResponse", users);
+  });
+  socket.on("typing", (data) => socket.broadcast.emit("typingResponse", data));
+
+  // socket.on("connect", () => {
+  //   console.log("plant added on front end");
+  // });
+  socket.on("disconnect", () => {
+    console.log("🔥: A user disconnecteds");
+    users = users.filter((user) => user.socketID !== socket.id);
+    console.log("after disconnect user", users);
+    io.emit("newUserResponse", users);
+    socket.disconnect();
   });
 });
 
