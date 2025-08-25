@@ -3,6 +3,7 @@ const cookieParser = require("cookie-parser");
 const crypto = require("node:crypto");
 const con = require("./config/db");
 const path = require("path");
+
 const { createServer } = require("node:http");
 const { Server } = require("socket.io");
 const app = express();
@@ -15,39 +16,7 @@ const io = new Server(server, {
 });
 
 app.set("io", io);
-let users = [];
-io.on("connection", (socket) => {
-  console.log(`⚡: ${socket.id} user just connected!`);
-  socket.on("message", (data) => {
-    console.log(data);
-    io.emit("messageResponse", data);
-  });
-  socket.on("newUser", (data) => {
-    console.log("data coming from newUser", data);
 
-    users.push(data);
-    users = users.filter(
-      (obj, index, self) =>
-        index === self.findIndex((t) => t.socketID === obj.socketID)
-    );
-    console.log("users", users);
-    io.emit("newUserResponse", users);
-  });
-  socket.on("typing", (data) => socket.broadcast.emit("typingResponse", data));
-
-  // socket.on("connect", () => {
-  //   console.log("plant added on front end");
-  // });
-  socket.on("disconnect", () => {
-    console.log("🔥: A user disconnecteds");
-    users = users.filter((user) => user.socketID !== socket.id);
-    console.log("after disconnect user", users);
-    io.emit("newUserResponse", users);
-    socket.disconnect();
-  });
-});
-
-//  end
 const session = require("express-session");
 const pgSession = require("connect-pg-simple")(session);
 // const MySQLStore = require("express-mysql-session")(session);
@@ -57,6 +26,8 @@ const bodyParser = require("body-parser"); // Import body-parser
 const plantsRoutes = require("./routes/plantsRoutes");
 const authRoutes = require("./routes/authRoutes");
 const ordersRoutes = require("./routes/ordersRoutes");
+const chatRoutes = require("./routes/chatRoutes");
+
 const PORT = process.env.PORT || 3001;
 const HOST =
   process.env.NODE_ENV === "test" ? process.env.TEST_HOST : process.env.HOST;
@@ -136,6 +107,7 @@ app.use(
 app.use("/api/auth", authRoutes);
 app.use("/api/plants", plantsRoutes);
 app.use("/api/orders", ordersRoutes);
+app.use("/api/chat", chatRoutes);
 
 const MY_DOMAIN =
   process.env.NODE_ENV === "test"

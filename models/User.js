@@ -21,6 +21,12 @@ module.exports = (sequelize, DataTypes) => {
       //   foreignKey: {
       //     name: 'myFooId',
       //   },
+      // User.belongsToMany(models.Messages, {
+      //   foreignKey: {
+      //     name: "id",
+      //     as: "messages",
+      //   },
+      // });
     }
   }
   User.init(
