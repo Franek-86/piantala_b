@@ -25,6 +25,7 @@ router.get("/", isAuth, plantsController.getAllPlants);
 router.get("/user-plants", plantsController.getUserPlants);
 router.get("/owned-plants", plantsController.getOwnedPlants);
 router.patch("/:id/status", isAdmin, plantsController.updateStatus);
+router.patch("/:id/type", isAdmin, plantsController.updatePlantType);
 router.patch("/:id/ownership", plantsController.updateOwner);
 router.patch("/clear-plate", isAdmin, plantsController.clearPlate);
 router.delete("/:id/delete", isAdmin, plantsController.deletePlant);

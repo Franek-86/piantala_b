@@ -1,10 +1,10 @@
 const con = require("../config/db");
 const FormData = require("form-data");
 const axios = require("axios");
-const User = require("../models/User");
-// const Plant = require("../models/Plant");
+
 const db = require("../models");
 const Plant = db.Plant;
+const User = db.User;
 exports.addPlate = async (req, res) => {
   const file = req.file;
   let { id } = req.params;
@@ -284,6 +284,30 @@ exports.updateStatus = async (req, res) => {
     }
   } catch (err) {
     return res.status(500).json({ message: "Server error" });
+  }
+};
+
+exports.updatePlantType = async (req, res) => {
+  console.log("323232");
+  const { id } = req.params;
+  const { plant_type } = req.body;
+  try {
+    await Plant.update(
+      { plant_type: plant_type },
+      {
+        where: {
+          id: id,
+        },
+      }
+    );
+    console.log("qqq", res);
+    return res
+      .status(200)
+      .json({ message: `Plant type updated to ${plant_type} successfully!` });
+  } catch (err) {
+    res
+      .status(500)
+      .json({ message: `rejection update failed due to: ${err.message}` });
   }
 };
 
