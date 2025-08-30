@@ -466,7 +466,7 @@ const paymentConfirmationEmailHTML = (a, b, c) => {
                                                             Piantina &amp; Piantumazione
                                                           </td>
                                                           <td class="productPrice" style="text-align: right;color: #4A4A4A;font-size:16px">
-                                                           €10
+                                                           €200
                                                           </td>
                                                         </tr>
                                                         <tr>
@@ -577,14 +577,14 @@ const paymentConfirmationEmailHTML = (a, b, c) => {
                                                         <tr class="textRow" style="line-height: 32px; color:#4A4A4A;">
                                                           <td class="textContent priceLabel" style="max-width: 150px; word-wrap: break-word;"><span style="font-weight: 600;font-size:16px;text-align: right;" class="" id="subtotal">Subtotale</span>:</td>
                                                           <td class="textContent price">
-                                                            <span style="font-size:16px;text-align: right;padding-left: 10px;width: 1%;white-space: nowrap;">€10 </span>
+                                                            <span style="font-size:16px;text-align: right;padding-left: 10px;width: 1%;white-space: nowrap;">€200 </span>
                                                           </td>
                                                         </tr>
                                                       </tbody>
                                                     </table>
                                                 <tr>
                                                   <td class="textContent total" colspan="2" style="color: #4A4A4A;font-size: 25px;padding-top: 32px;text-align: right;font-weight: 600;">
-                                                    €10
+                                                    €200
                                                   </td>
                                                 </tr>
                                           </td>
