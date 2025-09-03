@@ -362,7 +362,7 @@ exports.sendEmail = async (req, res) => {
 
   const mailOptions = {
     from: "postmaster@ernestverner.it",
-    to: "amicidiernestverner@gmail.com",
+    to: "tipiantoperamore@gmail.com",
     subject: `Ti Pianto per Amore - email da ${email}`,
     html: `<p>${messageBody}</p>`,
   };
