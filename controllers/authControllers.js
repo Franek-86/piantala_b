@@ -289,7 +289,6 @@ exports.passwordLink = async (req, res) => {
           ? process.env.DOMAIN_NAME_TEST_CLIENT
           : process.env.DOMAIN_NAME_CLIENT
       }/verify-reset/${user.verification_token}`;
-      console.log("here", url);
       // sendPasswordResetEmail;
 
       try {
@@ -312,41 +311,30 @@ exports.passwordLink = async (req, res) => {
           ? process.env.DOMAIN_NAME_TEST_CLIENT
           : process.env.DOMAIN_NAME_CLIENT
       }/verify-reset/${user.verification_token}`;
-      console.log("here", url);
 
       try {
         await sendPasswordResetEmail(email, name, url);
         res.status(200).send({ message: "email inviata" });
       } catch (error) {
-        console.log("error:", error);
         res.status(500).send({ message: "Errore di invio mail" });
       }
     }
   } catch (err) {
-    console.log(err);
     res.status(500).send({ message: "internal server error" });
   }
 };
 
 exports.newPassword = async (req, res) => {
   try {
-    console.log("test111", req.body.payload);
     const { psw } = req.body.payload;
     const { token } = req.body.payload;
     const hashedPassword = await bcrypt.hash(psw, 10);
-    console.log("token", token);
-    console.log("password", psw);
-    console.log("hashedPassword", hashedPassword);
     const user = await User.findOne({ where: { verification_token: token } });
     user.user_password = hashedPassword;
     user.verification_token = null;
     await user.save();
-
-    // console.log("user", user);
-    console.log("aaa", req.body);
     res.status(200).send("Password cambiata con successo");
   } catch (err) {
-    console.log("zzz", err);
     res.status(400).send("Errore");
   }
 };
@@ -361,8 +349,8 @@ exports.sendEmail = async (req, res) => {
   console.log("here", email, messageBody);
 
   const mailOptions = {
-    from: "postmaster@ernestverner.it",
-    to: "tipiantoperamore@gmail.com",
+    // from: email,
+    to: "tipiantopreamore86@gmail.com",
     subject: `Ti Pianto per Amore - email da ${email}`,
     html: `<p>${messageBody}</p>`,
   };
