@@ -160,8 +160,10 @@ exports.getUserInfo = async (req, res) => {
     if (user) {
       console.log("135", user.user_name);
       const test = {
+        id: user_id,
         userName: user.dataValues.user_name,
         email: user.dataValues.email,
+        phone: user.dataValues.phone,
       };
       // const test = user.dataValues.user_name;
       console.log("test1", test);
@@ -264,6 +266,15 @@ exports.registerUser = async (req, res) => {
     res.status(500).json({ message: "Server error during registration" });
   }
 };
+exports.deleteUser = async (req, res) => {
+  try {
+    const { id } = req.body;
+    await User.destroy({ where: { user_id: id } });
+    res.status(200).json({ message: "user successfully deleted" });
+  } catch (error) {
+    res.status(500).json({ error: error });
+  }
+};
 
 // Start password reset
 
@@ -350,7 +361,7 @@ exports.sendEmail = async (req, res) => {
 
   const mailOptions = {
     // from: email,
-    to: "tipiantoperamore86@gmail.com",
+    to: "tipiantoperamore@gmail.com",
     subject: `Ti Pianto per Amore - email da ${email}`,
     html: `<p>${messageBody}</p>`,
   };

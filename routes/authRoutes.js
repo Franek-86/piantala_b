@@ -15,6 +15,7 @@ router.post(
   authController.sendPaymentConfirmationEmail
 );
 router.post("/register", authController.registerUser);
+router.delete("/delete-user", authController.deleteUser);
 router.post("/login", authController.loginUser);
 router.post("/refresh-token", authController.refreshToken);
 router.post("/logout", authController.logoutUser);
