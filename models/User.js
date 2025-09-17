@@ -89,9 +89,19 @@ module.exports = (sequelize, DataTypes) => {
         type: Sequelize.STRING,
         allowNull: false,
       },
+      pic: {
+        type: Sequelize.STRING,
+      },
+      hash_pic: {
+        type: Sequelize.STRING,
+      },
       is_verified: {
         type: Sequelize.BOOLEAN,
         // defaultValue: false,
+      },
+      is_deleted: {
+        type: Sequelize.BOOLEAN,
+        defaultValue: false,
       },
       status: {
         type: Sequelize.INTEGER,

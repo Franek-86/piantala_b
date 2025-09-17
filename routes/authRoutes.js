@@ -3,6 +3,9 @@ const router = express.Router();
 const isAdmin = require("../middleware/isAdmin");
 const User = require("../models/User");
 const authController = require("../controllers/authControllers");
+const multer = require("multer");
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
 
 router.get("/verify", authController.verificationEmail);
 router.get(
@@ -32,6 +35,7 @@ router.get("/me", authController.userSession);
 // start password reset
 router.post("/password-reset", authController.passwordLink);
 router.patch("/new-password", authController.newPassword);
+router.patch("/set-user-pic", upload.single("pic"), authController.setUserPic);
 
 // end password reset
 module.exports = router;

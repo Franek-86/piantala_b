@@ -1,10 +1,11 @@
 const con = require("../config/db");
 const FormData = require("form-data");
 const axios = require("axios");
-
 const db = require("../models");
+const { imgurAdd } = require("../assets/imgur.js");
 const Plant = db.Plant;
 const User = db.User;
+
 exports.addPlate = async (req, res) => {
   const file = req.file;
   let { id } = req.params;
@@ -16,39 +17,42 @@ exports.addPlate = async (req, res) => {
   }
   try {
     const formData = new FormData();
-    formData.append("image", req.file.buffer, {
-      filename: req.file.originalname, // Ensure correct filename is passed
-      contentType: req.file.mimetype, // Ensure correct MIME type is passed
-    });
+    // formData.append("image", req.file.buffer, {
+    //   filename: req.file.originalname, // Ensure correct filename is passed
+    //   contentType: req.file.mimetype, // Ensure correct MIME type is passed
+    // });
+    formData.append("image", req.file.buffer);
 
-    const formHeaders = formData.getHeaders();
-    let accessToken = process.env.IMGUR_INTIAL_ACCESS_TOKEN;
-    async function refreshToken() {
-      const response = await axios.post("https://api.imgur.com/oauth2/token", {
-        refresh_token: process.env.IMGUR_REFRESH_TOKEN, // Replace with your refresh token
-        client_id: process.env.IMGUR_CLIENT_ID,
-        client_secret: process.env.IMGUR_CLIENT_SECRET,
-        grant_type: "refresh_token",
-      });
-      console.log("here1", response.data.access_token);
-      accessToken = response.data.access_token; // Store new token
-    }
-    await refreshToken();
-    // Add the Authorization header for Imgur API
-    const headers = {
-      ...formHeaders,
-      Authorization: `Bearer ${accessToken}`, // Ensure the Client-ID is set properly
-    };
-    console.log("Request Headers:", headers);
-    // Log the final headers
+    // const formHeaders = formData.getHeaders();
+    const imgurResponse = await imgurAdd(formData);
+    // const imgurResponse = await imgurAdd(formData);
+    // let accessToken = process.env.IMGUR_INTIAL_ACCESS_TOKEN;
+    // async function refreshToken() {
+    //   const response = await axios.post("https://api.imgur.com/oauth2/token", {
+    //     refresh_token: process.env.IMGUR_REFRESH_TOKEN, // Replace with your refresh token
+    //     client_id: process.env.IMGUR_CLIENT_ID,
+    //     client_secret: process.env.IMGUR_CLIENT_SECRET,
+    //     grant_type: "refresh_token",
+    //   });
+    //   console.log("here1", response.data.access_token);
+    //   accessToken = response.data.access_token; // Store new token
+    // }
+    // await refreshToken();
+    // // Add the Authorization header for Imgur API
+    // const headers = {
+    //   ...formHeaders,
+    //   Authorization: `Bearer ${accessToken}`, // Ensure the Client-ID is set properly
+    // };
+    // console.log("Request Headers:", headers);
+    // // Log the final headers
 
-    const imgurResponse = await axios.post(
-      "https://api.imgur.com/3/image",
-      formData,
-      {
-        headers: headers,
-      }
-    );
+    // const imgurResponse = await axios.post(
+    //   "https://api.imgur.com/3/image",
+    //   formData,
+    //   {
+    //     headers: headers,
+    //   }
+    // );
 
     if (imgurResponse && imgurResponse.data && imgurResponse.data.success) {
       const imageUrl = imgurResponse.data.data.link;
@@ -102,45 +106,43 @@ exports.addPlant = async (req, res) => {
     }
 
     const formData = new FormData();
-    formData.append("image", req.file.buffer, {
-      filename: req.file.originalname, // Ensure correct filename is passed
-      contentType: req.file.mimetype, // Ensure correct MIME type is passed
-    });
+    formData.append("image", req.file.buffer);
     // Get headers for the form data
-    const formHeaders = formData.getHeaders();
+    const imgurResponse = await imgurAdd(formData);
+    // const formHeaders = formData.getHeaders();
 
     // Log the headers to make sure everything looks correct
-    console.log("FormData Headers:", formHeaders);
+    // console.log("FormData Headers:", formHeaders);
 
     // Add the Authorization header for Imgur API
 
     // Log the final headers
 
-    let accessToken = process.env.IMGUR_INTIAL_ACCESS_TOKEN;
-    async function refreshToken() {
-      const response = await axios.post("https://api.imgur.com/oauth2/token", {
-        refresh_token: process.env.IMGUR_REFRESH_TOKEN, // Replace with your refresh token
-        client_id: process.env.IMGUR_CLIENT_ID,
-        client_secret: process.env.IMGUR_CLIENT_SECRET,
-        grant_type: "refresh_token",
-      });
-      console.log("here1", response.data.access_token);
-      accessToken = response.data.access_token; // Store new token
-      console.log("New Access Token:", accessToken);
-    }
-    await refreshToken();
-    const headers = {
-      ...formHeaders,
-      Authorization: `Bearer ${accessToken}`, // Ensure the Client-ID is set properly
-    };
-    console.log("Request Headers:", headers);
-    const imgurResponse = await axios.post(
-      "https://api.imgur.com/3/image",
-      formData,
-      {
-        headers: headers,
-      }
-    );
+    // let accessToken = process.env.IMGUR_INTIAL_ACCESS_TOKEN;
+    // async function refreshToken() {
+    //   const response = await axios.post("https://api.imgur.com/oauth2/token", {
+    //     refresh_token: process.env.IMGUR_REFRESH_TOKEN, // Replace with your refresh token
+    //     client_id: process.env.IMGUR_CLIENT_ID,
+    //     client_secret: process.env.IMGUR_CLIENT_SECRET,
+    //     grant_type: "refresh_token",
+    //   });
+    //   console.log("here1", response.data.access_token);
+    //   accessToken = response.data.access_token; // Store new token
+    //   console.log("New Access Token:", accessToken);
+    // }
+    // await refreshToken();
+    // const headers = {
+    //   ...formHeaders,
+    //   Authorization: `Bearer ${accessToken}`, // Ensure the Client-ID is set properly
+    // };
+    // console.log("Request Headers:", headers);
+    // const imgurResponse = await axios.post(
+    //   "https://api.imgur.com/3/image",
+    //   formData,
+    //   {
+    //     headers: headers,
+    //   }
+    // );
     if (imgurResponse && imgurResponse.data && imgurResponse.data.success) {
       const imageUrl = imgurResponse.data.data.link;
       const deleteHash = imgurResponse.data.data.deletehash;

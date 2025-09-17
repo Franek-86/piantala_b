@@ -6,7 +6,9 @@ const transporter = require("../config/nodemailer");
 // const User = require("../models/User");
 const db = require("../models");
 const User = db.User;
+const Order = db.Order;
 const MailerSend = require("mailersend");
+const { imgurAdd } = require("../assets/imgur");
 const axios = require("axios");
 const emailToBeSent = require("../assets/mailOptions");
 // const {
@@ -18,6 +20,8 @@ const {
   sendPasswordResetEmail,
   sendPaymentConfirmationEmail,
 } = require("../email/resend");
+const FormData = require("form-data");
+
 const domainNameClient =
   process.env.NODE_ENV === "test"
     ? process.env.DOMAIN_NAME_TEST_CLIENT
@@ -115,6 +119,40 @@ exports.setUserRole = async (req, res) => {
     }
   }
 };
+exports.setUserPic = async (req, res) => {
+  try {
+    const id = req.body.id;
+
+    // const name = req.files[0].originalname;
+    // const type = req.files[0].mimetype;
+    const buffer = req.file.buffer;
+
+    const formData = new FormData();
+    formData.append("image", buffer);
+
+    const imgurResponse = await imgurAdd(formData);
+    if (imgurResponse.status === 200) {
+      console.log("aaas", imgurResponse);
+
+      const hash = imgurResponse.data.data.deletehash;
+      console.log("aaas", hash);
+      const pic = imgurResponse.data.data.link;
+      try {
+        const user = await User.findOne({ where: { user_id: id } });
+        if (user) {
+          user.pic = pic;
+          user.hash_pic = hash;
+          user.save();
+          res.status(200).json({ message: "Profile pic added", url: pic });
+        }
+      } catch (err) {
+        res.status(500).json({ message: err });
+      }
+    }
+  } catch (err) {
+    console.log("error from set pic", err);
+  }
+};
 exports.setUserStatus = async (req, res) => {
   const { id, status } = req.body.payload.userInfo;
   if (status === 0) {
@@ -164,6 +202,7 @@ exports.getUserInfo = async (req, res) => {
         userName: user.dataValues.user_name,
         email: user.dataValues.email,
         phone: user.dataValues.phone,
+        pic: user.dataValues.pic,
       };
       // const test = user.dataValues.user_name;
       console.log("test1", test);
@@ -267,12 +306,27 @@ exports.registerUser = async (req, res) => {
   }
 };
 exports.deleteUser = async (req, res) => {
-  try {
-    const { id } = req.body;
-    await User.destroy({ where: { user_id: id } });
-    res.status(200).json({ message: "user successfully deleted" });
-  } catch (error) {
-    res.status(500).json({ error: error });
+  const { id } = req.body;
+  const checkOrders = await Order.findAll({ where: { user_id: id } });
+  console.log("check orders", checkOrders.length);
+  if (checkOrders.length === 0) {
+    try {
+      await User.destroy({ where: { user_id: id } });
+      res.status(200).json({ message: "user successfully deleted" });
+    } catch (error) {
+      res.status(500).json({ error: error });
+    }
+  } else {
+    try {
+      const user = await User.findOne({ where: { user_id: id } });
+
+      user.is_deleted = true;
+      await user.save();
+      console.log("check user", user);
+      res.status(200).json({ message: "user successfully deleted" });
+    } catch (error) {
+      res.status(500).json({ error: error });
+    }
   }
 };
 
@@ -392,6 +446,12 @@ exports.loginUser = async (req, res) => {
   }
   if (user.status === 1) {
     return res.status(401).json({ message: "accesso non consentito" });
+  }
+  if (user.is_deleted === true) {
+    return res.status(401).json({
+      message:
+        "utente disattivato, per riattivazione inviare mail a tipiantoperamore@gmail.com",
+    });
   }
   const passwordMatch = await bcrypt.compare(user_password, user.user_password);
 
