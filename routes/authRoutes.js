@@ -36,6 +36,7 @@ router.get("/me", authController.userSession);
 router.post("/password-reset", authController.passwordLink);
 router.patch("/new-password", authController.newPassword);
 router.patch("/set-user-pic", upload.single("pic"), authController.setUserPic);
+router.patch("/delete-user-pic", authController.deleteUserPic);
 
 // end password reset
 module.exports = router;

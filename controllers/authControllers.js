@@ -9,6 +9,7 @@ const User = db.User;
 const Order = db.Order;
 const MailerSend = require("mailersend");
 const { imgurAdd } = require("../assets/imgur");
+const { imgurDelete } = require("../assets/imgur");
 const axios = require("axios");
 const emailToBeSent = require("../assets/mailOptions");
 // const {
@@ -151,6 +152,35 @@ exports.setUserPic = async (req, res) => {
     }
   } catch (err) {
     console.log("error from set pic", err);
+  }
+};
+exports.deleteUserPic = async (req, res) => {
+  try {
+    const { id } = req.body;
+
+    const user = await User.findOne({ where: { user_id: id } });
+    if (user) {
+      console.log(user);
+      const hash_pic = user.hash_pic;
+      console.log(hash_pic);
+      const imgurResponse = await imgurDelete(hash_pic);
+
+      if (imgurResponse.status === 200) {
+        console.log("here the imgur response from delete pic", imgurResponse);
+        user.hash_pic = null;
+        user.pic = null;
+        user.save();
+        res.status(200).json({ message: "Immagine rimossa con successo" });
+      }
+
+      // console.log(imgurResponse);
+      // se va bene calcello anche su db
+    }
+  } catch (err) {
+    console.log("error from remove pic", err);
+    res
+      .status(500)
+      .json({ message: "Errore nell'eliminazione dell'immagine profilo" });
   }
 };
 exports.setUserStatus = async (req, res) => {
