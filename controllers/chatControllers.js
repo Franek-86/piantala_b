@@ -3,12 +3,13 @@ const express = require("express");
 const app = express();
 exports.message = async (req, res) => {
   console.log("q123", req.body);
-  const { sender_id, sender_username, receiver_id, content } = req.body;
+  const { sender_id, sender_username, receiver_id, content, pic } = req.body;
   const newMessage = await db.Message.create({
     sender_id,
     receiver_id,
     content,
     sender_username,
+    pic,
   });
   console.log("q123", newMessage.dataValues);
   const data = newMessage.dataValues;
