@@ -122,6 +122,7 @@ exports.setUserRole = async (req, res) => {
 };
 exports.setUserPic = async (req, res) => {
   try {
+    console.log("ppp");
     const id = req.body.id;
 
     // const name = req.files[0].originalname;
