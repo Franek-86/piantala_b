@@ -9,14 +9,12 @@ exports.addOrder = async (req, res) => {
   let third = crypto.randomBytes(2).toString("hex");
 
   const order_number = `${first}-${second}-${third}`;
-  console.log("jjj2", order_number);
   const { owner_id: user_id, id: product_id } = req.body;
   const newOrder = await Order.create({
     order_number,
     user_id,
     product_id,
   });
-  console.log("newOrder", newOrder);
   res.status(201).json({
     message: "Order added successfully!",
     order: newOrder,
@@ -37,7 +35,6 @@ exports.getOrders = async (req, res) => {
 };
 exports.updateOrder = async (req, res) => {
   const { status: newStatus, id: orderId } = req.body;
-  console.log("req.body", req.body);
   try {
     const updatedOrder = await Order.update(
       {
@@ -49,7 +46,6 @@ exports.updateOrder = async (req, res) => {
         },
       }
     );
-    console.log("updatedOrder", updatedOrder);
     if (updatedOrder[0] === 0) {
       return res
         .status(404)

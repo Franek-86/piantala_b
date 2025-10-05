@@ -25,6 +25,7 @@ const cors = require("cors"); // Import CORS
 const bodyParser = require("body-parser"); // Import body-parser
 const plantsRoutes = require("./routes/plantsRoutes");
 const authRoutes = require("./routes/authRoutes");
+const usersRoute = require("./routes/usersRoutes");
 const ordersRoutes = require("./routes/ordersRoutes");
 const chatRoutes = require("./routes/chatRoutes");
 
@@ -105,6 +106,7 @@ app.use(
 );
 
 app.use("/api/auth", authRoutes);
+app.use("/api/users", usersRoute);
 app.use("/api/plants", plantsRoutes);
 app.use("/api/orders", ordersRoutes);
 app.use("/api/chat", chatRoutes);

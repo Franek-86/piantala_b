@@ -2,7 +2,7 @@ const con = require("../config/db");
 const FormData = require("form-data");
 const axios = require("axios");
 const db = require("../models");
-const { imgurAdd } = require("../assets/imgur.js");
+const { imgurAdd, imgurDelete } = require("../assets/imgur.js");
 const Plant = db.Plant;
 const User = db.User;
 
@@ -10,54 +10,17 @@ exports.addPlate = async (req, res) => {
   const file = req.file;
   let { id } = req.params;
   id = parseInt(id);
-  console.log("this", id);
 
   if (!file) {
     res.status(400).send("no file uploaded");
   }
   try {
     const formData = new FormData();
-    // formData.append("image", req.file.buffer, {
-    //   filename: req.file.originalname, // Ensure correct filename is passed
-    //   contentType: req.file.mimetype, // Ensure correct MIME type is passed
-    // });
     formData.append("image", req.file.buffer);
-
-    // const formHeaders = formData.getHeaders();
     const imgurResponse = await imgurAdd(formData);
-    // const imgurResponse = await imgurAdd(formData);
-    // let accessToken = process.env.IMGUR_INTIAL_ACCESS_TOKEN;
-    // async function refreshToken() {
-    //   const response = await axios.post("https://api.imgur.com/oauth2/token", {
-    //     refresh_token: process.env.IMGUR_REFRESH_TOKEN, // Replace with your refresh token
-    //     client_id: process.env.IMGUR_CLIENT_ID,
-    //     client_secret: process.env.IMGUR_CLIENT_SECRET,
-    //     grant_type: "refresh_token",
-    //   });
-    //   console.log("here1", response.data.access_token);
-    //   accessToken = response.data.access_token; // Store new token
-    // }
-    // await refreshToken();
-    // // Add the Authorization header for Imgur API
-    // const headers = {
-    //   ...formHeaders,
-    //   Authorization: `Bearer ${accessToken}`, // Ensure the Client-ID is set properly
-    // };
-    // console.log("Request Headers:", headers);
-    // // Log the final headers
-
-    // const imgurResponse = await axios.post(
-    //   "https://api.imgur.com/3/image",
-    //   formData,
-    //   {
-    //     headers: headers,
-    //   }
-    // );
-
     if (imgurResponse && imgurResponse.data && imgurResponse.data.success) {
       const imageUrl = imgurResponse.data.data.link;
       const plateHash = imgurResponse.data.data.deletehash;
-      console.log("this2", imageUrl);
       try {
         const updatedPlate = await Plant.update(
           { plate: imageUrl, plate_hash: plateHash },
@@ -72,18 +35,14 @@ exports.addPlate = async (req, res) => {
           id: updatedPlate.insertId,
           image_url: imageUrl,
         });
-      } catch (err) {
-        console.log(err);
-      }
+      } catch (err) {}
     } else {
       console.error("Error uploading image:", imgurResponse.data);
       return res
         .status(500)
         .json({ message: "Error uploading image to Imgur" });
     }
-  } catch (err) {
-    console.log(err);
-  }
+  } catch (err) {}
 };
 
 exports.addPlant = async (req, res) => {
@@ -109,40 +68,7 @@ exports.addPlant = async (req, res) => {
     formData.append("image", req.file.buffer);
     // Get headers for the form data
     const imgurResponse = await imgurAdd(formData);
-    // const formHeaders = formData.getHeaders();
 
-    // Log the headers to make sure everything looks correct
-    // console.log("FormData Headers:", formHeaders);
-
-    // Add the Authorization header for Imgur API
-
-    // Log the final headers
-
-    // let accessToken = process.env.IMGUR_INTIAL_ACCESS_TOKEN;
-    // async function refreshToken() {
-    //   const response = await axios.post("https://api.imgur.com/oauth2/token", {
-    //     refresh_token: process.env.IMGUR_REFRESH_TOKEN, // Replace with your refresh token
-    //     client_id: process.env.IMGUR_CLIENT_ID,
-    //     client_secret: process.env.IMGUR_CLIENT_SECRET,
-    //     grant_type: "refresh_token",
-    //   });
-    //   console.log("here1", response.data.access_token);
-    //   accessToken = response.data.access_token; // Store new token
-    //   console.log("New Access Token:", accessToken);
-    // }
-    // await refreshToken();
-    // const headers = {
-    //   ...formHeaders,
-    //   Authorization: `Bearer ${accessToken}`, // Ensure the Client-ID is set properly
-    // };
-    // console.log("Request Headers:", headers);
-    // const imgurResponse = await axios.post(
-    //   "https://api.imgur.com/3/image",
-    //   formData,
-    //   {
-    //     headers: headers,
-    //   }
-    // );
     if (imgurResponse && imgurResponse.data && imgurResponse.data.success) {
       const imageUrl = imgurResponse.data.data.link;
       const deleteHash = imgurResponse.data.data.deletehash;
@@ -159,9 +85,7 @@ exports.addPlant = async (req, res) => {
         shop,
         house_number,
       });
-      console.log("1111", newPlant);
       const io = req.app.get("io");
-      console.log("tsocket test", io);
 
       res.status(201).json({
         message: "Item added successfully!",
@@ -194,15 +118,7 @@ exports.getAllPlants = async (req, res) => {
 
 exports.updateOwner = async (req, res) => {
   const { id, owner_id, comment, plantType, status, purchase_date } = req.body; // Get the new status from the request body
-  console.log(
-    "test345",
-    id,
-    owner_id,
-    comment,
-    plantType,
-    status,
-    purchase_date
-  );
+
   // qui
   // Change everyone without a last name to "Doe"
   try {
@@ -235,9 +151,6 @@ exports.updateOwner = async (req, res) => {
 exports.updateStatus = async (req, res) => {
   const { id } = req.params; // Get the plant ID from the URL
   const { status, rejection_comment } = req.body; // Get the new status and rejection comment from the request body
-  console.log("comment1113", req);
-  console.log("comment 111", rejection_comment);
-  console.log("comment 1112", status);
   const io = req.app.get("io");
   // Validate the status
   if (status !== "approved" && status !== "rejected") {
@@ -290,7 +203,6 @@ exports.updateStatus = async (req, res) => {
 };
 
 exports.updatePlantType = async (req, res) => {
-  console.log("323232");
   const { id } = req.params;
   const { plant_type } = req.body;
   try {
@@ -302,7 +214,6 @@ exports.updatePlantType = async (req, res) => {
         },
       }
     );
-    console.log("qqq", res);
     return res
       .status(200)
       .json({ message: `Plant type updated to ${plant_type} successfully!` });
@@ -315,9 +226,7 @@ exports.updatePlantType = async (req, res) => {
 
 exports.clearPlate = async (req, res) => {
   const { id, plate_hash } = req.body;
-  console.log("sta12", id, plate_hash);
   const deleteFromImgur = async (hash) => {
-    console.log("123321");
     if (!hash) return;
     try {
       async function refreshToken() {
@@ -330,9 +239,7 @@ exports.clearPlate = async (req, res) => {
             grant_type: "refresh_token",
           }
         );
-        console.log("here1", response.data.access_token);
         accessToken = response.data.access_token; // Store new token
-        console.log("New Access Token:", accessToken);
       }
       await refreshToken();
       const imgurResponse = await axios.delete(
@@ -343,7 +250,6 @@ exports.clearPlate = async (req, res) => {
           },
         }
       );
-      console.log(`Image with hash ${hash} deleted:`, imgurResponse.data);
     } catch (error) {
       console.error(`Failed to delete image with hash ${hash}:`, error);
     }
@@ -355,14 +261,11 @@ exports.clearPlate = async (req, res) => {
     try {
       con.query(sqlUpdate, [id], (err, results) => {
         if (err) {
-          console.log(err);
           return res.status(500).send(err);
         }
         res.json(results);
       });
-    } catch (err) {
-      console.log(err);
-    }
+    } catch (err) {}
   };
   await deleteFromImgur(plate_hash);
   await removePlate(id);
@@ -380,57 +283,23 @@ exports.deletePlant = async (req, res) => {
   const io = req.app.get("io");
 
   const { image_url, delete_hash, plate, plate_hash } = test[0].dataValues;
+  const imgurResponse = await imgurDelete(delete_hash);
 
-  const deleteFromImgur = async (hash) => {
-    if (!hash) return;
+  if (imgurResponse.status === 200) {
     try {
-      let accessToken = process.env.IMGUR_INTIAL_ACCESS_TOKEN;
-      async function refreshToken() {
-        const response = await axios.post(
-          "https://api.imgur.com/oauth2/token",
-          {
-            refresh_token: process.env.IMGUR_REFRESH_TOKEN, // Replace with your refresh token
-            client_id: process.env.IMGUR_CLIENT_ID,
-            client_secret: process.env.IMGUR_CLIENT_SECRET,
-            grant_type: "refresh_token",
-          }
+      await Plant.destroy({
+        where: {
+          id: id,
+        },
+      });
+      res.status(200).json({ message: `Plant ${id} successfully deleted!` });
+    } catch (err) {
+      res
+        .status(400)
+        .json(
+          `something went wrong deleting the plant after deleting images from imgur: ${err.message}`
         );
-        console.log("here1", response.data.access_token);
-        accessToken = response.data.access_token; // Store new token
-      }
-      await refreshToken();
-      const imgurResponse = await axios.delete(
-        `https://api.imgur.com/3/image/${hash}`,
-        {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        }
-      );
-      console.log(`Image with hash ${hash} deleted:`, imgurResponse.data);
-    } catch (error) {
-      console.error(`Failed to delete image with hash ${hash}:`, error);
     }
-  };
-
-  await Promise.all([
-    deleteFromImgur(delete_hash),
-    deleteFromImgur(plate_hash),
-  ]);
-
-  try {
-    await Plant.destroy({
-      where: {
-        id: id,
-      },
-    });
-    res.status(200).json({ message: `Plant ${id} successfully deleted!` });
-  } catch (err) {
-    res
-      .status(400)
-      .json(
-        `something went wrong deleting the plant after deleting images from imgur: ${err.message}`
-      );
   }
 };
 
@@ -447,31 +316,10 @@ exports.getUserPlants = async (req, res) => {
   } catch (err) {
     return res.status(500).send(err);
   }
-
-  // console.log("test0", user);
-
-  // const sql = "SELECT * FROM plants WHERE user_id = $1";
-  // con.query(sql, [userId], (err, results) => {
-  //   if (err) {
-  //     console.log(err);
-  //     return res.status(500).send(err);
-  //   }
-  //   console.log("test1", results.rows);
-  //   res.json(results.rows);
-  // });
 };
 
 exports.getOwnedPlants = async (req, res) => {
-  console.log("ciao dal get owned plants", req.query.ID);
   const ownerID = req.query.ID;
-  // const sql = "select * from plants where owner_id = $1";
-  // con.query(sql, [ownerID], (err, results) => {
-  //   if (err) {
-  //     console.log(err);
-  //     return res.status(500).send(err);
-  //   }
-  //   res.json(results.rows);
-  // });
   try {
     const user = await Plant.findAll({
       where: {
@@ -486,15 +334,11 @@ exports.getOwnedPlants = async (req, res) => {
 
 exports.getReporterInfo = async (req, res) => {
   const reporterId = req.params.id;
-  console.log("aaa1", reporterId);
   try {
     const response = await User.findOne({ where: { id: reporterId } });
     if (response === null) {
-      console.log("Not found!");
       es.status(404).send("Not Found");
     } else {
-      console.log(response instanceof User); // true
-      console.log(response); // 'My Title'
       const formatDate = (date) => {
         const newDate = new Date(date);
         return newDate.toLocaleDateString("en-GB");
@@ -512,17 +356,14 @@ exports.getReporterInfo = async (req, res) => {
       res.status(200).send(repData);
     }
   } catch (err) {
-    console.log(err);
     res.status(500).send(err.message);
   }
 };
 exports.getOwnerInfo = async (req, res) => {
   const ownerId = req.params.id;
-  console.log("aaa1", ownerId);
   try {
     const response = await User.findOne({ where: { id: ownerId } });
     if (response === null) {
-      console.log("Not found!");
       es.status(404).send("Not Found");
     } else {
       const formatDate = (date) => {
@@ -542,11 +383,9 @@ exports.getOwnerInfo = async (req, res) => {
         email: response.email,
         cratedAt: formatDate(response.createdAt),
       };
-      console.log(repData);
       res.status(200).send(repData);
     }
   } catch (err) {
-    console.log(err);
     res.status(500).send(err.message);
   }
 };
