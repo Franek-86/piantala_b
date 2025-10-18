@@ -54,7 +54,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       fiscal_code: {
         type: Sequelize.STRING,
-        allowNull: false,
+        allowNull: true,
         unique: false,
       },
       city: {

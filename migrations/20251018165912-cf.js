@@ -3,24 +3,30 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.addColumn("messages", "pic", {
-      type: Sequelize.DataTypes.STRING,
-    });
     /**
      * Add altering commands here.
      *
      * Example:
      * await queryInterface.createTable('users', { id: Sequelize.INTEGER });
      */
+    queryInterface.changeColumn("users", "fiscal_code", {
+      type: Sequelize.STRING,
+      defaultValue: null,
+      allowNull: true,
+    });
   },
 
   async down(queryInterface, Sequelize) {
-    await queryInterface.removeColumn("users", "pic");
     /**
      * Add reverting commands here.
      *
      * Example:
      * await queryInterface.dropTable('users');
      */
+    queryInterface.changeColumn("users", "fiscal_code", {
+      type: Sequelize.STRING,
+      defaultValue: null,
+      allowNull: false,
+    });
   },
 };

@@ -85,7 +85,7 @@ exports.registerUser = async (req, res) => {
     last_name,
     address,
     birthday,
-    fiscal_code,
+    // fiscal_code,
     email,
     city,
     gender,
@@ -98,7 +98,7 @@ exports.registerUser = async (req, res) => {
   const existingUser = await User.findOne({ where: { email } });
 
   if (existingUser) {
-    return res.status(400).json({ message: "Utente già registrato" }); // Send a message "User
+    return res.status(400).json({ message: "Utente già registrato" });
   }
   try {
     const hashedPassword = await bcrypt.hash(user_password, 10);
@@ -110,7 +110,7 @@ exports.registerUser = async (req, res) => {
       city: city,
       gender: gender,
       birthday: birthday,
-      fiscal_code: fiscal_code,
+      // fiscal_code: fiscal_code,
       email: email,
       user_name: user_name,
       phone: phone,
