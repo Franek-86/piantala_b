@@ -17,6 +17,7 @@ router.post(
   "/send-payment-confirmation-email",
   authController.sendPaymentConfirmationEmail
 );
+router.post("/check-email", authController.checkExistingUser);
 router.post("/register", authController.registerUser);
 // router.delete("/delete-user", authController.deleteUser);
 router.post("/login", authController.loginUser);

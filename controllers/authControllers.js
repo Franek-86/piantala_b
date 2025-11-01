@@ -66,6 +66,26 @@ exports.verificationEmailPasswordReset = async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
+exports.checkExistingUser = async (req, res) => {
+  const { email } = req.body;
+  try {
+    const user = await User.findOne({ where: { email } });
+    if (user) {
+      if (!user.is_verified) {
+        return res
+          .status(200)
+          .json({ message: "User needs to verify email address" });
+      } else {
+        return res.status(200).json({ message: "User already registered" });
+      }
+    } else {
+      return res.status(200).json({ message: "User not registered" });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
 
 exports.sendPaymentConfirmationEmail = async (req, res) => {
   const { email, order_number, created_at } = req.body.payload;

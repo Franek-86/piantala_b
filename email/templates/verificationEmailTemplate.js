@@ -125,69 +125,7 @@ const verificationEmailHTML = (a, url) => {
                       style="padding: 10px 0 0px 0"
                     >
                       <!--[if (gte mso 9)|(IE)]><table align="center" border="0" cellspacing="0" cellpadding="0" width="350">
-<tr>
-<td align="center" valign="top" width="350">
-<![endif]-->
-                      <table
-                        border="0"
-                        cellpadding="0"
-                        cellspacing="0"
-                        width="100%"
-                        style="
-                          max-width: 500px;
-                          border-bottom: 1px solid #e4e4e4;
-                        "
-                      >
-                        <tbody>
-                          <tr>
-                            <td
-                              bgcolor="#ffffff"
-                              align="left"
-                              valign="middle"
-                              style="
-                                padding: 0px;
-                                color: #111111;
-                                font-family:
-                                  &quot;Helvetica Neue&quot;, Helvetica, Arial,
-                                  sans-serif;
-                                font-size: 48px;
-                                font-weight: 400;
-                                line-height: 62px;
-                                padding: 0 0 15px 0;
-                              "
-                            >
-                              <a href="https://piantala-a.onrender.com" target="_blank"
-                                ><img
-                                  width="30"
-                                  height="30"
-                                  alt="logo"
-                                  src="https://i.ibb.co/Wpg2m71D/tree-icon-transparent-320x320.png"
-                              /></a>
-                            </td>
-                            <td
-                              bgcolor="#ffffff"
-                              align="right"
-                              valign="middle"
-                              style="
-                                padding: 0px;
-                                color: #111111;
-                                font-family:
-                                  &quot;Helvetica Neue&quot;, Helvetica, Arial,
-                                  sans-serif;
-                                font-size: 48px;
-                                font-weight: 400;
-                                line-height: 48px;
-                                padding: 0 0 15px 0;
-                              "
-                            >
-                            </td>
-                          </tr>
-                        </tbody>
-                      </table>
-                      <!--[if (gte mso 9)|(IE)]></td></tr></table>
-<![endif]-->
-                    </td>
-                  </tr>
+
                   <tr>
                     <td bgcolor="#ffffff" align="center" style="padding: 0">
                       <!--[if (gte mso 9)|(IE)]><table align="center" border="0" cellspacing="0" cellpadding="0" width="350">
@@ -231,7 +169,7 @@ const verificationEmailHTML = (a, url) => {
                                   margin-bottom: 5px;
                                 "
                               >
-                                Verifica il tuo indirizzo mail per completare la registrazione a Ti Pianto Per Amore
+                                Verifica il tuo indirizzo mail
                               </p>
                             </td>
                           </tr>
