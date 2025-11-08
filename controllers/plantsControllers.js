@@ -105,6 +105,79 @@ exports.addPlant = async (req, res) => {
   }
 };
 
+exports.updatePlantPic = async (req, res) => {
+  console.log("ciao");
+  // await imgurAdd()
+  // await deleteFromImgur()
+
+  const file = req.file;
+
+  const deleteHash = req.body.deleteHash;
+  let { plantId } = req.params;
+  console.log(file);
+  console.log(plantId);
+  if (!file) {
+    res.status(400).send("no file uploaded");
+  }
+  if (!deleteHash) {
+    res.status(400).send("no file uploaded");
+  }
+  try {
+    const deleteResponse = await imgurDelete(deleteHash);
+    if (deleteResponse) {
+      console.log("t123444444444", deleteResponse);
+      if (deleteResponse.status === 200) {
+        try {
+          const formData = new FormData();
+          formData.append("image", req.file.buffer);
+          console.log("formData", formData);
+          const imgurResponse = await imgurAdd(formData);
+          if (
+            imgurResponse &&
+            imgurResponse.data &&
+            imgurResponse.data.success
+          ) {
+            const imageUrl = imgurResponse.data.data.link;
+            const imageHash = imgurResponse.data.data.deletehash;
+            try {
+              await Plant.update(
+                { image_url: imageUrl, delete_hash: imageHash },
+                {
+                  where: {
+                    id: plantId,
+                  },
+                }
+              );
+              // res.status(201).json({
+              //   message: "Item added successfully!",
+              //   id: updatedPlantPic.insertId,
+              //   image_url: imageUrl,
+              // });
+            } catch (err) {
+              console.log("err", err);
+            }
+          } else {
+            console.error("Error uploading image:", imgurResponse.data);
+            return res
+              .status(500)
+              .json({ message: "Error uploading image to Imgur" });
+          }
+        } catch (err) {
+          res.status(500).json({
+            message:
+              "this is from update pic, old pic has been cancelled but something went wrong with adding new one",
+            error: err,
+          });
+        }
+      } else {
+        res.status(501).json({ message: "old pic not successfully cancelled" });
+      }
+    }
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "error from update image", error: err });
+  }
+};
 exports.getAllPlants = async (req, res) => {
   try {
     const io = req.app.get("io");

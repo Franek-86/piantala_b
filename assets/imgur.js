@@ -37,9 +37,7 @@ const imgurDelete = async (hash) => {
         client_secret: process.env.IMGUR_CLIENT_SECRET,
         grant_type: "refresh_token",
       });
-      console.log("here1", response.data.access_token);
       accessToken = response.data.access_token; // Store new token
-      console.log("New Access Token:", accessToken);
     }
     await refreshToken();
     const imgurResponse = await axios.delete(
