@@ -31,6 +31,10 @@ router.patch("/clear-plate", isAdmin, plantsController.clearPlate);
 router.delete("/:id/delete", isAdmin, plantsController.deletePlant);
 router.get("/user/reporter/:id", isAdmin, plantsController.getReporterInfo);
 router.get("/user/owner/:id", isAdmin, plantsController.getOwnerInfo);
+router.get(
+  "/user/owner-public-info/:ownerId",
+  plantsController.getOwnerPublicInfo
+);
 router.patch(
   "/update-plant-pic/:plantId",
   upload.single("plantPic"),

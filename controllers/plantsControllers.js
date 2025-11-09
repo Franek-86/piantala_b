@@ -148,11 +148,12 @@ exports.updatePlantPic = async (req, res) => {
                   },
                 }
               );
-              // res.status(201).json({
-              //   message: "Item added successfully!",
-              //   id: updatedPlantPic.insertId,
-              //   image_url: imageUrl,
-              // });
+              res.status(201).json({
+                message: "image successfully updated",
+                // id: updatedPlantPic.insertId,
+                image_url: imageUrl,
+                delete_hash: imageHash,
+              });
             } catch (err) {
               console.log("err", err);
             }
@@ -460,5 +461,22 @@ exports.getOwnerInfo = async (req, res) => {
     }
   } catch (err) {
     res.status(500).send(err.message);
+  }
+};
+exports.getOwnerPublicInfo = async (req, res) => {
+  const ownerId = req.params.ownerId;
+  try {
+    const response = await User.findOne({
+      where: {
+        id: ownerId,
+      },
+    });
+
+    const userName = response.user_name;
+    if (response) {
+      res.status(200).json({ ownerUserName: userName });
+    }
+  } catch (err) {
+    res.status(500).json({ error: err });
   }
 };
