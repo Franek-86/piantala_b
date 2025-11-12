@@ -134,7 +134,7 @@ app.post("/create-checkout-session", async (req, res) => {
   console.log("this is the cl of the product", product);
   const price = await stripe.prices.create({
     product: product,
-    unit_amount: 19000,
+    unit_amount: 20000,
     currency: "eur",
   });
 
