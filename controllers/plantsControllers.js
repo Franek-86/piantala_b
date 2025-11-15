@@ -106,7 +106,6 @@ exports.addPlant = async (req, res) => {
 };
 
 exports.updatePlantPic = async (req, res) => {
-  console.log("ciao");
   // await imgurAdd()
   // await deleteFromImgur()
 
@@ -116,9 +115,61 @@ exports.updatePlantPic = async (req, res) => {
   let { plantId } = req.params;
   console.log(file);
   console.log(plantId);
+
+  if (deleteHash == "null") {
+    console.log("delete hash è null");
+    try {
+      const formData = new FormData();
+      formData.append("image", req.file.buffer);
+      console.log("formData", formData);
+      const imgurResponse = await imgurAdd(formData);
+      if (imgurResponse && imgurResponse.data && imgurResponse.data.success) {
+        const imageUrl = imgurResponse.data.data.link;
+        const imageHash = imgurResponse.data.data.deletehash;
+        try {
+          await Plant.update(
+            { image_url: imageUrl, delete_hash: imageHash },
+            {
+              where: {
+                id: plantId,
+              },
+            }
+          );
+          return res.status(200).json({
+            message: "image successfully updated",
+            // id: updatedPlantPic.insertId,
+            image_url: imageUrl,
+            delete_hash: imageHash,
+          });
+        } catch (err) {
+          console.log("err", err);
+          return res.status(400).json({
+            message: "found no old pic to delete but new posting error is:",
+            err,
+            // id: updatedPlantPic.insertId,
+            //  image_url: imageUrl,
+            //  delete_hash: imageHash,
+          });
+        }
+      } else {
+        console.error("Error uploading image:", imgurResponse.data);
+        return res
+          .status(500)
+          .json({ message: "Error uploading image to Imgur" });
+      }
+    } catch (err) {
+      res.status(500).json({
+        message:
+          "this is from update pic, old pic has been cancelled but something went wrong with adding new one",
+        err,
+      });
+    }
+  }
+
   if (!file) {
     res.status(400).send("no file uploaded");
   }
+
   if (!deleteHash) {
     res.status(400).send("no file uploaded");
   }
@@ -148,7 +199,7 @@ exports.updatePlantPic = async (req, res) => {
                   },
                 }
               );
-              res.status(201).json({
+              return res.status(200).json({
                 message: "image successfully updated",
                 // id: updatedPlantPic.insertId,
                 image_url: imageUrl,
@@ -156,6 +207,13 @@ exports.updatePlantPic = async (req, res) => {
               });
             } catch (err) {
               console.log("err", err);
+              return res.status(400).json({
+                message:
+                  "old image successfully deleted but new one not posted successfully",
+                // id: updatedPlantPic.insertId,
+                //  image_url: imageUrl,
+                //  delete_hash: imageHash,
+              });
             }
           } else {
             console.error("Error uploading image:", imgurResponse.data);
