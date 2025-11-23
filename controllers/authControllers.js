@@ -3,6 +3,8 @@ const jwt = require("jsonwebtoken");
 const con = require("../config/db");
 const crypto = require("crypto");
 const transporter = require("../config/nodemailer");
+const { OAuth2Client } = require("google-auth-library");
+
 // const User = require("../models/User");
 const db = require("../models");
 const User = db.User;
@@ -314,6 +316,112 @@ exports.loginUser = async (req, res) => {
     }
   }
 };
+exports.googleAccess = async (req, res) => {
+  const { clientId, credential } = req.body;
+  const client = new OAuth2Client();
+
+  const ticket = await client.verifyIdToken({
+    clientId: clientId,
+    idToken: credential,
+  });
+  const payload = ticket.getPayload();
+  // const test = new OAuth2Client({
+  //   clientId: clientId,
+  //   clientSecret: credential,
+  // });
+
+  const { given_name, family_name, email } = payload;
+  const user = await User.findOne({ where: { email: email } });
+
+  if (!user) {
+    const user = await User.create({
+      first_name: given_name,
+      last_name: family_name,
+      // city: city,
+      // gender: gender,
+      // birthday: birthday,
+      email: email,
+      user_name: given_name,
+      // phone: phone,
+      // user_password: hashedPassword,
+      // verification_token: email_token,
+    });
+    const token = jwt.sign(
+      { id: user.id, email: email, role: "user" },
+      "your_jwt_secret_key",
+      { expiresIn: "10d" }
+    );
+    const refreshToken = jwt.sign(
+      { id: user.id, email: user.email, role: user.role },
+      process.env.REFRESH_SECRET,
+      { expiresIn: "120d" }
+    );
+
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "none",
+      // maxAge: 1000,
+      maxAge: 120 * 24 * 60 * 60 * 1000, // 120 days
+    });
+    // res.cookie("refreshToken", refreshToken, {
+    //   httpOnly: true,
+    //   secure: false,
+    //   sameSite: "Lax",
+    //   maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+    // });
+
+    req.session.user = {
+      id: user.id,
+      email: user.email,
+      role: user.role,
+    };
+    return res.status(200).json({
+      message: "Login successful",
+      token,
+      user: req.session.user,
+    });
+  }
+  try {
+    const token = jwt.sign(
+      { id: user.id, email: user.email, role: user.role },
+      process.env.JWT_SECRET_KEY,
+      { expiresIn: "600s" }
+    );
+    const refreshToken = jwt.sign(
+      { id: user.id, email: user.email, role: user.role },
+      process.env.REFRESH_SECRET,
+      { expiresIn: "120d" }
+    );
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "none",
+      // maxAge: 1000,
+      maxAge: 120 * 24 * 60 * 60 * 1000, // 120 days
+    });
+    // res.cookie("refreshToken", refreshToken, {
+    //   httpOnly: true,
+    //   secure: false,
+    //   sameSite: "Lax",
+    //   maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+    // });
+
+    req.session.user = {
+      id: user.id,
+      email: user.email,
+      role: user.role,
+    };
+    return res.status(200).json({
+      message: "Login successful",
+      token,
+      user: req.session.user,
+    });
+  } catch (err) {
+    return res.status(500).json({ message: "Server error" });
+  }
+};
+
 exports.refreshToken = (req, res) => {
   const refreshToken = req.cookies?.refreshToken;
   if (!refreshToken) {

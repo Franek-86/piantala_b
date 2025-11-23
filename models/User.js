@@ -49,7 +49,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       birthday: {
         type: Sequelize.DATE,
-        allowNull: false,
+        allowNull: true,
         unique: false,
       },
       fiscal_code: {
@@ -59,12 +59,12 @@ module.exports = (sequelize, DataTypes) => {
       },
       city: {
         type: Sequelize.STRING,
-        allowNull: false,
+        allowNull: true,
         unique: false,
       },
       gender: {
         type: Sequelize.STRING,
-        allowNull: false,
+        allowNull: true,
         unique: false,
       },
       email: {
@@ -74,7 +74,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       user_password: {
         type: Sequelize.STRING,
-        allowNull: false,
+        allowNull: true,
       },
       user_name: {
         type: Sequelize.STRING,
@@ -87,7 +87,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       phone: {
         type: Sequelize.STRING,
-        allowNull: false,
+        allowNull: true,
       },
       pic: {
         type: Sequelize.STRING,
