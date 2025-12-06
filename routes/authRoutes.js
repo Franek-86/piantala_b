@@ -22,6 +22,7 @@ router.post("/register", authController.registerUser);
 // router.delete("/delete-user", authController.deleteUser);
 router.post("/login", authController.loginUser);
 router.post("/google-access", authController.googleAccess);
+router.post("/google-access-android", authController.googleAccessAndroid);
 router.post("/refresh-token", authController.refreshToken);
 router.post("/logout", authController.logoutUser);
 // router.get("/users", authController.getAllUsers);

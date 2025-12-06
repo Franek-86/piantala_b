@@ -421,6 +421,27 @@ exports.googleAccess = async (req, res) => {
     return res.status(500).json({ message: "Server error" });
   }
 };
+exports.googleAccessAndroid = async (req, res) => {
+  let { authHeader } = req.body.payload;
+  if (!authHeader) {
+    return res.status(401).json({ message: "nessun header trovato" });
+  }
+
+  if (authHeader && authHeader.startsWith("Bearer ")) {
+    authHeader = authHeader.substring(7);
+  }
+  const googleValidationRes = await fetch(
+    `https://www.googleapis.com/oauth2/v3/tokeninfo?access_token=${authHeader}`
+  );
+
+  if (googleValidationRes.status !== 200) {
+    return res
+      .status(401)
+      .json({ error: "google could not verify access token" });
+  }
+  const googleRes = await googleValidationRes.json();
+  return res.text(`hello ${googleRes.email}`);
+};
 
 exports.refreshToken = (req, res) => {
   const refreshToken = req.cookies?.refreshToken;
