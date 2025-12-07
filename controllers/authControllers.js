@@ -424,6 +424,7 @@ exports.googleAccess = async (req, res) => {
 exports.googleAccessAndroid = async (req, res) => {
   console.log("aaa", req);
   console.log("bbb", req.body);
+  console.log("ccc", req.body.familyName);
 
   let { familyName, givenName, email } = req.body;
 
