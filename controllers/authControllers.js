@@ -422,9 +422,8 @@ exports.googleAccess = async (req, res) => {
   }
 };
 exports.googleAccessAndroid = async (req, res) => {
-  console.log("aaa", req);
   console.log("bbb", req.body);
-  console.log("ccc", req.body.familyName);
+  console.log("ccc", req.body.email);
 
   let { familyName, givenName, email } = req.body;
 
@@ -474,6 +473,7 @@ exports.googleAccessAndroid = async (req, res) => {
     });
   }
   try {
+    console.log("ddd", user);
     const token = jwt.sign(
       { id: user.id, email: user.email, role: user.role },
       process.env.JWT_SECRET_KEY,
