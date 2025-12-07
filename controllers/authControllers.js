@@ -422,25 +422,104 @@ exports.googleAccess = async (req, res) => {
   }
 };
 exports.googleAccessAndroid = async (req, res) => {
-  let { authHeader } = req.body.payload;
-  if (!authHeader) {
-    return res.status(401).json({ message: "nessun header trovato" });
+  let { given_name, family_name, email } = req.body.payload;
+
+  const user = await User.findOne({ where: { email: email } });
+
+  if (!user) {
+    const user = await User.create({
+      first_name: given_name,
+      last_name: family_name,
+      // city: city,
+      // gender: gender,
+      // birthday: birthday,
+      email: email,
+      user_name: given_name,
+      // phone: phone,
+      // user_password: hashedPassword,
+      // verification_token: email_token,
+    });
+    const token = jwt.sign(
+      { id: user.id, email: email, role: "user" },
+      "your_jwt_secret_key",
+      { expiresIn: "10d" }
+    );
+    const refreshToken = jwt.sign(
+      { id: user.id, email: user.email, role: user.role },
+      process.env.REFRESH_SECRET,
+      { expiresIn: "120d" }
+    );
+
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "none",
+      // maxAge: 1000,
+      maxAge: 120 * 24 * 60 * 60 * 1000, // 120 days
+    });
+
+    req.session.user = {
+      id: user.id,
+      email: user.email,
+      role: user.role,
+    };
+    return res.status(200).json({
+      message: "Login successful",
+      token,
+      user: req.session.user,
+    });
+  }
+  try {
+    const token = jwt.sign(
+      { id: user.id, email: user.email, role: user.role },
+      process.env.JWT_SECRET_KEY,
+      { expiresIn: "600s" }
+    );
+    const refreshToken = jwt.sign(
+      { id: user.id, email: user.email, role: user.role },
+      process.env.REFRESH_SECRET,
+      { expiresIn: "120d" }
+    );
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "none",
+      // maxAge: 1000,
+      maxAge: 120 * 24 * 60 * 60 * 1000, // 120 days
+    });
+
+    req.session.user = {
+      id: user.id,
+      email: user.email,
+      role: user.role,
+    };
+    return res.status(200).json({
+      message: "Login successful",
+      token,
+      user: req.session.user,
+    });
+  } catch (err) {
+    return res.status(500).json({ message: "Server error" });
   }
 
-  if (authHeader && authHeader.startsWith("Bearer ")) {
-    authHeader = authHeader.substring(7);
-  }
-  const googleValidationRes = await fetch(
-    `https://www.googleapis.com/oauth2/v3/tokeninfo?access_token=${authHeader}`
-  );
+  // if (!authHeader) {
+  //   return res.status(401).json({ message: "nessun header trovato" });
+  // }
 
-  if (googleValidationRes.status !== 200) {
-    return res
-      .status(401)
-      .json({ error: "google could not verify access token" });
-  }
-  const googleRes = await googleValidationRes.json();
-  return res.text(`hello ${googleRes.email}`);
+  // if (authHeader && authHeader.startsWith("Bearer ")) {
+  //   authHeader = authHeader.substring(7);
+  // }
+  // const googleValidationRes = await fetch(
+  //   `https://www.googleapis.com/oauth2/v3/tokeninfo?access_token=${authHeader}`
+  // );
+
+  // if (googleValidationRes.status !== 200) {
+  //   return res
+  //     .status(401)
+  //     .json({ error: "google could not verify access token" });
+  // }
+  // const googleRes = await googleValidationRes.json();
+  // return res.text(`hello ${googleRes.email}`);
 };
 
 exports.refreshToken = (req, res) => {
