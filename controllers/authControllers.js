@@ -422,19 +422,19 @@ exports.googleAccess = async (req, res) => {
   }
 };
 exports.googleAccessAndroid = async (req, res) => {
-  let { given_name, family_name, email } = req.body.payload;
+  let { familyName, givenName, email } = req.body.payload;
 
   const user = await User.findOne({ where: { email: email } });
 
   if (!user) {
     const user = await User.create({
-      first_name: given_name,
-      last_name: family_name,
+      first_name: givenName,
+      last_name: familyName,
       // city: city,
       // gender: gender,
       // birthday: birthday,
       email: email,
-      user_name: given_name,
+      user_name: givenName,
       // phone: phone,
       // user_password: hashedPassword,
       // verification_token: email_token,
