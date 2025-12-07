@@ -422,10 +422,10 @@ exports.googleAccess = async (req, res) => {
   }
 };
 exports.googleAccessAndroid = async (req, res) => {
-  console.log("aaa", req.body.payload);
+  console.log("aaa", req);
   console.log("bbb", req.body);
 
-  let { familyName, givenName, email } = req.body.payload;
+  let { familyName, givenName, email } = req.body;
 
   const user = await User.findOne({ where: { email: email } });
 
