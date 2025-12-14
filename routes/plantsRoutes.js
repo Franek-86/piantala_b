@@ -21,7 +21,7 @@ router.post(
   upload.single("plate"),
   plantsController.addPlate
 );
-router.get("/", isAuth, plantsController.getAllPlants);
+router.get("/", plantsController.getAllPlants);
 router.get("/user-plants", plantsController.getUserPlants);
 router.get("/owned-plants", plantsController.getOwnedPlants);
 router.patch("/:id/status", isAdmin, plantsController.updateStatus);
