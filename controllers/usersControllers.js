@@ -221,10 +221,7 @@ exports.getAllUsers = async (req, res) => {
   }
 };
 exports.sendEmail = async (req, res) => {
-  const {
-    loggedUserInfo: { email },
-    messageBody,
-  } = req.body.payload;
+  const { address: email, messageBody } = req.body.payload;
 
   const mailOptions = {
     to: "tipiantoperamore@gmail.com",
