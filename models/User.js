@@ -110,6 +110,11 @@ module.exports = (sequelize, DataTypes) => {
       verification_token: {
         type: Sequelize.STRING,
       },
+      google: {
+        type: Sequelize.SMALLINT,
+        defaultValue: 1,
+        allowNull: false,
+      },
       updated_at: {
         type: Sequelize.TIME,
       },

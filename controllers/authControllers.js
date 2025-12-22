@@ -342,10 +342,13 @@ exports.googleAccess = async (req, res) => {
       // birthday: birthday,
       email: email,
       user_name: given_name,
+      is_verified: true,
+      google: 0,
       // phone: phone,
       // user_password: hashedPassword,
       // verification_token: email_token,
     });
+    console.log("1234", user);
     const token = jwt.sign(
       { id: user.id, email: email, role: "user" },
       "your_jwt_secret_key",
@@ -435,6 +438,8 @@ exports.googleAccessAndroid = async (req, res) => {
       // birthday: birthday,
       email: email,
       user_name: givenName,
+      is_verified: true,
+      google: 0,
       // phone: phone,
       // user_password: hashedPassword,
       // verification_token: email_token,
