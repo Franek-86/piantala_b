@@ -348,7 +348,6 @@ exports.googleAccess = async (req, res) => {
       // user_password: hashedPassword,
       // verification_token: email_token,
     });
-    console.log("1234", user);
     const token = jwt.sign(
       { id: user.id, email: email, role: "user" },
       "your_jwt_secret_key",
@@ -426,7 +425,6 @@ exports.googleAccess = async (req, res) => {
 };
 exports.googleAccessAndroid = async (req, res) => {
   let { familyName, givenName, email } = req.body;
-
   const user = await User.findOne({ where: { email: email } });
 
   if (!user) {
