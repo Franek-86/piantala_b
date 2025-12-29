@@ -430,7 +430,7 @@ exports.googleAccessAndroid = async (req, res) => {
       email: email,
       user_name: givenName,
       is_verified: true,
-      google: 0,
+      google: 1,
       // phone: phone,
       // user_password: hashedPassword,
       // verification_token: email_token,
