@@ -112,10 +112,8 @@ exports.registerUser = async (req, res) => {
     city,
     gender,
     user_password,
-    role,
     user_name,
     phone,
-    terms,
   } = req.body;
 
   const existingUser = await User.findOne({ where: { email } });
@@ -140,6 +138,7 @@ exports.registerUser = async (req, res) => {
       user_password: hashedPassword,
       verification_token: email_token,
       terms: true,
+      google: 0,
       terms_v: 1,
       terms_date: date,
     });
@@ -337,7 +336,7 @@ exports.googleAccess = async (req, res) => {
       email: email,
       user_name: given_name,
       is_verified: true,
-      google: 0,
+      google: 1,
       // phone: phone,
       // user_password: hashedPassword,
       // verification_token: email_token,
