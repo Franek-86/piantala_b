@@ -115,6 +115,19 @@ module.exports = (sequelize, DataTypes) => {
         defaultValue: 1,
         allowNull: false,
       },
+      terms: {
+        type: Sequelize.BOOLEAN,
+        defaultValue: false,
+        allowNull: true,
+      },
+      terms_date: {
+        type: Sequelize.DATE,
+        allowNull: true,
+      },
+      terms_v: {
+        type: Sequelize.INTEGER,
+        allowNull: true,
+      },
       updated_at: {
         type: Sequelize.TIME,
       },

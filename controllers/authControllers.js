@@ -115,6 +115,7 @@ exports.registerUser = async (req, res) => {
     role,
     user_name,
     phone,
+    terms,
   } = req.body;
 
   const existingUser = await User.findOne({ where: { email } });
@@ -125,7 +126,7 @@ exports.registerUser = async (req, res) => {
   try {
     const hashedPassword = await bcrypt.hash(user_password, 10);
     let email_token = generateVerificationToken();
-
+    let date = Date.now();
     const user = await User.create({
       first_name: first_name,
       last_name: last_name,
@@ -138,6 +139,9 @@ exports.registerUser = async (req, res) => {
       phone: phone,
       user_password: hashedPassword,
       verification_token: email_token,
+      terms: true,
+      terms_v: 1,
+      terms_date: date,
     });
     const token = jwt.sign(
       { id: user.id, email: email, role: "user" },
@@ -160,16 +164,6 @@ exports.registerUser = async (req, res) => {
           "Controlla la tua casella di posta per completare la registrazione",
         token,
       });
-      // return res
-      //   .status(200)
-      //   .json({ message: "User registered and email sent" });
-      // const mailOptions = emailToBeSent(email, user);
-      // transporter.sendMail(mailOptions, (error, info) => {
-      //   if (error) {
-      //     console.error(error);
-      //   } else {
-      //   }
-      // });
     } catch (error) {
       res.status(500).send("Error: Something went wrong. Please try again.");
     }
