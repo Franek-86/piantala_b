@@ -113,15 +113,12 @@ exports.updatePlantPic = async (req, res) => {
 
   const deleteHash = req.body.deleteHash;
   let { plantId } = req.params;
-  console.log(file);
-  console.log(plantId);
 
   if (deleteHash == "null") {
-    console.log("delete hash è null");
     try {
       const formData = new FormData();
       formData.append("image", req.file.buffer);
-      console.log("formData", formData);
+
       const imgurResponse = await imgurAdd(formData);
       if (imgurResponse && imgurResponse.data && imgurResponse.data.success) {
         const imageUrl = imgurResponse.data.data.link;
@@ -142,7 +139,6 @@ exports.updatePlantPic = async (req, res) => {
             delete_hash: imageHash,
           });
         } catch (err) {
-          console.log("err", err);
           return res.status(400).json({
             message: "found no old pic to delete but new posting error is:",
             err,
@@ -176,12 +172,10 @@ exports.updatePlantPic = async (req, res) => {
   try {
     const deleteResponse = await imgurDelete(deleteHash);
     if (deleteResponse) {
-      console.log("t123444444444", deleteResponse);
       if (deleteResponse.status === 200) {
         try {
           const formData = new FormData();
           formData.append("image", req.file.buffer);
-          console.log("formData", formData);
           const imgurResponse = await imgurAdd(formData);
           if (
             imgurResponse &&
@@ -206,7 +200,6 @@ exports.updatePlantPic = async (req, res) => {
                 delete_hash: imageHash,
               });
             } catch (err) {
-              console.log("err", err);
               return res.status(400).json({
                 message:
                   "old image successfully deleted but new one not posted successfully",
@@ -233,7 +226,6 @@ exports.updatePlantPic = async (req, res) => {
       }
     }
   } catch (err) {
-    console.log(err);
     res.status(500).json({ message: "error from update image", error: err });
   }
 };
@@ -496,7 +488,7 @@ exports.getOwnerInfo = async (req, res) => {
   try {
     const response = await User.findOne({ where: { id: ownerId } });
     if (response === null) {
-      es.status(404).send("Not Found");
+      res.status(404).send("Not Found");
     } else {
       const formatDate = (date) => {
         const newDate = new Date(date);
@@ -507,7 +499,7 @@ exports.getOwnerInfo = async (req, res) => {
         firstName: response.first_name,
         lastName: response.last_name,
         city: response.city,
-        birthday: formatDate(response.birthday),
+        birthday: response.birthday ? formatDate(response.birthday) : null,
         fiscalCode: response.fiscal_code,
         user: response.user_name,
         role: response.role,
