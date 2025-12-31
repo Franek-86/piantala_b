@@ -122,10 +122,12 @@ module.exports = (sequelize, DataTypes) => {
       },
       terms_date: {
         type: Sequelize.DATE,
+        defaultValue: Sequelize.DataTypes.NOW,
         allowNull: true,
       },
       terms_v: {
         type: Sequelize.INTEGER,
+        defaultValue: 1,
         allowNull: true,
       },
       updated_at: {
