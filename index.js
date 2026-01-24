@@ -44,15 +44,28 @@ app.use(
     methods: ["GET", "POST", "PATCH", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true,
-  })
+  }),
 );
 
 // Allow all OPTIONS requests (preflight)
 app.options("*", cors());
 app.use(cookieParser());
 app.use("/uploads", express.static("uploads"));
+app.use(
+  express.static("build", {
+    index: "index.html",
+    setHeaders: (res, path) => {
+      res.set({
+        "cache-Control": path.includes("index.html")
+          ? "no-store"
+          : "public, max-age=0",
+      });
+    },
+  }),
+);
 
 app.use(bodyParser.json());
+
 // STRIPE_TEST_SECRET_KEY;
 // const sessionStore = new MySQLStore({}, require("./config/db"));
 // Stripe da ripristinare, oltre a questo devi anche andare nella stessa pagina a ripristinare il "product" che sta nel post della "create-checkout-session"
@@ -102,7 +115,7 @@ app.use(
       sameSite: "none",
       maxAge: 600000,
     },
-  })
+  }),
 );
 
 app.use("/api/auth", authRoutes);
