@@ -14,12 +14,12 @@ router.post(
   "/add-plant",
   isAuth,
   upload.single("image"),
-  plantsController.addPlant
+  plantsController.addPlant,
 );
 router.post(
   "/upload-plate/:id",
   upload.single("plate"),
-  plantsController.addPlate
+  plantsController.addPlate,
 );
 router.get("/", plantsController.getAllPlants);
 router.get("/user-plants", plantsController.getUserPlants);
@@ -33,12 +33,12 @@ router.get("/user/reporter/:id", isAdmin, plantsController.getReporterInfo);
 router.get("/user/owner/:id", isAdmin, plantsController.getOwnerInfo);
 router.get(
   "/user/owner-public-info/:ownerId",
-  plantsController.getOwnerPublicInfo
+  plantsController.getOwnerPublicInfo,
 );
 router.patch(
   "/update-plant-pic/:plantId",
   upload.single("plantPic"),
   isAdmin,
-  plantsController.updatePlantPic
+  plantsController.updatePlantPic,
 );
 module.exports = router;

@@ -10,12 +10,12 @@ const upload = multer({ storage: storage });
 router.get("/verify", authController.verificationEmail);
 router.get(
   "/reset-password/verify",
-  authController.verificationEmailPasswordReset
+  authController.verificationEmailPasswordReset,
 );
 // router.post("/send", authController.sendEmail);
 router.post(
   "/send-payment-confirmation-email",
-  authController.sendPaymentConfirmationEmail
+  authController.sendPaymentConfirmationEmail,
 );
 router.post("/check-email", authController.checkExistingUser);
 router.post("/register", authController.registerUser);

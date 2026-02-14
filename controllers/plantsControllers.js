@@ -28,7 +28,7 @@ exports.addPlate = async (req, res) => {
             where: {
               id: id,
             },
-          }
+          },
         );
         res.status(201).json({
           message: "Item added successfully!",
@@ -130,7 +130,7 @@ exports.updatePlantPic = async (req, res) => {
               where: {
                 id: plantId,
               },
-            }
+            },
           );
           return res.status(200).json({
             message: "image successfully updated",
@@ -191,7 +191,7 @@ exports.updatePlantPic = async (req, res) => {
                   where: {
                     id: plantId,
                   },
-                }
+                },
               );
               return res.status(200).json({
                 message: "image successfully updated",
@@ -258,7 +258,7 @@ exports.updateOwner = async (req, res) => {
         where: {
           id: id,
         },
-      }
+      },
     );
 
     if (!updateOwner) {
@@ -269,7 +269,10 @@ exports.updateOwner = async (req, res) => {
       message: `Plant ${id} ownership updated successfully, owner id is ${owner_id}`,
     });
   } catch (err) {
-    return res.status(500).json({ message: "Server error" });
+    console.log("error from update ownership", err);
+    return res
+      .status(500)
+      .json({ message: "Server error while updating ownership" });
   }
 };
 exports.updateStatus = async (req, res) => {
@@ -290,7 +293,7 @@ exports.updateStatus = async (req, res) => {
             where: {
               id: id,
             },
-          }
+          },
         );
 
         return res
@@ -309,7 +312,7 @@ exports.updateStatus = async (req, res) => {
             where: {
               id: id,
             },
-          }
+          },
         );
 
         return res.status(200).json({
@@ -336,7 +339,7 @@ exports.updatePlantType = async (req, res) => {
         where: {
           id: id,
         },
-      }
+      },
     );
     return res
       .status(200)
@@ -361,7 +364,7 @@ exports.clearPlate = async (req, res) => {
             client_id: process.env.IMGUR_CLIENT_ID,
             client_secret: process.env.IMGUR_CLIENT_SECRET,
             grant_type: "refresh_token",
-          }
+          },
         );
         accessToken = response.data.access_token; // Store new token
       }
@@ -372,7 +375,7 @@ exports.clearPlate = async (req, res) => {
           headers: {
             Authorization: `Bearer ${accessToken}`,
           },
-        }
+        },
       );
     } catch (error) {
       console.error(`Failed to delete image with hash ${hash}:`, error);
@@ -421,7 +424,7 @@ exports.deletePlant = async (req, res) => {
       res
         .status(400)
         .json(
-          `something went wrong deleting the plant after deleting images from imgur: ${err.message}`
+          `something went wrong deleting the plant after deleting images from imgur: ${err.message}`,
         );
     }
   }

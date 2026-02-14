@@ -3,9 +3,10 @@ const cookieParser = require("cookie-parser");
 const crypto = require("node:crypto");
 const con = require("./config/db");
 const path = require("path");
-
+const fs = require("fs");
 const { createServer } = require("node:http");
 const { Server } = require("socket.io");
+
 const app = express();
 // socket
 const server = createServer(app);
@@ -118,6 +119,26 @@ app.use(
   }),
 );
 
+// const indexPath = path.resolve(__dirname, "..", "build", "index.html");
+// app.get("/*", (req, res, next) => {
+//   // console.log("t987", indexPath);
+//   fs.readFile(indexPath, "utf8", (err, htmlData) => {
+//     if (err) {
+//       console.log("err", err);
+//     }
+//     console.log("t9876", req);
+//     // if (req.url === "http://localhost:3000/map/177") {
+//     //   console.log("t9876");
+//     // }
+//   });
+//   next();
+// });
+// const router = express.Router();
+app.use(express.static(path.join(__dirname, "build")));
+app.get("*", (req, res, next) => {
+  console.log("staaaaaaaaaa", path.join(__dirname, "build"));
+  next();
+});
 app.use("/api/auth", authRoutes);
 app.use("/api/users", usersRoute);
 app.use("/api/plants", plantsRoutes);
@@ -144,7 +165,7 @@ app.post("/create-checkout-session", async (req, res) => {
 
   // const product = "prod_SXbLBcm0aD8vtG";
 
-  console.log("this is the cl of the product", product);
+  // console.log("this is the cl of the product", product);
   const price = await stripe.prices.create({
     product: product,
     unit_amount: 20000,
