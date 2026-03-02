@@ -139,13 +139,13 @@ exports.registerUser = async (req, res) => {
       verification_token: email_token,
       terms: true,
       google: 0,
-      terms_v: 1,
+      terms_v: 2,
       terms_date: date,
     });
     const token = jwt.sign(
       { id: user.id, email: email, role: "user" },
       "your_jwt_secret_key",
-      { expiresIn: "10d" }
+      { expiresIn: "10d" },
     );
 
     // res.status(201).json({
@@ -273,12 +273,12 @@ exports.loginUser = async (req, res) => {
       const token = jwt.sign(
         { id: user.id, email: user.email, role: user.role },
         process.env.JWT_SECRET_KEY,
-        { expiresIn: "600s" }
+        { expiresIn: "600s" },
       );
       const refreshToken = jwt.sign(
         { id: user.id, email: user.email, role: user.role },
         process.env.REFRESH_SECRET,
-        { expiresIn: "120d" }
+        { expiresIn: "120d" },
       );
       res.cookie("refreshToken", refreshToken, {
         httpOnly: true,
@@ -344,12 +344,12 @@ exports.googleAccess = async (req, res) => {
     const token = jwt.sign(
       { id: user.id, email: email, role: "user" },
       "your_jwt_secret_key",
-      { expiresIn: "10d" }
+      { expiresIn: "10d" },
     );
     const refreshToken = jwt.sign(
       { id: user.id, email: user.email, role: user.role },
       process.env.REFRESH_SECRET,
-      { expiresIn: "120d" }
+      { expiresIn: "120d" },
     );
 
     res.cookie("refreshToken", refreshToken, {
@@ -381,12 +381,12 @@ exports.googleAccess = async (req, res) => {
     const token = jwt.sign(
       { id: user.id, email: user.email, role: user.role },
       process.env.JWT_SECRET_KEY,
-      { expiresIn: "600s" }
+      { expiresIn: "600s" },
     );
     const refreshToken = jwt.sign(
       { id: user.id, email: user.email, role: user.role },
       process.env.REFRESH_SECRET,
-      { expiresIn: "120d" }
+      { expiresIn: "120d" },
     );
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
@@ -445,12 +445,12 @@ exports.googleAccessAndroid = async (req, res) => {
       const token = jwt.sign(
         { id: user.id, email: email, role: "user" },
         "your_jwt_secret_key",
-        { expiresIn: "10d" }
+        { expiresIn: "10d" },
       );
       const refreshToken = jwt.sign(
         { id: user.id, email: user.email, role: user.role },
         process.env.REFRESH_SECRET,
-        { expiresIn: "120d" }
+        { expiresIn: "120d" },
       );
 
       res.cookie("refreshToken", refreshToken, {
@@ -479,12 +479,12 @@ exports.googleAccessAndroid = async (req, res) => {
       const token = jwt.sign(
         { id: user.id, email: user.email, role: user.role },
         process.env.JWT_SECRET_KEY,
-        { expiresIn: "600s" }
+        { expiresIn: "600s" },
       );
       const refreshToken = jwt.sign(
         { id: user.id, email: user.email, role: user.role },
         process.env.REFRESH_SECRET,
-        { expiresIn: "120d" }
+        { expiresIn: "120d" },
       );
       res.cookie("refreshToken", refreshToken, {
         httpOnly: true,
@@ -574,7 +574,7 @@ exports.refreshToken = (req, res) => {
     const newAccessToken = jwt.sign(
       { id: user.id, email: user.email, role: user.role },
       process.env.JWT_SECRET_KEY,
-      { expiresIn: "10s" }
+      { expiresIn: "10s" },
     );
     res.status(200).json({
       message: "Login successful",
@@ -604,7 +604,7 @@ exports.logoutUser = async (req, res) => {
 exports.fetchRegions = async (req, res) => {
   try {
     const response = await axios.get(
-      "http://api.geonames.org/childrenJSON?geonameId=3175395&username=franek"
+      "http://api.geonames.org/childrenJSON?geonameId=3175395&username=franek",
     );
 
     if (response.data.status?.value == 19) {
@@ -628,7 +628,7 @@ exports.fetchDistricts = async (req, res) => {
   let geonameId = req.query.regionCode;
   try {
     const response = await axios.get(
-      `http://api.geonames.org/childrenJSON?geonameId=${geonameId}&username=franek`
+      `http://api.geonames.org/childrenJSON?geonameId=${geonameId}&username=franek`,
     );
 
     res.json(response.data.geonames);
@@ -640,7 +640,7 @@ exports.fetchCities = async (req, res) => {
   let geonameId = req.query.cityCode;
   try {
     const response = await axios.get(
-      `http://api.geonames.org/childrenJSON?geonameId=${geonameId}&username=franek`
+      `http://api.geonames.org/childrenJSON?geonameId=${geonameId}&username=franek`,
     );
 
     res.json(response.data.geonames);
@@ -655,7 +655,7 @@ exports.generateFiscalCode = async (req, res) => {
   const { name, lastName, gender, city, year, month, day } = req.body.payload;
   try {
     const response = await axios.get(
-      `http://api.miocodicefiscale.com/calculate?lname=${lastName}&fname=${name}&gender=${gender}&city=${city}&state=BA&day=${day}&month=${month}&year=${year}&access_token=${process.env.CF_KEY}`
+      `http://api.miocodicefiscale.com/calculate?lname=${lastName}&fname=${name}&gender=${gender}&city=${city}&state=BA&day=${day}&month=${month}&year=${year}&access_token=${process.env.CF_KEY}`,
     );
     const fiscalCode = response.data.data.cf;
     res.json(fiscalCode);
@@ -665,7 +665,7 @@ exports.validateFiscalCode = async (req, res) => {
   const fiscalCode = req.body.payload;
   try {
     const response = await axios.get(
-      `${process.env.CF_URL}?cf=${fiscalCode}&access_token=${process.env.CF_KEY}`
+      `${process.env.CF_URL}?cf=${fiscalCode}&access_token=${process.env.CF_KEY}`,
     );
 
     // if (response.data.status) {
