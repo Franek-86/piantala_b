@@ -264,9 +264,15 @@ exports.loginUser = async (req, res) => {
         "utente disattivato, per riattivazione inviare mail a tipiantoperamore@gmail.com",
     });
   }
+  if (!user.user_password) {
+    return res.status(401).json({
+      message: `Email utilizzata per effettuare l'accesso con Google, puoi accedere con questo indirizzo mail utilizzando l'opzione "Accedi con Google".`,
+    });
+  }
   const passwordMatch = await bcrypt.compare(user_password, user.user_password);
 
   if (!passwordMatch) {
+    console.log("Sta2?");
     return res.status(401).json({ message: "Password non corretta" });
   } else {
     try {
