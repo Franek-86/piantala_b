@@ -8,6 +8,7 @@ const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 router.get("/me", userController.userSession);
 router.patch("/role", isAdmin, userController.setUserRole);
+router.patch("/profile", userController.updateUserProfile);
 
 router.patch("/set-user-pic", upload.single("pic"), userController.setUserPic);
 router.patch("/delete-user-pic", userController.deleteUserPic);

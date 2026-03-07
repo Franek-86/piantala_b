@@ -28,7 +28,7 @@ exports.setUserRole = async (req, res) => {
           where: {
             user_id: id,
           },
-        }
+        },
       );
 
       res.status(200).send("diritti amministrativi rimossi");
@@ -45,7 +45,7 @@ exports.setUserRole = async (req, res) => {
           where: {
             user_id: id,
           },
-        }
+        },
       );
 
       res.status(200).send("diritti amministrativi aggiunti");
@@ -53,6 +53,39 @@ exports.setUserRole = async (req, res) => {
       console.error(error);
       return res.status(500).json({ message: "Internal server error" });
     }
+  }
+};
+exports.updateUserProfile = async (req, res) => {
+  const { id, name, phone } = req.body.payload;
+
+  try {
+    if (name) {
+      await User.update(
+        { user_name: name },
+        {
+          where: {
+            user_id: id,
+          },
+        },
+      );
+    }
+    if (phone) {
+      await User.update(
+        { phone },
+        {
+          where: {
+            user_id: id,
+          },
+        },
+      );
+    }
+
+    res.status(200).json({ message: "Profilo modificato" });
+  } catch (error) {
+    console.error(error);
+    return res
+      .status(500)
+      .json({ message: "Errore 500: nome utente non modificato" });
   }
 };
 
@@ -120,7 +153,7 @@ exports.setUserStatus = async (req, res) => {
           where: {
             user_id: id,
           },
-        }
+        },
       );
 
       res.status(200).send("User has been blocked");
@@ -137,7 +170,7 @@ exports.setUserStatus = async (req, res) => {
           where: {
             user_id: id,
           },
-        }
+        },
       );
 
       res.status(200).send("User has been unblocked");
