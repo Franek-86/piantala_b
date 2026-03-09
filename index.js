@@ -52,18 +52,17 @@ app.use(
 app.options("*", cors());
 app.use(cookieParser());
 app.use("/uploads", express.static("uploads"));
-app.use(
-  express.static("build", {
-    index: "index.html",
-    setHeaders: (res, path) => {
-      res.set({
-        "cache-Control": path.includes("index.html")
-          ? "no-store"
-          : "public, max-age=0",
-      });
-    },
-  }),
-);
+app.use(express.static("build"));
+
+app.get("*", (req, res) => {
+  res.setHeader(
+    "Cache-Control",
+    "no-store, no-cache, must-revalidate, proxy-revalidate",
+  );
+  res.setHeader("Expires", "0");
+  res.setHeader("Surrogate-Control", "no-store");
+  res.sendFile(path.join(__dirname, "build", "index.html"));
+});
 
 app.use(bodyParser.json());
 
@@ -134,11 +133,13 @@ app.use(
 //   next();
 // });
 // const router = express.Router();
+
 app.use(express.static(path.join(__dirname, "build")));
 app.get("*", (req, res, next) => {
   console.log("staaaaaaaaaa", path.join(__dirname, "build"));
   next();
 });
+
 app.use("/api/auth", authRoutes);
 app.use("/api/users", usersRoute);
 app.use("/api/plants", plantsRoutes);
