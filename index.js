@@ -25,6 +25,7 @@ require("@dotenvx/dotenvx").config();
 const cors = require("cors"); // Import CORS
 const bodyParser = require("body-parser"); // Import body-parser
 const plantsRoutes = require("./routes/plantsRoutes");
+const versionRoutes = require("./routes/versionRoutes");
 const authRoutes = require("./routes/authRoutes");
 const usersRoute = require("./routes/usersRoutes");
 const ordersRoutes = require("./routes/ordersRoutes");
@@ -148,6 +149,8 @@ app.get("*", (req, res, next) => {
   console.log("staaaaaaaaaa", path.join(__dirname, "build"));
   next();
 });
+
+app.use("/api/version", versionRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/users", usersRoute);
 app.use("/api/plants", plantsRoutes);
